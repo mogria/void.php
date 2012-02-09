@@ -1,5 +1,6 @@
 <?php
 
+namespace Void;
 
 class FilterManager implements Filter {
   protected $filters;
