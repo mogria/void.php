@@ -4,7 +4,7 @@ namespace Void;
 
 class JobCollection implements Job {
   
-  protected $jobs;
+  protected $jobs = Array();
   
   public function add(Job $job) {
     $this->jobs[] = $job;

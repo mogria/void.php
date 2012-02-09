@@ -13,7 +13,7 @@ class FilterManager implements Filter {
     array_diff($this->filters, array($job));
   }
   
-  public function filter(Array $list) {
+  public function filter($list) {
     $newlist = array();
     foreach($this->filters as $filter) {
       foreach($list as $key => $value) {
