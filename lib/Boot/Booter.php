@@ -5,10 +5,9 @@ namespace Void;
 class Booter extends JobCollection {
   static protected $instance;
   
-  static protected $jobs_dir = "Jobs";
-  
   protected function __construct() {
-    
+    $this->add(new ErrorToException());
+    $this->add(new MagicQuoteFix());
   }
   
   protected function __clone() {}
