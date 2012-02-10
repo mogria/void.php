@@ -19,7 +19,7 @@ class Request {
   }
   
   public static function getMethod() {
-    return self::buildControllerName(isset(self::$request[1]) ? self::$request[1] : self::getDefaultMethod());
+    return self::buildMethodName(isset(self::$request[1]) ? self::$request[1] : self::getDefaultMethod());
   }
   
   public static function getParams() {
@@ -31,11 +31,11 @@ class Request {
   }
   
   public static function getDefaultControllerName() {
-    self::buildControllerName(self::getDefaultController());
+    return self::buildControllerName(self::getDefaultController());
   }
   
   public static function buildControllerName($name) {
-    return ucfirst($name) . "Controller";
+    return __NAMESPACE__ . "\\" . ucfirst($name) . "Controller";
   }
   
   public static function getDefaultMethod() {
@@ -43,7 +43,7 @@ class Request {
   }
   
   public static function getDefaultMethodName() {
-    self::buildMethodName(self::getDefaultMethod());
+    return self::buildMethodName(self::getDefaultMethod());
   }
   
   public static function buildMethodName($name) {
