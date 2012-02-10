@@ -5,6 +5,7 @@ namespace Void;
 require_once ROOT . 'lib/Filters/Filter.php';
 require_once ROOT . 'lib/Filters/FilterManager.php';
 require_once ROOT . 'lib/Filters/ExtensionFilter.php';
+require_once ROOT . 'lib/Filters/UcFirstFilter.php';
 
 class Autoloader {
   
@@ -46,7 +47,11 @@ class Autoloader {
   private static function filter($list) {
     $manager = new FilterManager();
     $manager->add(new ExtensionFilter("php"));
-    return $manager->filter($list);
+    $list = $manager->filter($list);
+    $list = array_flip($list);
+    $manager = new FilterManager();
+    $manager->add(new UcFirstFilter());
+    return array_flip($manager->filter($list));
   }
 }
 
