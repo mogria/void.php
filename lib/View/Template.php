@@ -38,6 +38,7 @@ class Template extends VirtualAttribute {
     extract($this->toArray());
     ob_start();
     eval( <<<_VOID_TEMPLATE
+?>
 {$this->parse(file_get_contents($this->file))}
 _VOID_TEMPLATE
     );
