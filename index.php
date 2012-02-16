@@ -7,10 +7,12 @@ require_once 'lib/Autoloader/Autoloader.php';
 
 Booter::boot();
 
-Request::grab();
+$request = new Request();
 
-$controller = Dispatcher::getController();
+$dispatcher = new Dispatcher($request);
 
-echo Dispatcher::executeAction($controller);
+$controller = $dispatcher->getController();
+
+$controller->executeAction($dispatcher)
 
 Booter::shutdown();
