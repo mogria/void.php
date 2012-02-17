@@ -13,6 +13,6 @@ $dispatcher = new Dispatcher($request);
 
 $controller = $dispatcher->getController();
 
-$controller->executeAction($dispatcher)
+echo $controller->executeAction($dispatcher);
 
 Booter::shutdown();

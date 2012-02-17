@@ -6,7 +6,7 @@ class Request {
   
   protected $urlparams;
   
-  public static function grab() {
+  public function __construct() {
     $this->urlparams = self::getArray();
   }
   
@@ -16,9 +16,9 @@ class Request {
 
   public function __get($key){
     if ($key == 'controller') {
-      return $this->urlparams[0];
+      return isset($this->urlparams[0]) ? $this->urlparams[0] : null;
     } else if($key == 'method') {
-      return $this->urlparams[1];
+      return isset($this->urlparams[1]) ? $this->urlparams[1] : null;
     } else if($key == 'params') {
       return array_slice($this->urlparams, 2);
     } else {

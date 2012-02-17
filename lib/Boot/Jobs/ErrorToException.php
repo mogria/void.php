@@ -11,7 +11,7 @@ class ErrorToException implements Job {
   public function cleanup() {}
 
   public static function exception_error_handler($errno, $errstr, $errfile, $errline ) {
-    throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
+    throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
   }
 
 }

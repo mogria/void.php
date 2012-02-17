@@ -15,7 +15,7 @@ class Dispatcher {
   }
   
   public function getController() {
-    !class_exists($classname = $this->getController()) && $classname = $this->getDefaultControllerName();
+    !class_exists($classname = $this->getControllerName()) && $classname = $this->getDefaultControllerName();
     return new $classname();
   }
   
@@ -24,11 +24,11 @@ class Dispatcher {
     return $methodname;
   }
 
-  public function getActionName() {
-    return substr($this->getAction(), strlen(self::METHOD_PREFIX));
+  public function getActionName(ControllerBase $controller) {
+    return substr($this->getAction($controller), strlen(self::METHOD_PREFIX));
   }
 
-  public function getController() {
+  public function getControllerName() {
     return $this->buildControllerName(isset($this->request->controller) ? $this->request->controller: $this->getDefaultController());
   }
   
@@ -37,7 +37,7 @@ class Dispatcher {
   }
 
   public function getParams() {
-    return $request->params;
+    return $this->request->params;
   }
   
   public function getDefaultController() {
