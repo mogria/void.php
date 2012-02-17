@@ -90,7 +90,7 @@ class VirtualAttribute implements \ArrayAccess, \IteratorAggregate {
     return $this->exists($key);
   }
 
-  public function __unset() {
+  public function __unset($key) {
     $this->delete($key);
   }
 

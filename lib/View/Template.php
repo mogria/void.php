@@ -3,6 +3,8 @@
  * @author Mogria
  */
 
+namespace Void;
+
 class Template extends VirtualAttribute {
   protected $file;
   
@@ -12,10 +14,8 @@ class Template extends VirtualAttribute {
   }
   
   public function setFile($file) {
-    if(!is_file($file)) {
-      throw new InexistentFileException("Template file '$file' does not exist!");
-    }
-    $this->file = $file;
+    $finder = new TemplateFinder($file);
+    $this->file = $finder->getPath();
   }
   
   public function getFile() {
@@ -24,13 +24,15 @@ class Template extends VirtualAttribute {
   
   public function parse($string) {
     return preg_replace(Array(
-        '/\{>(.*?)\}/',
-        '/\{=(.*?)\}/',
-        '/\{(.*?)\}/ms'
+      '/\{>(.*?)\}/',
+      '/\{\[(.*?)\}/',
+      '/\{=(.*?)\}/',
+      '/\{(.*?)\}/ms'
     ), Array(
-        "<?php print(htmlspecialchars(\\1)) ?>",
-        "<?php print(\\1) ?>",
-        "<?php \\1 ?>"
+      "<?php print(htmlspecialchars(\\1)) ?>",
+      "<?php \\1->parse() ?>",
+      "<?php print(\\1) ?>",
+      "<?php \\1 ?>"
     ), $string);
   }
   
