@@ -1,12 +1,13 @@
 <?php
 
-// The URL to the location where this framework is
-define('BASEURL', 
-    'http' . (!empty($_SERVER['HTTPS']) ? "s" : "")  . '://' 
+// The URL to the location where this framework is example /myblog/
+define('BASEURL', dirname($_SERVER['SCRIPT_NAME']) . "/");
+
+// The full URL (example: http://example.org/myblog/)
+define('FULLURL','http' . (!empty($_SERVER['HTTPS']) ? "s" : "")  . '://'
     . $_SERVER['HTTP_HOST']
-    . $_SERVER['SERVER_PORT'] != 80 ? ":" . $_SERVER['SERVER_PORT'] : ""
-    . dirname($_SERVER['SCRIPT_NAME'])
-);
+    . ($_SERVER['SERVER_PORT'] != 80 ? ":" . $_SERVER['SERVER_PORT'] : "")
+    .  BASEURL);
 
 // the shorter the better ;-)
 define('DS', DIRECTORY_SEPARATOR);
