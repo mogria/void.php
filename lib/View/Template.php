@@ -62,7 +62,7 @@ class Template extends VirtualAttribute {
       '/\{(.*?)\}/'
     ), Array(
       "<?php print(htmlspecialchars(\\1)) ?>",
-      "<?php \\1->parse() ?>",
+      "<?php print(\\1->render()) ?>",
       "<?php print(\\1) ?>",
       "<?php \\1 ?>"
     ), $string);
@@ -75,16 +75,20 @@ class Template extends VirtualAttribute {
    *
    * @return string the output of the template
    */
-  public function render() {
-    extract($this->toArray());
-    ob_start();
-    eval( <<<_VOID_TEMPLATE
-?>
-{$this->parse(file_get_contents($this->file))}
+  public function render($filespec = null, $initializers = Array()) {
+    if($filespec === null) {
+      extract($this->toArray());
+      ob_start();
+      eval( <<<_VOID_TEMPLATE
+?>{$this->parse(file_get_contents($this->file))}
 _VOID_TEMPLATE
-    );
-    $content = ob_get_contents();
-    ob_end_clean();
-    return $content;
+      );
+      $content = ob_get_contents();
+      ob_end_clean();
+      return $content;
+    } else {
+      $template = new Template($filespec, $initializers);
+      return  $template->render();
+    }
   }
 }
