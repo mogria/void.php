@@ -1,0 +1,39 @@
+
+a:focus, a:hover {color:#6c0;}
+a {color:#4a0}
+thead th {background:#d9ffc3;}
+tbody tr:nth-child(even) td, tbody tr.even td {background:#ecf9e5;}
+
+.box{background: #eCf9e5;}
+
+body {
+  background-color: black;
+}
+
+#wrapper {
+  background-color: #ffffff;
+  padding: 20px;
+  box-shadow: 0px 0px 20px #00ff00;
+  border-radius: 5px;
+}
+
+nav {
+  overflow: auto;
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0px;
+  padding: 0px;
+}
+
+nav > ul > li {
+  float: left;
+}
+
+nav > ul > li > a {
+  display: block;
+  padding: 20px;
+  text-decoration: none;
+}
+
