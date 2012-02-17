@@ -64,7 +64,7 @@ class TemplateFinder {
     } else {
       $file = $this->filespec;
     }
-    if(!is_file($file) && !is_file($file = ROOT . self::TEMPLATE_DIR . DS . $file . self::TEMPLATE_EXT)) {
+    if(!is_file($file)) {
       throw new InexistentFileException("Template File '$file' not found.");
     }
     return $file;
