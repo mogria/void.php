@@ -98,5 +98,7 @@ _VOID_TEMPLATE
     }
   }
 
-  public function link
+  public function link($controller = null, $action = null, Array $params = Array()) {
+    return Router::link($controller, $action, $params);
+  }
 }
