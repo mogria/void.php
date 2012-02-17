@@ -13,8 +13,8 @@ body {
 #wrapper {
   background-color: #ffffff;
   padding: 20px;
-  box-shadow: 0px 0px 20px #00ff00;
-  border-radius: 5px;
+  box-shadow: 0px 0px 50px #4a0;
+  border-radius: 0px 0px 5px 5px;
 }
 
 nav {
