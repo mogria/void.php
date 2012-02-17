@@ -23,6 +23,10 @@ class VirtualAttribute implements \ArrayAccess, \IteratorAggregate {
    * @param Array $reference
    */
   public function __construct(&$reference) {
+    $this->setReference($reference);
+  }
+
+  public function setReference(&$reference) {
     $this->__virtual_vars = &$reference;
   }
 
@@ -144,7 +148,6 @@ class VirtualAttribute implements \ArrayAccess, \IteratorAggregate {
   public function &__get($key) {
     return $this->get($key);
   }
-
   public function __set($key, $value) {
     if($key === "_" && is_array($value)) {
       $this->setArray($value);

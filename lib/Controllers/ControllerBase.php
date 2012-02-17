@@ -6,7 +6,9 @@ namespace Void;
  * The Controller from which every other controller should inherit.
  *
  */
-abstract class ControllerBase {
+abstract class ControllerBase extends VirtualAttribute {
+
+  public function __construct() {}
 
   /**
    * Creates the view and calls a method from the controller
@@ -15,10 +17,18 @@ abstract class ControllerBase {
    */
   public function executeAction(Dispatcher $dispatcher) {
   	$actionname = $dispatcher->getActionName($this);
-  	$this->view = new Template(Array('application', 'layout'));
+    $controllername = explode("\\", get_called_class());
+    $controllername = $controllername[count($controllername) - 1];
+    $controllername = strtolower(substr($controllername, 0, -strlen(Dispatcher::CONTROLLER_EXT)));
+  	$layout = new Template(Array('layout', 'application'));
+    $this->view = $layout->content = new Template(Array(
+      $controllername,
+      $actionname
+    ));
+    $this->setReference($this->view->getReference());
 
   	call_user_func_array(Array($this, Dispatcher::METHOD_PREFIX . $actionname), $dispatcher->getParams());
-  	return $this->view->render();
+  	return $layout->render();
   }
 
   abstract function action_index();
