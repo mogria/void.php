@@ -2,19 +2,43 @@
 
 namespace Void;
 
+// These filters are needed to filter throw the file's found
 require_once ROOT . 'lib/Filters/Filter.php';
 require_once ROOT . 'lib/Filters/FilterManager.php';
 require_once ROOT . 'lib/Filters/ExtensionFilter.php';
 require_once ROOT . 'lib/Filters/UcFirstFilter.php';
 
+/**
+ * This class loads classes automaticly when the class is needed
+ * To do so, this class creates an index. If a class is requested
+ * This class searches the index and includes the file which the
+ * requested class is in.
+ * 
+ * @package Void.php
+ * @author Mogria
+ */
 class Autoloader {
   
-  public static $index = Array();
+  /**
+   * @var Array $index
+   */
+  private static $index = Array();
   
+  /**
+   * Creates the index and stores it in self::$index
+   * 
+   * @param string $dir Directory where the classes are
+   */
   public static function init($dir) {
     self::$index = self::filter(self::create_index($dir));
   }
 
+  /**
+   * This Method will be called if a class is requested.
+   * The Class will be loaded in here if the class is in the index.
+   * 
+   * @param string $classname The classname of the Class
+   */
   public static function load($classname) {
     if(strpos($classname, "Void\\") === 0) {
       $classname = substr($classname, strlen("Void\\"));
@@ -24,6 +48,12 @@ class Autoloader {
     }
   }
 
+  /**
+   * A recursive function which creates the index
+   * 
+   * @param string $dir The current directory
+   * @return Array the index
+   */
   private static function create_index($dir) {
     $list = Array();
     $dir = rtrim($dir, DS);
@@ -44,6 +74,13 @@ class Autoloader {
     return $list;
   }
   
+  /**
+   * This Method filters out all the classes which are
+   * not PHP Files containing a Class.
+   * 
+   * @param Array list The class index
+   * @return Array The filtered index
+   */
   private static function filter($list) {
     $manager = new FilterManager();
     $manager->add(new ExtensionFilter("php"));
@@ -55,6 +92,8 @@ class Autoloader {
   }
 }
 
+// Create the index of this framework
 Autoloader::init(ROOT);
 
+// Add the Load Method to the autoloaders
 spl_autoload_register(Array('Void\Autoloader', 'load'));
