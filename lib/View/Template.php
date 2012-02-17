@@ -73,6 +73,12 @@ class Template extends VirtualAttribute {
    * variables set (by using the method's from virtual attribute)
    * are available in the Template file.
    *
+   * if you don't pass any parameters the properties of the object will be used,
+   * if you pass some parameters only the values in $initializers are used to render
+   * the given template file ($filespec)
+   *
+   * @param mixed $filespec the file which should be rendered
+   * @param Array $initializers the variables which can be used within the Template
    * @return string the output of the template
    */
   public function render($filespec = null, $initializers = Array()) {
@@ -91,4 +97,6 @@ _VOID_TEMPLATE
       return  $template->render();
     }
   }
+
+  public function link
 }
