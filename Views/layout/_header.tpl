@@ -4,10 +4,10 @@
   </div>
   <nav class="span-12 last">
     <ul>
-      <li><a href="#">Home</a></li>
-      <li><a href="#">About</a></li>
-      <li><a href="#">Contact</a></li>
-      <li><a href="#">Help</a></li>
+      <li>{=$this->aTag('Home', array())}</li>
+      <li>{=$this->aTag('About', array('pages', 'about'))}</li>
+      <li>{=$this->aTag('Contact', array('pages', 'contact'))}</li>
+      <li>{=$this->aTag('Help', array('pages', 'help'))}</li>
       <li><a href="http://github.com/mogria/void.php">Github Repository</a></li>
     </ul>
   </nav>

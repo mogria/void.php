@@ -17,8 +17,7 @@ class Router {
    * @param Array $params
    * @return string
    */
-  public static funciton link($controller = null, $action = null, Array $params = Array()) {
-
+  public static function link($controller = null, $action = null, Array $params = Array()) {
     // if it's an array pull out the required values
     if (is_array($controller)) {
       $array = $controller;
@@ -28,14 +27,14 @@ class Router {
     }
 
     // is it an URL like http://example.com? if yes return it;
-    if(preg_match("/[a-z\-]{3,}:\/\//i", $controller) {
+    if(preg_match("/[a-z\-]{3,}:\/\//i", $controller)) {
       return $controller;
     }
 
     // return link to root if no controller, action or any param is given
     if($controller === null && $action === null && $params == null) {
       return BASEURL;
-    } else ($action === null &&  $params == null) { // if only controller is given
+    } else if ($action === null &&  $params == null) { // if only controller is given
       return BASEURL . "index.php/" . $controller;
     } else {
       // get the default controller if needed

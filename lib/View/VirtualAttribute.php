@@ -15,7 +15,7 @@ class VirtualAttribute implements \ArrayAccess, \IteratorAggregate {
    * Array where all the properties are stored
    * @var Array $__virtual_vars
    */
-  protected $__virtual_vars;
+  protected $__virtual_vars = Array();
 
   /**
    * Constructor
@@ -151,6 +151,7 @@ class VirtualAttribute implements \ArrayAccess, \IteratorAggregate {
   public function __set($key, $value) {
     if($key === "_" && is_array($value)) {
       $this->setArray($value);
+      return;
     }
     return $this->set($key, $value);
   }

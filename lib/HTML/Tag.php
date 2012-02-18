@@ -30,7 +30,8 @@ class Tag extends VirtualAttribute {
    * @param Array $attributes
    */
   public function __construct($name, $content = null, Array $attributes = Array()) {
-    $this->name = $name;
+    $this->setName($name);
+    $this->setContent($content);
     $this->_ = $attributes;
   }
 
@@ -40,7 +41,7 @@ class Tag extends VirtualAttribute {
    * @param string $name
    */
   public function setName($name) {
-    $this->name = $name;
+    $this->name = strtolower($name);
   }
 
   /**
@@ -58,7 +59,7 @@ class Tag extends VirtualAttribute {
    * @param string $content
    */
   public function setContent($content) {
-    return $this->content;
+    $this->content = $content;
   }
 
   /**
@@ -76,9 +77,11 @@ class Tag extends VirtualAttribute {
    * @return string
    */
   public function output() {
-    return "<" . $this->name . implode("", array_map(function(&$value, $key) {
-      $value = " " . htmlspecialchars($key) . ( $value !== null ? "=\"" . htmlspecialchars($value) . "\"" : "")
-    }, $this->getArray())) . ">" . ($this->content !== null ? $this->content . "</" . $this->name . ">" : " />");
+    $attributes = &$this->getReference();
+    array_walk($attributes, function(&$value, $key) {
+      $value = " " . htmlspecialchars($key) . ( $value !== null ? "=\"" . htmlspecialchars($value) . "\"" : "");
+    });
+    return "<" . $this->name . implode("", $attributes) . ($this->content !== null ? ">" . $this->content . "</" . $this->name . ">" : " />");
   }
 
   /**
@@ -86,7 +89,7 @@ class Tag extends VirtualAttribute {
    *
    * @return string
    */
-  public functio __toString() {
+  public function __toString() {
     return $this->output();
   }
 }
