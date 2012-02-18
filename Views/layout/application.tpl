@@ -3,12 +3,12 @@
   <head>
     <title>Void.php</title>
     <meta charset="utf-8" />
-    <link href="{>BASEURL}stylesheets/blueprint/screen.css" rel="stylesheet" type="text/css" media="screen, projection" />
-    <link href="{>BASEURL}stylesheets/blueprint/print.css" rel="stylesheet" type="text/css" media="print" />
+    {=$this->linkTag('stylesheets/blueprint/screen.css', Array('media' => 'screen, projection'))}
+    {=$this->linkTag('stylesheets/blueprint/print.css', Array('media' => 'print'))}
     <!--[if lt IE 8]>
-    <link href="{>BASEURL}stylesheets/blueprint/ie.css" type="text/css" media="print">
+    {=$this->linkTag('stylesheets/blueprint/ie.css', Array('media' => 'screen, projection'))}
     <![endif]-->
-    <link href="{>BASEURL}stylesheets/style.css" rel="stylesheet" type="text/css" />
+    {=$this->linkTag('stylesheets/style.css')}
   </head>
   <body>
     <div id="wrapper" class="container">
