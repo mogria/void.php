@@ -2,10 +2,10 @@
 
 namespace Void;
 
-class Dispatcher {  
+class Dispatcher {
   protected $request;
 
-  const DEFAULT_CONTROLLER = "Main";
+  const DEFAULT_CONTROLLER = "Pages";
   const DEFAULT_METHOD     = "index";
   const CONTROLLER_EXT     = "Controller";
   const METHOD_PREFIX      = "action_";
@@ -13,12 +13,12 @@ class Dispatcher {
   public function __construct(Request $request) {
     $this->request = $request;
   }
-  
+
   public function getController() {
     !class_exists($classname = $this->getControllerName()) && $classname = $this->getDefaultControllerName();
     return new $classname();
   }
-  
+
   public function getAction(ControllerBase $controller) {
     !method_exists($controller, $methodname = $this->getMethod()) && $methodname = $this->getDefaultMethodName();
     return $methodname;
@@ -29,37 +29,37 @@ class Dispatcher {
   }
 
   public function getControllerName() {
-    return $this->buildControllerName(isset($this->request->controller) ? $this->request->controller: $this->getDefaultController());
+    return $this->buildControllerName($this->request->controller != null ? $this->request->controller: $this->getDefaultController());
   }
-  
+
   public function getMethod() {
-    return $this->buildMethodName(isset($this->request->method) ? $this->request->method : $this->getDefaultMethod());
+    return $this->buildMethodName($this->request->method != null ? $this->request->method : $this->getDefaultMethod());
   }
 
   public function getParams() {
     return $this->request->params;
   }
-  
+
   public function getDefaultController() {
     return self::DEFAULT_CONTROLLER;
   }
-  
+
   public function getDefaultControllerName() {
     return $this->buildControllerName($this->getDefaultController());
   }
-  
+
   public function buildControllerName($name) {
     return __NAMESPACE__ . "\\" . ucfirst($name) . self::CONTROLLER_EXT;
   }
-  
+
   public function getDefaultMethod() {
     return self::DEFAULT_METHOD;
-  } 
-  
+  }
+
   public function getDefaultMethodName() {
     return $this->buildMethodName($this->getDefaultMethod());
   }
-  
+
   public function buildMethodName($name) {
     return self::METHOD_PREFIX . strtolower($name);
   }
