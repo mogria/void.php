@@ -37,7 +37,7 @@ class VirtualAttribute implements \ArrayAccess, \IteratorAggregate {
    */
   protected function isUndefinedProperty($key) {
     if(!$this->exists($key)) {
-        throw new UndefinedPropertyException();
+        throw new UndefinedPropertyException("property $key does not exist!");
     }
   }
 
