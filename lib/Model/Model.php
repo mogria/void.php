@@ -9,11 +9,22 @@ class Model extends VirtualAttribtue {
 
   protected static $table = null;
 
+  protected static $attributes;
+
   public function __construct(Array $attributes = Array()) {
     $this->connection = Connection::getInstance();
     $this->tablename === null && $this->tablename = self::modelToTable(get_called_class());
-    $this->table === null && $this->table = new Table($name);
+    $this->table === null && $this->table = new Table($name) && $this->attributes = $this->table->getAttributeList();
     $this->_ = $attributes;
+  }
+
+  public static function set($key, $value) {
+    $this->isUndefinedProperty();
+    parent::set($key, $value);
+  }
+
+  public function exists() {
+    return in_array($key, $this->attributes);
   }
 
   public static function modelToTable($modelname) {

@@ -6,6 +6,8 @@ class Table extends Singleton {
 
   protected static $tables = Array();
 
+  protected $columns;
+
   public function __construct($name) {
     $this->scan();
   }
@@ -17,5 +19,30 @@ class Table extends Singleton {
 
   public function scan() {
 
+  }
+
+  public function getColumn($name) {
+    foreach($columns as $column) {
+      if($column->getName() == $name) {
+        return $column;
+      }
+    }
+    return false;
+  }
+
+  public function addColumn(Column $column) {
+    $this->columns[] = $column;
+  }
+
+  public function columnExists($name) {
+    return $this->getColumn($name) !== false;
+  }
+
+  public function getAttributeList() {
+    $attributes = Array();
+    foreach($columns as $column) {
+      $attributes[] = $column->getName();
+    }
+    return $attributes;
   }
 }
