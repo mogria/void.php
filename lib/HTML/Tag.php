@@ -49,7 +49,7 @@ class Tag extends VirtualAttribute {
    *
    * @return string $name
    */
-  public function getName($name) {
+  public function getName() {
     return $this->name;
   }
 
@@ -67,7 +67,7 @@ class Tag extends VirtualAttribute {
    *
    * @return string $content
    */
-  public function getContent($content) {
+  public function getContent() {
     return $this->content;
   }
 
@@ -77,7 +77,7 @@ class Tag extends VirtualAttribute {
    * @return string
    */
   public function output() {
-    $attributes = &$this->getReference();
+    $attributes = $this->getReference();
     array_walk($attributes, function(&$value, $key) {
       $value = " " . htmlspecialchars($key) . ( $value !== null ? "=\"" . htmlspecialchars($value) . "\"" : "");
     });
