@@ -8,7 +8,7 @@
       <li>{=$this->aTag('About', array('pages', 'about'))}</li>
       <li>{=$this->aTag('Contact', array('pages', 'contact'))}</li>
       <li>{=$this->aTag('Help', array('pages', 'help'))}</li>
-      <li><a href="http://github.com/mogria/void.php">Github Repository</a></li>
+      <li>{=$this->aTag('Github Repository', 'http://github.com/mogria/void.php', Array('target' => '_blank'))}</li>
     </ul>
   </nav>
 </header>
