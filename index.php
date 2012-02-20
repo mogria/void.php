@@ -12,7 +12,7 @@ namespace Void;
 // This defines some useful constants
 require_once 'config/consts.php';
 // For automated loading of classes
-require_once 'lib/Autoloader/Autoloader.php';
+require_once 'autoload.php';
 
 // Startup
 Booter::boot();

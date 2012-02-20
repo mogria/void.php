@@ -2,11 +2,8 @@
 
 namespace Void;
 
-// These filters are needed to filter the file's found
-require_once ROOT . 'lib/Filters/Filter.php';
-require_once ROOT . 'lib/Filters/FilterManager.php';
-require_once ROOT . 'lib/Filters/ExtensionFilter.php';
-require_once ROOT . 'lib/Filters/UcFirstFilter.php';
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 
 /**
  * This class loads classes automaticly when the class is needed
@@ -29,7 +26,8 @@ class Autoloader {
    * @param string $dir Directory where the classes are
    */
   public static function init($dir) {
-    self::$index = self::filter(self::create_index($dir));
+    self::$index = self::create_index($dir);
+    print_r(self::$index);
   }
 
   /**
@@ -56,44 +54,13 @@ class Autoloader {
    */
   private static function create_index($dir) {
     $list = Array();
-    $dir = rtrim($dir, DS);
-    $entries = scandir($dir);
-    foreach($entries as $entry) {
-      if($entry == "." || $entry == "..") {
-        continue;
-      }
-      $entry = $dir . DS . $entry;
-      if(is_dir($entry)) {
-        $list = array_merge($list, self::create_index($entry));
-      } else if(is_file($entry)) {
-        $classname = basename($entry);
-        $classname = substr($classname, 0, strrpos($classname, "."));
-        $list[$classname] = $entry;
-      }
+    $files = $iterator = new PHPClassFileFilter(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir)));
+    print_r($files);
+    foreach($files as $file) {
+      $classname = substr($file->getFilename(), 0, strrpos($file->getFilename(), "."));
+      $list[$classname] = $file->getPathname();
     }
     return $list;
   }
-
-  /**
-   * This Method filters out all the classes which aren't
-   * PHP Files containing a class.
-   *
-   * @param Array list The class index
-   * @return Array The filtered index
-   */
-  private static function filter($list) {
-    $manager = new FilterManager();
-    $manager->add(new ExtensionFilter("php"));
-    $list = $manager->filter($list);
-    $list = array_flip($list);
-    $manager = new FilterManager();
-    $manager->add(new UcFirstFilter());
-    return array_flip($manager->filter($list));
-  }
 }
 
-// Create the index of all classes within this framework
-Autoloader::init(ROOT);
-
-// register the load() Method as an autoloader
-spl_autoload_register(Array('Void\Autoloader', 'load'));
