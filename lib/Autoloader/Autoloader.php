@@ -27,7 +27,6 @@ class Autoloader {
    */
   public static function init($dir) {
     self::$index = self::create_index($dir);
-    print_r(self::$index);
   }
 
   /**
@@ -55,7 +54,6 @@ class Autoloader {
   private static function create_index($dir) {
     $list = Array();
     $files = $iterator = new PHPClassFileFilter(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir)));
-    print_r($files);
     foreach($files as $file) {
       $classname = substr($file->getFilename(), 0, strrpos($file->getFilename(), "."));
       $list[$classname] = $file->getPathname();
