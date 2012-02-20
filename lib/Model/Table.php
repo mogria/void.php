@@ -6,10 +6,17 @@ class Table extends Singleton {
 
   protected static $tables = Array();
 
+  protected $name;
+
   protected $columns;
 
   public function __construct($name) {
+    $this->name = $name;
     $this->scan();
+  }
+
+  public function getName() {
+    return $this->name;
   }
 
   public static function getInstance($name) {
