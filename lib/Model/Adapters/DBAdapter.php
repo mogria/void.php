@@ -21,16 +21,16 @@ abstract class DBAdapter {
 
   public function __construct(Connection $connection) {
     $this->connection = $connection;
-    $this->pdo = $connection->get
+    $this->pdo = $connection->getPDO();
   }
   abstract public function quoteColumn(Column $column);
   abstract public function fullColumn(Column $column);
 
   public function convertType(Column $column) {
     $new_column = clone $column;
-    if(isset($types[$column->type])) {
+    if(isset($this->types[$column->type])) {
       $new_column->setType($types[$column->type][0]);
-      isset($types[$column->type]['length']) && $new_column->setLength($types[$column->type]['length']);
+      isset($this->types[$column->type]['length']) && $new_column->setLength($this->types[$column->type]['length']);
     }
     return $new_column;
   }

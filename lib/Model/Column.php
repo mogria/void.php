@@ -7,6 +7,7 @@ class Column {
   protected $length;
   protected $type;
   protected $table;
+  protected 
 
   public function __construct(Table $table) {
     $this->table = $table;

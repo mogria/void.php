@@ -32,7 +32,7 @@ class MysqlAdapter extends DBAdapter {
 
   public function fullRow(Column $column) {
     $new_column = $this->convertType($column);
-    return $this->safeColumn($column) . " " . $new_column->getType() . ($new_column->getLength() ? "(" . $new_column->getLength() . ")" : "";
+    return $this->safeColumn($column) . " " . $new_column->getType() . ($new_column->getLength() ? "(" . $new_column->getLength() . ")" : "");
   }
 
   public function getTables() {
@@ -45,6 +45,6 @@ class MysqlAdapter extends DBAdapter {
   }
 
   public function getColumns($table) {
-    $stmnt = $this->pdo-query('EXPLAIN ' . $this->safeTable($table) . ";")
+    $stmnt = $this->pdo->query('EXPLAIN ' . $this->safeTable($table) . ";");
   }
 }
