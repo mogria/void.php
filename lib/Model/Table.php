@@ -45,11 +45,7 @@ class Table extends Singleton {
     return $this->getColumn($name) !== false;
   }
 
-  public function getAttributeList() {
-    $attributes = Array();
-    foreach($columns as $column) {
-      $attributes[] = $column->getName();
-    }
-    return $attributes;
+  public function getColumns() {
+    return $this->columns;
   }
 }
