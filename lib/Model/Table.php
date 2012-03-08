@@ -48,7 +48,7 @@ class Table extends Singleton {
   public function getAttributeList() {
     $attributes = Array();
     foreach($columns as $column) {
-      $attributes[] = $column->getName();
+      $attributes[$column->getName()] = new Attribute($column);
     }
     return $attributes;
   }

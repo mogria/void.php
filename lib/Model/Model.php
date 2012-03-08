@@ -18,7 +18,7 @@ class Model extends VirtualAttribtue {
     $this->_ = $attributes;
   }
 
-  public static function set($key, $value) {
+  public function set($key, $value) {
     $this->isUndefinedProperty();
     parent::set($key, $value);
   }

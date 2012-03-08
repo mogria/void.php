@@ -46,4 +46,18 @@ class Connection extends Singleton {
   public function getAdapter() {
     return $this->adapter($this);
   }
+
+  /**
+   * calls the Methods of the PDO objects if the called method doesn't exist on this object
+   *
+   * @param $method the called method name
+   * @param $arguments the arguments given to the method call
+   */
+  public function __call($method, $arguments) {
+    if(method_exists($this->pdo, $method)) {
+      call_user_func_array(Array($this->pdo, $method), $arguments);
+    } else {
+      throw new BadMethodCallException("there is no method '$method'");
+    }
+  }
 }

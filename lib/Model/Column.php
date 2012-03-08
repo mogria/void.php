@@ -7,7 +7,6 @@ class Column {
   protected $length;
   protected $type;
   protected $table;
-  protected 
 
   public function __construct(Table $table) {
     $this->table = $table;
@@ -41,6 +40,24 @@ class Column {
     $this->type = $type;
   }
 
+  public function castType($type) {
+    $php_types = Array(
+      'string' => function($value) { return (string)$value; },
+      'text' => function($value) { return (string)$value; },
+      'integer' => function($value) { return (int)$value; },
+      'float' => function($value) { return (double)$value; },
+      'boolean' => function($value) { return (bool)$value; },
+      'binary' => function($value) { return (string)$value; }, // or leave it?
+      'date' => function($value) { return strtotime($value); },
+      'time' => function($value) { return strtotime($value); },
+      'timestamp' => function($value) { return strtotime($value); },
+      'datetime' =>  function($value) { return strtotime($value); },
+      'primary_key' => function($value) { return (int)$value; }
+    );
+    isset($php_types[$this->types]) && $type = $php_types[$this->types]($type);
+    return $type;
+  }
+
   public function getQuoted() {
     return Connection::getAdapter()->safeColumn($this);
   }
@@ -59,7 +76,7 @@ class Column {
       'binary' => PDO::PARAM_LOB,
       'date' => PDO::PARAM_STR,
       'time' => PDO::PARAM_STR,
-      'timestamp' => PPDO::PARAM_INT,
+      'timestamp' => PDO::PARAM_INT,
       'datetime' => PDO::PARAM_STR,
       'primary_key' => PDO::PARAM_INT
     );
