@@ -15,7 +15,7 @@ class Attribute {
     return $this->column;
   }
 
-  public function getValue() {
+  public function &getValue() {
     return $this->value;
   }
 

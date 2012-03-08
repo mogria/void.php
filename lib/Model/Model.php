@@ -20,7 +20,16 @@ class Model extends VirtualAttribtue {
 
   public function set($key, $value) {
     $this->isUndefinedProperty();
-    parent::set($key, $value);
+    $this->__virtual_vars[$key]->setValue($value);
+  }
+
+  public function &get($key) {
+    $this->isUndefinedProperty();
+    return $this->__virtual_vars[$key]->getValue();
+  }
+
+  public function delete() {
+    throw new BadMethodException("you cannot delete an attribute of an model");
   }
 
   public function exists() {
