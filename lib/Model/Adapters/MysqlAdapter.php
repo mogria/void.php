@@ -45,6 +45,7 @@ class MysqlAdapter extends DBAdapter {
   }
 
   public function getColumns($table) {
-    $stmnt = $this->pdo->query('EXPLAIN ' . $this->safeTable($table) . ";");
+    $stmnt = $this->connection->query('EXPLAIN ' . $this->safeTable($table) . ";");
+    // need to fetch this properly
   }
 }

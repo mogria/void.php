@@ -19,9 +19,8 @@ abstract class DBAdapter {
     'primary_key' => Array('UNDEFINED_TYPE')
   );
 
-  public function __construct(Connection $connection) {
-    $this->connection = $connection;
-    $this->pdo = $connection->getPDO();
+  public function __construct() {
+    $this->connection = Connection::getInstance();
   }
   abstract public function quoteColumn(Column $column);
   abstract public function fullColumn(Column $column);

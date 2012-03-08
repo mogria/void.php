@@ -44,7 +44,7 @@ class Connection extends Singleton {
   }
 
   public function getAdapter() {
-    return $this->adapter($this);
+    return $this->adapter;
   }
 
   /**

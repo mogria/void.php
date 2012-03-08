@@ -10,7 +10,10 @@ class Table extends Singleton {
 
   protected $columns;
 
+  protected $connection;
+
   public function __construct($name) {
+    $this->connection = Connection::getInstance();
     $this->name = $name;
     $this->scan();
   }
@@ -51,5 +54,9 @@ class Table extends Singleton {
       $attributes[$column->getName()] = new Attribute($column);
     }
     return $attributes;
+  }
+
+  public function __toString() {
+    $this->connection->getAdapter()->safeTable($this->getName());
   }
 }

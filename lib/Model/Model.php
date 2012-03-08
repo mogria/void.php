@@ -43,4 +43,11 @@ class Model extends VirtualAttribtue {
   public static function tableToModel($tablename) {
     return ucfirst(strtolower($tablename));
   }
+
+
+  public static function find($id) {
+    $this->connection->prepare("SELECT * FROM $this->table WHERE id = ?", $id);
+    // fetch this properly (fix the problem: this is a static method and $this->table and $this->connectionis needed ... )
+  }
+
 }
