@@ -1,4 +1,5 @@
 
+/* change the colors from blueprint to green */
 a:focus, a:hover {color:#6c0;}
 a {color:#4a0}
 thead th {background:#d9ffc3;}
@@ -6,10 +7,12 @@ tbody tr:nth-child(even) td, tbody tr.even td {background:#ecf9e5;}
 
 .box{background: #eCf9e5;}
 
+/* black background */
 body {
   background-color: black;
 }
 
+/* white wrapper with green shadow */
 #wrapper {
   background-color: #ffffff;
   padding: 20px;
@@ -17,6 +20,7 @@ body {
   border-radius: 0px 0px 5px 5px;
 }
 
+/* menu */
 nav {
   overflow: auto;
 }

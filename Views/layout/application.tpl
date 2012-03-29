@@ -22,9 +22,7 @@
           <h1>by the way ...</h1>
           <p class="box">Random text, Random text, Random text, Random text, Random text, Random text, Random text, Random text</p>
         </aside>
-        <footer class="span-24 last">
-          <p>Powered by <a href="http://github.com/mogria/void.php">Void.php</a></p>
-        </footer>
+        {=$this->render(Array('layout', '_footer'))}
       </div>
     </div>
   </body>
