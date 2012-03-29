@@ -1,7 +1,7 @@
 <?php
 
 // The URL to the location where this framework is example /myblog/
-define('BASEURL', dirname($_SERVER['SCRIPT_NAME']) . "/");
+define('BASEURL', rtrim(dirname($_SERVER['SCRIPT_NAME']), "/") . "/");
 
 // The full URL (example: http://example.org/myblog/)
 define('FULLURL','http' . (!empty($_SERVER['HTTPS']) ? "s" : "")  . '://'
