@@ -22,6 +22,7 @@
           <h1>by the way ...</h1>
           <p class="box">Random text, Random text, Random text, Random text, Random text, Random text, Random text, Random text</p>
         </aside>
+        <hr />
         {=$this->render(Array('layout', '_footer'))}
       </div>
     </div>
