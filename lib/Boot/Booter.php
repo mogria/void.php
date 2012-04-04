@@ -18,6 +18,7 @@ class Booter extends JobCollection {
   protected function __construct() {
     $this->add(new ErrorToException());
     $this->add(new MagicQuoteFix());
+    $this->add(new PHPErrorMessages());
   }
   
   /**
