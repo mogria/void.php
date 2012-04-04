@@ -13,6 +13,8 @@ namespace Void;
 require_once 'config/consts.php';
 // For automated loading of classes
 require_once 'autoload.php';
+// the configuration
+require_once 'config/environments.php';
 
 // Startup
 Booter::boot();
