@@ -10,7 +10,7 @@ namespace Void;
  * You can set and get what property you ever want
  *
  */
-class VirtualAttribute implements \ArrayAccess, \IteratorAggregate {
+class VirtualAttribute extends VoidBase implements \ArrayAccess, \IteratorAggregate {
   /**
    * Array where all the properties are stored
    * @var Array $__virtual_vars
@@ -45,9 +45,9 @@ class VirtualAttribute implements \ArrayAccess, \IteratorAggregate {
    * Returns a Reference to the value of $key
    *
    * @param $key
-   * @return &mixed
+   * @return mixed
    */
-  public function &get($key) {
+  public function get($key) {
     $this->isUndefinedProperty($key);
     return $this->__virtual_vars[$key];
   }
@@ -145,7 +145,7 @@ class VirtualAttribute implements \ArrayAccess, \IteratorAggregate {
   /*
    * magic function for easier access
    */
-  public function &__get($key) {
+  public function __get($key) {
     return $this->get($key);
   }
   public function __set($key, $value) {

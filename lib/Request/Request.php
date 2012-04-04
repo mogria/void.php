@@ -29,7 +29,7 @@ namespace Void;
  * @author Mogria
  * @package Void.php
  */
-class Request {
+class Request extends VoidBase {
 
   /**
    * The elements of the URL
