@@ -19,6 +19,9 @@ function loadDefaultConfig($cfg) {
 
     /** Router */
     $cfg->router_index_file = "index.php";
+
+    /** Booter */
+    $cfg->booter_classes = Array('ErrorToException', 'MagicQuoteFix', 'PHPErrorMessages');
   }, 'all');
 
   // default configuration for the development environment

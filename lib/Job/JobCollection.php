@@ -2,7 +2,7 @@
 
 namespace Void;
 
-class JobCollection implements Job {
+class JobCollection extends VoidBase implements Job {
   
   protected $jobs = Array();
   
