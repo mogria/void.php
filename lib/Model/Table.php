@@ -10,7 +10,10 @@ class Table extends Singleton {
 
   protected $columns;
 
+  protected $connection;
+
   public function __construct($name) {
+    $this->connection = Connection::getInstance();
     $this->name = $name;
     $this->scan();
   }
@@ -29,7 +32,7 @@ class Table extends Singleton {
   }
 
   public function getColumn($name) {
-    foreach($columns as $column) {
+    foreach($this->columns as $column) {
       if($column->getName() == $name) {
         return $column;
       }
@@ -47,5 +50,17 @@ class Table extends Singleton {
 
   public function getColumns() {
     return $this->columns;
+  }
+
+  public function getAttributeList() {
+    $attributes = Array();
+    foreach($columns as $column) {
+      $attributes[$column->getName()] = new Attribute($column);
+    }
+    return $attributes;
+  }
+
+  public function __toString() {
+    $this->connection->getAdapter()->safeTable($this->getName());
   }
 }

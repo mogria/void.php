@@ -4,12 +4,12 @@ namespace Void;
 
 class Attribute {
 
+  protected $column;
   protected $value;
 
-  protected $column;
-
-  public function getColumn() {
-    return $this->column;
+  public function __construct(Column $column) {
+    $this->column = $column;
+    $this->setValue(null);
   }
 
   public function getValue() {
@@ -20,8 +20,11 @@ class Attribute {
     $this->value = $value;
   }
 
-  public function __construct(Column $column, $value = null) {
-    $this->column = $column;
-    $this->setValue($value);
+  public function getColumn() {
+    return $this->column;
+  }
+
+  public function getName() {
+    $this->column->getName();
   }
 }

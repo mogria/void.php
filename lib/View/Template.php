@@ -5,6 +5,8 @@
 
 namespace Void;
 
+use BadMethodCallException;
+
 /**
  * A Template System
  */
@@ -97,11 +99,37 @@ _VOID_TEMPLATE
       return  $template->render();
     }
   }
-
+  
+  /**
+   * Link to a certain Controller
+   *
+   * @param type $controller
+   * @param type $action
+   * @param array $params
+   * @return string
+   * @see Router 
+   */
   public function link($controller = null, $action = null, Array $params = Array()) {
     return Router::link($controller, $action, $params);
   }
 
+  /**
+   * Gets called if you call a method on this object which doesn't exists.
+   * 
+   * - if you call a Method on this ending with "Tag"
+   *   An HTML tag will be returned with the name of the caled method (without "Tag" @ the and)
+   *   The first Parameter is the content, the second an array of attributes with key => value pairs
+   *   
+   *   - if a class exists with the name of the Called Method (like ATag), this class will be used to
+   *     create the HTML Tag and all the arguments given will be passed to the __construct Method of this class
+   *   
+   * 
+   * 
+   * @param type $method
+   * @param type $args
+   * @return Tag
+   * @throws BadMethodCallException 
+   */
   public function __call($method, $args) {
     // Check if the called function ends with "Tag"
     if (substr($method, -strlen("Tag")) === "Tag") {
@@ -111,12 +139,17 @@ _VOID_TEMPLATE
       if(class_exists($classname = __NAMESPACE__ . "\\" . $tagname . "Tag")) {
         // create an instance and call the constructor
         $tag = new $classname();
+        // pass all the arguments to the contructor
         call_user_func_array(Array($tag, '__construct'), $args);
       } else {
+        // create a instance of the common Tag class
         $tag = new Tag($tagname, array_shift($args), ($params = array_shift($args)) === null ? Array() : $params);
       }
-      return $tag->output();
+      // return the Tag Object
+      return $tag;
+    } else {
+      // Nothing to do here 
+      throw new BadMethodCallException("There is no magic method '$method'.");
     }
-    // @todo: throw an exception if the method doesn't end with "Tag"
   }
 }

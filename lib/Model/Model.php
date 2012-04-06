@@ -35,11 +35,18 @@ class Model extends VirtualAttribtue {
     parent::set($key, $value);
   }
 
+  public function &get($key) {
+    $this->isUndefinedProperty();
+    return $this->__virtual_vars[$key]->getValue();
+  }
+
+  public function delete() {
+    throw new BadMethodException("you cannot delete an attribute of an model");
+  }
+
   public function exists($key) {
     return self::$table->columnExists($key);
   }
-
-  public function delete() {}
 
   public static function modelToTable($modelname) {
     return strtolower($modelname);
@@ -47,5 +54,10 @@ class Model extends VirtualAttribtue {
 
   public static function tableToModel($tablename) {
     return ucfirst(strtolower($tablename));
+  }
+
+  public static function find($id) {
+    $this->connection->prepare("SELECT * FROM $this->table WHERE id = ?", $id);
+    // fetch this properly (fix the problem: this is a static method and $this->table and $this->connectionis needed ... )
   }
 }
