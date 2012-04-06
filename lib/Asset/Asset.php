@@ -16,9 +16,9 @@ class Asset extends VoidBase {
 
   public function load() {
     $directives = Array(
-      'require_file',
+      'require',
       'require_dir',
-      'require_recursive'
+      'require_tree'
     );
     $content = file_get_contents($this->directory. DS . $this->main_file . "." . $this->extension);
     $matches = Array();
@@ -26,7 +26,7 @@ class Asset extends VoidBase {
 
     foreach($directives as $directive) {
       $content = preg_replace_callback(
-        '/^#=[ ]*' . preg_quote($directive) . '[ ]+([^\\n$]*)/i',
+        '/^\/\/=[ ]*' . preg_quote($directive) . '[ ]+([^\\n$]*)/i',
         function($matches) use ($directive, $self) {
           $method = "handler_" . $directive;
           return $self->$method($matches[1]);
@@ -38,7 +38,7 @@ class Asset extends VoidBase {
     return $content;
   }
 
-  public function handler_require_file($file) {
+  public function handler_require($file) {
     $str = "";
 
     $cwd = getcwd();  // get the current directory
@@ -66,23 +66,23 @@ class Asset extends VoidBase {
     $cwd = getcwd();
     chdir($this->directory);
     $files = array_diff(scandir($dir), array(".", ".."));
+    return $str;
     foreach($files as $file) {
-      $str .= $this->require_single_file($file);
+      $str .= $this->require_single_file($dir . DS . $file);
     }
     chdir($cwd);
-    return $str;
     
   }
 
-  public function handler_require_recursive($dir) {
+  public function handler_require_tree($dir) {
     $str = "";
     $cwd = getcwd();
     chdir($this->directory);
     $iterator = RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir));
+    chdir($cwd);
     foreach($iterator as $file) {
       $str .= require_single_file($file . "");
     }
-    chdir($cwd);
     return $str;
   }
 }
