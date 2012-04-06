@@ -7,19 +7,7 @@ namespace Void;
  * @package Void.php
  * @author Mogria
  */
-class TemplateFinder {
-
-  /**
-   * The directory where all the Template files are in.
-   * @var string
-   */
-  const TEMPLATE_DIR = "Views";
-
-  /**
-   * The extension the template files use.
-   * @var string
-   */
-  const TEMPLATE_EXT = "tpl";
+class TemplateFinder extends VoidBase {
 
   /**
    * An array or an string
@@ -60,7 +48,7 @@ class TemplateFinder {
     if(is_array($this->filespec)) {
       $controller = isset($this->filespec['controller']) ? $this->filespec['controller'] : array_shift($this->filespec) ;
       $action = isset($this->filespec['action']) ? $this->filespec['action'] : array_shift($this->filespec);
-      $file = ROOT . self::TEMPLATE_DIR . DS . $controller . DS . $action . "." . self::TEMPLATE_EXT;
+      $file = ROOT . self::$config->dir . DS . $controller . DS . $action . "." . self::$config->ext;
     } else {
       $file = $this->filespec;
     }

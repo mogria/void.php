@@ -8,7 +8,7 @@ namespace Void;
  * @author Mogria
  * @package void.php
  */
-class Router {
+class Router extends VoidBase {
   /**
    * returns a link to the given $controller and $action with the given $params
    *
@@ -35,7 +35,7 @@ class Router {
     if($controller === null && $action === null && $params == null) {
       return BASEURL;
     } else if ($action === null &&  $params == null) { // if only controller is given
-      return BASEURL . "index.php/" . $controller;
+      return BASEURL . self::$config->index_file . "/" . $controller;
     } else {
       // get the default controller if needed
       $controller = $controller == null ? Dispatcher::DEFAULT_CONTROLLER : $controller;
@@ -47,7 +47,7 @@ class Router {
       }, $params));
 
       // build and return the URL
-      return BASEURL . "index.php/" . $controller . "/" . $action . $paramstr;
+      return BASEURL . self::$config->index_file . "/" . $controller . "/" . $action . $paramstr;
     }
   }
 
@@ -62,5 +62,9 @@ class Router {
   public static function redirect($controller = null, $action = null, Array $params = Array()) {
     header("Location: " . self::link($controller, $action, $params));
     exit;
+  }
+
+  public static function getIndexFile() {
+    return self::$config->index_file;
   }
 }

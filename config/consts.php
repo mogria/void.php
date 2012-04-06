@@ -1,7 +1,8 @@
 <?php
 
+namespace Void;
 // The URL to the location where this framework is example /myblog/
-define('BASEURL', dirname($_SERVER['SCRIPT_NAME']) . "/");
+define('BASEURL', rtrim(dirname($_SERVER['SCRIPT_NAME']), "/") . "/");
 
 // The full URL (example: http://example.org/myblog/)
 define('FULLURL','http' . (!empty($_SERVER['HTTPS']) ? "s" : "")  . '://'
@@ -15,3 +16,8 @@ define('DS', DIRECTORY_SEPARATOR);
 // the path in the file system to the framework
 define('ROOT', realpath('.') . DS);
 
+
+// the environments
+define('PRODUCTION', 'production');
+define('TEST', 'test');
+define('DEVELOPMENT', 'development');

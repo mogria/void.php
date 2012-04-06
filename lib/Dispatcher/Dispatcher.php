@@ -2,13 +2,8 @@
 
 namespace Void;
 
-class Dispatcher {
+class Dispatcher extends VoidBase {
   protected $request;
-
-  const DEFAULT_CONTROLLER = "Pages";
-  const DEFAULT_METHOD     = "index";
-  const CONTROLLER_EXT     = "Controller";
-  const METHOD_PREFIX      = "action_";
 
   public function __construct(Request $request) {
     $this->request = $request;
@@ -25,7 +20,7 @@ class Dispatcher {
   }
 
   public function getActionName(ControllerBase $controller) {
-    return substr($this->getAction($controller), strlen(self::METHOD_PREFIX));
+    return substr($this->getAction($controller), strlen(self::$config->method_prefix));
   }
 
   public function getControllerName() {
@@ -41,7 +36,7 @@ class Dispatcher {
   }
 
   public function getDefaultController() {
-    return self::DEFAULT_CONTROLLER;
+    return self::$config->default_controller;
   }
 
   public function getDefaultControllerName() {
@@ -49,11 +44,11 @@ class Dispatcher {
   }
 
   public function buildControllerName($name) {
-    return __NAMESPACE__ . "\\" . ucfirst($name) . self::CONTROLLER_EXT;
+    return __NAMESPACE__ . "\\" . ucfirst($name) . self::$config->controller_ext;
   }
 
   public function getDefaultMethod() {
-    return self::DEFAULT_METHOD;
+    return self::$config->default_method;
   }
 
   public function getDefaultMethodName() {
@@ -61,6 +56,15 @@ class Dispatcher {
   }
 
   public function buildMethodName($name) {
-    return self::METHOD_PREFIX . strtolower($name);
+    return self::$config->method_prefix . strtolower($name);
+  }
+
+  public static function getControllerExtension() {
+    return self::$config->controller_ext;
+  }
+
+
+  public static function getMethodPrefix() {
+    return self::$config->method_prefix;
   }
 }
