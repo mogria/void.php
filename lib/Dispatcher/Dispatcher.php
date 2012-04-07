@@ -14,12 +14,13 @@ class Dispatcher extends VoidBase {
     return new $classname();
   }
 
-  public function getAction(ControllerBase $controller) {
-    !method_exists($controller, $methodname = $this->getMethod()) && $methodname = $this->getDefaultMethodName();
+  public function getAction($controller) {
+    $methodname = $this->getMethod();
+    $controller instanceof ControllerBase && !method_exists($controller, $methodname) && $methodname = $this->getDefaultMethodName();
     return $methodname;
   }
 
-  public function getActionName(ControllerBase $controller) {
+  public function getActionName($controller) {
     return substr($this->getAction($controller), strlen(self::$config->method_prefix));
   }
 
