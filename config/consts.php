@@ -21,3 +21,6 @@ define('ROOT', realpath('.') . DS);
 define('PRODUCTION', 'production');
 define('TEST', 'test');
 define('DEVELOPMENT', 'development');
+
+// no DateTime warnings anymore ... 
+date_default_timezone_set(@date_default_timezone_get());
