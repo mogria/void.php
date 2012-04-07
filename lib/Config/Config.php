@@ -2,17 +2,15 @@
 
 namespace Void;
 
-
-
 class Config extends VirtualAttribute {
   
   protected $environment = null;
 
-  protected $production;
+  protected $production = Array();
 
-  protected $test;
+  protected $test = Array();
 
-  protected $development;
+  protected $development = Array();
 
   public function __construct($environment, $mixed = null) {
     $this->setEnvironment($environment);
@@ -79,7 +77,7 @@ class Config extends VirtualAttribute {
   /**
    * concat multiple keys
    */
-  public static function concatKeys($array) {
+  public static function concatKeys($array = "") {
     if(!is_array($array)) {
       $array = func_get_args();
     }
