@@ -22,6 +22,13 @@ function loadDefaultConfig($cfg) {
 
     /** Booter */
     $cfg->booter_classes = Array('ErrorToException', 'MagicQuoteFix', 'PHPErrorMessages');
+
+    /** Assets */
+    $cfg->cssasset_dir = "stylesheets";
+    $cfg->cssasset_ext = "css";
+    $cfg->javascriptasset_dir = "javascripts";
+    $cfg->javascriptasset_ext = "js";
+
   }, 'all');
 
   // default configuration for the development environment
