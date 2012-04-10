@@ -9,7 +9,7 @@ tbody tr:nth-child(even) td, tbody tr.even td {background:#ecf9e5;}
 
 /* black background */
 body {
-  background-color: black;
+  background-color: #111;
 }
 
 /* white wrapper with green shadow */
@@ -58,4 +58,10 @@ nav > ul > li > a {
 
 h1 {
   border-bottom: 1px solid #ddd;
+}
+
+code {
+  background-color: #DDD;
+  border: 1px solid #AAA;
+  border-radius: 3px;
 }
