@@ -52,6 +52,26 @@ class Router extends VoidBase {
   }
 
   /**
+   * creates a link to a CSS Asset
+   *
+   * @param $main_file - the relative path without extension, relative to the stylesheet directory
+   * @param $params - Additional Params
+   */
+  public static function linkCSS($main_file, Array $params = Array()) {
+    return self::link("CSS", $main_file, $params);
+  }
+
+  /**
+   * creates a link to a Javascript Asset
+   *
+   * @param $main_file - the relative path without extension, relative to the javascript directory
+   * @param $params - Additional Params
+   */
+  public static function linkJS($main_file, Array $params = Array()) {
+    return self::link("JS", $main_file, $params);
+  }
+
+  /**
    * redirects to the given $controller and $action with the given $params
    *
    * @param mixed $controller

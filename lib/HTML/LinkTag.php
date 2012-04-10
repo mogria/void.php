@@ -7,7 +7,7 @@ class LinkTag extends Tag {
     $this->type = "text/css";
     $this->rel = "stylesheet";
     parent::__construct("link", null, $attributes);
-    $this->setTarget($href);
+    $this->setTarget(Router::linkCSS($href));
   }
 
   public function setTarget($link) {
