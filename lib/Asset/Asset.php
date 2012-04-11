@@ -31,7 +31,7 @@ class Asset extends VoidBase {
         '/^\/\/=[ ]*' . preg_quote($directive) . '[ ]+([^\\n$]*)/mi',
         function($matches) use ($directive, $self) {
           $method = "handler_" . $directive;
-          return $self->$method($matches[1]);
+          return $self->$method(trim($matches[1]));
         },
         $content
       );
@@ -64,6 +64,10 @@ class Asset extends VoidBase {
   }
 
   public function handler_require_dir($dir) {
+    return $this->handler_require_tree($dir, 1);
+  }
+
+  public function handler_require_tree($dir, $depth = -1) {
     $str = "";
     $cwd = getcwd();
     chdir($this->directory);
@@ -71,25 +75,17 @@ class Asset extends VoidBase {
     chdir($cwd);
 
     foreach($files as $file) {
-      $str .= $this->require_single_file($dir . DS . $file);
-    }
-
-    return $str;
-    
-  }
-
-  public function handler_require_tree($dir) {
-    $str = "";
-    $cwd = getcwd();
-    chdir($this->directory);
-    $iterator = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($dir));
-    chdir($cwd);
-    foreach($iterator as $file) {
-      if(is_file($this->directory . DS . $file)) {
-        $str .= $this->require_single_file($file);
+      if(is_file($this->directory . DS . $dir . DS . $file)) {
+        $str .= $this->require_single_file($dir . DS . $file);
+      } else if(is_dir($this->directory . DS . $dir . DS . $file)) {
+        if($depth == -1 || (--$depth > 0)) {
+          $str .= $this->handler_require_tree($dir . DS . $file, $depth);
+        }
       }
-      echo "\n";
     }
+
     return $str;
   }
 }
+
+
