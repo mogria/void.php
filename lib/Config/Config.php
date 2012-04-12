@@ -247,13 +247,27 @@ class Config extends VirtualAttribute {
    * @see set
    * @see getCalledClass
    */
-  public function get($key) {
-    // dont throw an exception if the key is not set before
+  public function get($key, $tmp_environment = null) {
     $back = null;
+    $environment = null;
+
+    // change the environment if one is given
+    if($to_environment !== null) {
+      $environment = $this->getEnvironment();
+      $this->setEnvironment($to_environment);
+    }
+
+    // dont throw an exception if the key is not set before
     try {
       // create the new classname and pass it to the function of the superclass
       $back = parent::get(self::classNameKey($key));
     } catch(UndefinedPropertyException $ex) {}
+
+    // change back the environment back
+    if($to_environment !== null) {
+      $this->setEnvironment($environment);
+    }
+
     return $back;
   }
 

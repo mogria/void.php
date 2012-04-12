@@ -13,9 +13,8 @@ require dirname(__FILE__) . DS . 'default_configuration.php';
 $environment = DEVELOPMENT;
 
 
-/* Returns the Configuration with ALL THE settings for each environment
- * 
- *
+/**
+ * Returns the Configuration with ALL THE settings for each environment
  */
 function getConfig() {
   // get the variable $environment from outside
@@ -35,6 +34,7 @@ function getConfig() {
 
     // the settings just for the development environment
     $cfg->config(function($cfg) {
+      /** database configuration **/
     }, DEVELOPMENT);
 
 
