@@ -47,7 +47,7 @@ class Request extends VoidBase {
   /**
    * Parses the requested URL
    */
-  protected static function getArray() {
+  public static function getArray() {
     return array_values(array_diff(explode("/", trim(str_replace($_SERVER['SCRIPT_NAME'], "", $_SERVER['PHP_SELF']), "/")), Array('')));
   }
 
