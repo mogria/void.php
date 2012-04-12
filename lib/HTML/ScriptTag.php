@@ -6,7 +6,7 @@ class ScriptTag extends Tag {
   public function __construct($src = null, Array $attributes = Array()) {
     $this->type = "text/javascript";
     parent::__construct("script", " ", $attributes);
-    $this->setTarget($src);
+    $this->setTarget(Router::linkJS($src));
   }
 
   public function setTarget($link) {

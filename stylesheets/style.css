@@ -1,15 +1,7 @@
 
-/* change the colors from blueprint to green */
-a:focus, a:hover {color:#6c0;}
-a {color:#4a0}
-thead th {background:#d9ffc3;}
-tbody tr:nth-child(even) td, tbody tr.even td {background:#ecf9e5;}
-
-.box{background: #eCf9e5;}
-
 /* black background */
 body {
-  background-color: black;
+  background-color: #111;
 }
 
 /* white wrapper with green shadow */
@@ -58,4 +50,10 @@ nav > ul > li > a {
 
 h1 {
   border-bottom: 1px solid #ddd;
+}
+
+code {
+  background-color: #DDD;
+  border: 1px solid #AAA;
+  border-radius: 3px;
 }
