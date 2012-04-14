@@ -29,6 +29,10 @@ function loadDefaultConfig($cfg) {
     $cfg->javascriptasset_dir = "javascripts";
     $cfg->javascriptasset_ext = "js";
 
+
+    /** Model **/
+    $cfg->modelconfig_dir = "Models";
+
   }, 'all');
 
   // default configuration for the development environment
