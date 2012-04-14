@@ -5,9 +5,10 @@ namespace Void;
 /**
  * This configured ActiveRecord for void.php
  */
-class ModelConfig implements Job {
+class ModelConfig extends VoidBase implements Job {
   
   public function run() {
+    define('PHP_ACTIVERECORD_AUTOLOAD_DISABLE', 1);
     require_once ROOT . "lib" . DS . "Model" . DS . "ActiveRecord.php";
     \ActiveRecord\Config::initialize(function($cfg) {
       $cfg->set_model_directory(self::$config->dir);
