@@ -8,13 +8,14 @@ namespace Void;
 class ModelConfig implements Job {
   
   public function run() {
+    require_once ROOT . "lib" . DS . "Model" . DS . "ActiveRecord.php";
     \ActiveRecord\Config::initialize(function($cfg) {
       $cfg->set_model_directory(self::$config->dir);
       $cfg->set_connections(
         Array(
-          DEVELOPMENT => 'mysql://username:password@localhost/development_database_name',
-          TEST        => 'mysql://username:password@localhost/development_database_name',
-          PRODUCTION  => 'mysql://username:password@localhost/development_database_name'
+          DEVELOPMENT => self::$config->get('connection', DEVELOPMENT),
+          TEST        => self::$config->get('connection', TEST),
+          PRODUCTION  => self::$config->get('connection', PRODUCTION)
       ));
     });
   }
