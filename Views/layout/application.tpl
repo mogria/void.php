@@ -16,7 +16,7 @@
         {=$this->render(Array('layout', '_header'))}
         <hr />
         <section class="span-16">
-          {[$content}
+          {[$_content}
         </section>
         <aside class="span-8 last">
           <h1>by the way ...</h1>
