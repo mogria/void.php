@@ -35,16 +35,19 @@ function getConfig() {
     // the settings just for the development environment
     $cfg->config(function($cfg) {
       /** database configuration **/
+      $cfg->modelconfig_connection = 'mysql://root@localhost/development_database_name';
     }, DEVELOPMENT);
 
 
     // the settings for the test environment
     $cfg->config(function($cfg) {
+      $cfg->modelconfig_connection = 'mysql://root@localhost/test_database_name';
     }, TEST);
 
 
     // the settings for the production environment
     $cfg->config(function($cfg) {
+      $cfg->modelconfig_connection = 'mysql://root@localhost/production_database_name';
     }, PRODUCTION);
   });
 }

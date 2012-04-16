@@ -23,7 +23,7 @@ class Router extends VoidBase {
       $array = $controller;
       $controller = isset($array['controller']) ? $array['controller'] : array_shift($array);
       $action = isset($array['action']) ? $array['action'] : array_shift($array);
-      $params = array_diff_key($array, Array('controller' => null, 'action' => null));
+      $params = isset($array['params']) ? $array['params'] : array_diff_key($array, Array('controller' => null, 'action' => null));
     }
 
     // is it an URL like http://example.com? if yes return it;
@@ -42,8 +42,8 @@ class Router extends VoidBase {
       // get the default action if needed
       $action = $action == null ? Dispatcher::DEFAULT_METHOD : $action;
       // append / in front of each element and implode all the elements together
-      $paramstr = implode("", array_map(function(&$value) {
-        $value = "/" . $value;
+      $paramstr = implode("", array_map(function($value) {
+        return "/" . $value;
       }, $params));
 
       // build and return the URL

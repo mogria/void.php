@@ -34,4 +34,4 @@ The Controllers are located in the `Controllers` folder. Every Controller needs 
 For every Controller you create you have to create a folder inside of `Views` with the exact same name. If my Controller were called `TestController` the name of the folder would be `test`. And for every method you create there should be a template file in the folder of the Controller. For example, the name of the file would be `test.tpl` if the name of the action is `action_test`.
 
 ## Models
-The Models aren't implemented yet into this framework.
+This framework uses [php-activerecord](http://phpactiverecord.org), which is an [ActiveRecord](https://en.wikipedia.org/wiki/Active_record_pattern) implemenation in PHP. Take a look at their Website and learn More about it. Simply place all the Model classes into `Models/`-folder.

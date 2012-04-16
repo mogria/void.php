@@ -247,7 +247,7 @@ class Config extends VirtualAttribute {
    * @see set
    * @see getCalledClass
    */
-  public function get($key, $tmp_environment = null) {
+  public function get($key, $to_environment = null) {
     $back = null;
     $environment = null;
 
