@@ -7,28 +7,42 @@
     <title>Void.php - {{ page.title }}</title>
     {% endif %}
 
-    <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}css/style.css" />
-    <link rel="stylesheet" href="css/screen.css" type="text/css" media="screen, projection">
-    <link rel="stylesheet" href="css/print.css" type="text/css" media="print">
+    <link rel="stylesheet" href="{{ site.baseurl }}css/screen.css" type="text/css" media="screen, projection">
+    <link rel="stylesheet" href="{{ site.baseurl }}css/print.css" type="text/css" media="print">
     <!--[if lt IE 8]>
-      <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen, projection">
+      <link rel="stylesheet" href="{{ site.baseurl }}css/ie.css" type="text/css" media="screen, projection">
     <![endif]-->
+    <link rel="stylesheet" type="text/css" href="{{ site.baseurl }}css/style.css" />
   </head>
   <body>
-    <header>
-      <nav>
-        <ul class="menu">
-          <li><a href="{{ site.baseurl }}">Home</a></li>
-          <li><a href="{{ site.baseurl }}pages/about.html">About</a></li>
-          <li><a href="{{ site.baseurl }}pages/about.html">Documentation</a></li>
-          <li><a href="http://github.com/mogria/void.php">Git Repository</a></li>
-        </ul>
-      </nav>
-    </header>
-    <section>
-      {{ content }}
-    </section>
-    <footer>
-    </footer>
+    <div id="headerbg">
+      <header class="container">
+        <div id="logo" class="span-12">
+          <img src="{{ site.baseurl }}images/void.php.png" title="void.php - change the way you write php" alt="void.php - change the way you write php" />
+        </div>
+        <nav class="span-12 last">
+          <ul class="menu">
+            <li><a href="{{ site.baseurl }}">Home</a></li>
+            <li><a href="{{ site.baseurl }}pages/about.html">About</a></li>
+            <li><a href="{{ site.baseurl }}pages/about.html">Documentation</a></li>
+            <li><a href="http://github.com/mogria/void.php">Git Repository</a></li>
+          </ul>
+        </nav>
+      </header>
+    </div>
+    <div id="wrapper">
+      <div class="container">
+        <section class="span-16">
+          {{ content }}
+        </section>
+        <aside class="span-8 last">
+          <div class="box">
+            <h3>Downloads</h3>
+          </div>
+        </aside>
+        <footer class="span-24 last">
+        </footer>
+      </div>
+    </div>
   </body>
 </html>

@@ -1,3 +1,72 @@
-header {
-  background-color: #333;
+/*** basic colors ***/
+body, html {
+  background-color: #999;
 }
+
+#headerbg {
+  position: relative;
+  background-color: #EEE;
+  box-shadow: 0px 0px 20px #333;
+  padding-top: 15px;
+}
+
+#wrapper > .container {
+  background-color: #EEE;
+  box-shadow: 0px 0px 20px #333;
+  padding: 20px;
+  border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  margin-bottom: 50px;
+}
+
+footer {
+  border-top: 1px solid #FFF;
+}
+
+/*** menu ***/
+nav {
+  height: 100%;
+  min-height: 100%;
+  overflow: auto;
+  margin-top: 78px;
+}
+.menu {
+  overflow: auto;
+  margin: 0px;
+  padding: 0px;
+  list-style-type: none;
+  text-align: right;
+}
+
+.menu li {
+  display: inline-block;
+}
+
+.menu li a {
+  display: block;
+  padding: 15px;
+  border-width: 0px;
+  border-top-width: 1px;
+  border-left-width: 1px;
+  border-color: white;
+  border-style: solid;
+  text-decoration: none;
+  margin-left: -4px;
+  background-color: #EEE;
+}
+
+.menu li a:hover {
+  background-color: #FFF;
+}
+
+.menu li:first-child a {
+  border-top-left-radius: 5px;
+  margin-left: 0px;
+}
+
+
+.menu li:last-child a {
+  border-right-width: 1px;
+  border-top-right-radius: 5px;
+}
+
