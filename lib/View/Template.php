@@ -57,7 +57,7 @@ class Template extends VirtualAttribute {
    * @return string
    */
   public function parse($string) {
-    return preg_replace(Array(
+    return preg_replace("/(\?>)$/m", "\\1\n", preg_replace(Array(
       '/\{>(.*?)\}/',
       '/\{\[(.*?)\}/',
       '/\{=(.*?)\}/',
@@ -67,7 +67,7 @@ class Template extends VirtualAttribute {
       "<?php print(\\1->render()) ?>",
       "<?php print(\\1) ?>",
       "<?php \\1 ?>"
-    ), $string);
+    ), $string));
   }
 
   /**
