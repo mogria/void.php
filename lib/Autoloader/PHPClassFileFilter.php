@@ -22,13 +22,17 @@ class PHPClassFileFilter extends FilterIterator {
 
   public function inExcludedDir($file) {
     $inside = false;
+    $file_before = $file;
+    $file = null;
     foreach($this->excluded_dirs as $dir) {
-      while($file != DS && $file != "." && !$inside) {
+      $dir = str_replace("/", DS, $dir);
+      while($file != $file_before && $file != DS && $file != "." && !$inside) {
+        $file = $file_before;
         // echo str_pad($file, 80, " ", STR_PAD_RIGHT) . ": " . str_pad(substr($file, -strlen($dir)), strlen($dir), " ", STR_PAD_RIGHT) . " === " . $dir . "\n";
         if(substr($file, -strlen($dir)) === $dir) {
           $inside = true;
         }
-        $file = dirname($file);
+        $file_before = dirname($file);
       }
     }
     return $inside;
