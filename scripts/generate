@@ -1,0 +1,108 @@
+#!/usr/bin/env php
+<?php
+
+define('DS', DIRECTORY_SEPARATOR);
+define('ROOT', realpath(dirname(__FILE__) . DS . "..") . DS);
+
+define('HELP', <<<HELP
+{$argv[0]} generator_name [params ...]
+
+generators: 
+  controller (c, ctrl)
+
+HELP
+);
+
+abstract class Generator {
+  protected $files = Array();
+  protected $flags = Array('force' => false);
+
+  public function isFlag($key) {
+    return array_key_exists($key, $this->flags);
+  }
+
+  public function setFlag($key, $value) {
+    if(!$this->isFlag($key)) {
+      throw new InvalidArgumentException("No such flag '$key'");
+    }
+    $this->flags[$key] = $value;
+  }
+
+  public function getFlag($key) {
+    if(!$this->isFlag($key)) {
+      throw new InvalidArgumentException("No such flag '$key'");
+    }
+    return $this->flags[$key];
+  }
+
+  public function generate() {
+    foreach($this->files as $file => $content) {
+      if($content === true) {
+        if(!is_dir(ROOT . $file)) {
+          echo "creating dir '$file'\n";
+          mkdir(ROOT . $file);
+        }
+      } else {
+        if(is_file(ROOT . $file) && !$this->getFlag('force')) {
+          throw new BadMethodCallException("file '$file' already exists (use -f to force overwrite)");
+        }
+        echo "creating '$file'\n";
+        file_put_contents(ROOT . $file, $content);
+      }
+    }
+  }
+}
+
+class ControllerGenerator extends Generator {
+ public function __construct($name, $methods) {
+   $name = ucfirst($name);
+   $methods = array_merge(array('index'), $methods);
+   $methods_string = "";
+   foreach($methods as $method) {
+     $methods_string .= <<<METHOD
+
+  public function action_{$method}() {
+  }
+METHOD;
+   }
+   $this->files["Controllers/{$name}Controller.php"] = <<<CONTROLLER
+<?php
+
+namespace Void;
+
+class {$name}Controller extends ControllerBase {
+$methods_string
+
+}
+
+CONTROLLER;
+
+    $foldername = strtolower($name);
+    $this->files["Views/$foldername"] = true;
+    foreach($methods as $method) {
+      $this->files["Views/$foldername/$method.tpl"] = "";
+    }
+  }
+}
+
+try {
+  if(count($argv) > 1) {
+    switch($argv[1]) {
+      case 'c':
+      case 'ctrl':
+      case 'controller':
+        if(!isset($argv[2])) {
+          throw new InvalidArgumentException("missing argument 'name'");
+        }
+        $generator = new ControllerGenerator($argv[2], @array_slice($argv, 3));
+        break;
+      default:
+        throw new InvalidArgumentException("no such generator '{$argv[1]}'");
+    }
+    $generator->generate();
+  } else {
+    echo HELP;
+  }
+} catch(Exception $ex) {
+  echo "Error: {$ex->getMessage()}\n";
+}
