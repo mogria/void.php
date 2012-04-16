@@ -21,13 +21,25 @@ class Router extends VoidBase {
     // if it's an array pull out the required values
     if (is_array($controller)) {
       $array = $controller;
+      // get the controller
       $controller = isset($array['controller']) ? $array['controller'] : array_shift($array);
+      // remove it from the array
+      $array = array_diff_key($array, Array('controller' => null));
+      // grab the action
       $action = isset($array['action']) ? $array['action'] : array_shift($array);
-      $params = isset($array['params']) ? $array['params'] : array_diff_key($array, Array('controller' => null, 'action' => null));
+      // and remove it
+      $array = array_diff_key($array, Array('action' => null));
+
+      // get the params
+      $params = array_values(isset($array['params']) ? $array['params'] : $array);
+
+      if(count($params) == 1 && is_array($params[0])) {
+        $params = $params[0];
+      }
     }
 
     // is it an URL like http://example.com? if yes return it;
-    if(preg_match("/[a-z\-]{3,}:\/\//i", $controller)) {
+    if(preg_match("/^[a-z\-]{3,}:\/\//i", $controller)) {
       return $controller;
     }
 
@@ -35,19 +47,19 @@ class Router extends VoidBase {
     if($controller === null && $action === null && $params == null) {
       return BASEURL;
     } else if ($action === null &&  $params == null) { // if only controller is given
-      return BASEURL . self::$config->index_file . "/" . $controller;
+      return BASEURL . urlencode(self::$config->index_file) . "/" . urlencode($controller);
     } else {
       // get the default controller if needed
       $controller = $controller == null ? Dispatcher::DEFAULT_CONTROLLER : $controller;
       // get the default action if needed
       $action = $action == null ? Dispatcher::DEFAULT_METHOD : $action;
       // append / in front of each element and implode all the elements together
-      $paramstr = implode("", array_map(function($value) {
-        return "/" . $value;
+      $paramstr = implode("", array_map(function(&$value) {
+        return "/" . urlencode($value);
       }, $params));
 
       // build and return the URL
-      return BASEURL . self::$config->index_file . "/" . $controller . "/" . $action . $paramstr;
+      return BASEURL . urlencode(self::$config->index_file) . "/" . urlencode($controller) . "/" . urlencode($action) . $paramstr;
     }
   }
 
