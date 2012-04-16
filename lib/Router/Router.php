@@ -70,10 +70,7 @@ class Router extends VoidBase {
    * @param $params - Additional Params
    */
   public static function linkCSS($main_file, Array $params = Array()) {
-    $main_file = explode("/", $main_file);
-    $file = array_shift($main_file);
-    $params = array_merge($main_file, $params);
-    return self::link("CSS", $file, $params);
+    return self::linkAsset("CSS", $main_file, $params);
   }
 
   /**
@@ -83,7 +80,21 @@ class Router extends VoidBase {
    * @param $params - Additional Params
    */
   public static function linkJS($main_file, Array $params = Array()) {
-    return self::link("JS", $main_file, $params);
+    return self::linkAsset("JS", $main_file, $params);
+  }
+
+  /**
+   * creates a link to a Asset
+   *
+   * @param $type - the type of the asset ('CSS' or 'JS')
+   * @param $main_file - the relative path without extension, relative to the directory where the assets of the given type are in
+   * @param $params - Additional Params
+   */
+  protected static function linkAsset($type, $main_file, Array $params = Array()) {
+    $main_file = explode("/", $main_file);
+    $file = array_shift($main_file);
+    $params = array_merge($main_file, $params);
+    return self::link($type, $file, $params);
   }
 
   /**
