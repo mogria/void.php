@@ -50,9 +50,9 @@ class Router extends VoidBase {
       return BASEURL . urlencode(self::$config->index_file) . "/" . urlencode($controller);
     } else {
       // get the default controller if needed
-      $controller = $controller == null ? Dispatcher::DEFAULT_CONTROLLER : $controller;
+      $controller = $controller == null ? Dispatcher::getDefaultController() : $controller;
       // get the default action if needed
-      $action = $action == null ? Dispatcher::DEFAULT_METHOD : $action;
+      $action = $action == null ? Dispatcher::getDefaultMethod() : $action;
       // append / in front of each element and implode all the elements together
       $paramstr = implode("", array_map(function(&$value) {
         return "/" . urlencode($value);
@@ -70,7 +70,10 @@ class Router extends VoidBase {
    * @param $params - Additional Params
    */
   public static function linkCSS($main_file, Array $params = Array()) {
-    return self::link("CSS", $main_file, $params);
+    $main_file = explode("/", $main_file);
+    $file = array_shift($main_file);
+    $params = array_merge($main_file, $params);
+    return self::link("CSS", $file, $params);
   }
 
   /**
