@@ -70,3 +70,10 @@ nav {
   border-top-right-radius: 5px;
 }
 
+
+/*** boxes ***/
+.box {
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0px 0px 20px #BBB;
+}

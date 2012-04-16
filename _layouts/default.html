@@ -35,10 +35,20 @@
         <section class="span-16">
           {{ content }}
         </section>
+
         <aside class="span-8 last">
-          <div class="box">
+          {% if page.title == 'Home'  %}
+          <div class="box" id="downloads">
             <h3>Downloads</h3>
+              <div id="zip" class="span-3">
+                <a href="https://github.com/mogria/void.php/zipball/master"><img src="{{ site.baseurl }}images/zip-package.png" alt="download as .zip" /></a>
+              </div>
+              <div id="targz" class="span-4 last">
+                <a href="https://github.com/mogria/void.php/tarball/master"><img src="{{ site.baseurl }}images/targz-package.png" alt="download as .tar.gz" /></a>
+              </div>
+              <p>Or you just want to clone a git-repository? See the <a href="https://github.com/mogria/void.php">GitHub-Project page</a>.</p>
           </div>
+          {% endif %}
         </aside>
         <footer class="span-24 last">
         </footer>
