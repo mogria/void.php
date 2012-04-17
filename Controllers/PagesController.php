@@ -4,7 +4,13 @@ namespace Void;
 
 class PagesController extends ControllerBase {
   public function action_index() { }
-  public function action_about() { }
-  public function action_get_involved() { }
-  public function action_help() { }
+  public function action_about() {
+    $this->title = "About";
+  }
+  public function action_get_involved() {
+    $this->title = "Get Involved";
+  }
+  public function action_help() {
+    $this->title = "Help";
+  }
 }

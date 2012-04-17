@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Void.php</title>
+    <title>{=isset($title) ? $title . " - " : ""}Void.php</title>
     <meta charset="utf-8" />
     {=$this->linkTag('blueprint/screen', Array('media' => 'screen, projection'))}
     {=$this->linkTag('blueprint/print', Array('media' => 'print'))}
