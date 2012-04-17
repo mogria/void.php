@@ -19,26 +19,22 @@ class ModelConfig extends VoidBase implements Job {
 
     // include ActiveRecord
     require_once ROOT . "lib" . DS . "Model" . DS . "ActiveRecord.php";
-
-    // make a copy of the Config object for the following closure
-    $config = self::$config;
     
     // initialize ActiveRecord
-    \ActiveRecord\Config::initialize(function($cfg) use ($config) {
-      // set the directory all the models are in
-      $cfg->set_model_directory($config->dir);
+    $cfg = \ActiveRecord\Config::instance();
+    // set the directory all the models are in
+    $cfg->set_model_directory(self::$config->dir);
 
-      // set all the possible connections to the database
-      $cfg->set_connections(
-        Array(
-          DEVELOPMENT => $config->get('connection', DEVELOPMENT),
-          TEST        => $config->get('connection', TEST),
-          PRODUCTION  => $config->get('connection', PRODUCTION)
-      ));
+    // set all the possible connections to the database
+    $cfg->set_connections(
+      Array(
+        DEVELOPMENT => self::$config->get('connection', DEVELOPMENT),
+        TEST        => self::$config->get('connection', TEST),
+        PRODUCTION  => self::$config->get('connection', PRODUCTION)
+    ));
 
-      // set the default connection
-      $cfg->set_default_connection($config->getEnvironment());
-    });
+    // set the default connection
+    $cfg->set_default_connection(self::$config->getEnvironment());
   }
 
   public function cleanup() {}
