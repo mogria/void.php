@@ -60,8 +60,8 @@ class Template extends VirtualAttribute {
     return preg_replace_callback(
       "/\\{(\\[|>|=|)\s*(:|)(.*)\\}($)?/m",
       function($match) {
-        $before = '<?php ';
-        $after = ' ?>';
+        $before = '<' . '?php ';
+        $after = ' ?' . '>';
         switch($match[1]) {
           case '>':
             $before .= "print(htmlspecialchars(";
