@@ -10,6 +10,12 @@ abstract class ControllerBase extends VirtualAttribute {
 
   public function __construct() {}
 
+  /**
+   * Stores all the variables which get assigned to the view
+   *
+   * @var Array $view_vars
+   * @acces protected
+   */
   protected $view_vars;
 
   /**
@@ -18,19 +24,32 @@ abstract class ControllerBase extends VirtualAttribute {
    * @return string the rendered output of the view
    */
   public function executeAction(Dispatcher $dispatcher) {
+    // use the property '$view_vars' to save all the variables for the view
     $this->setReference($this->view_vars);
+    // get the name of the action called
   	$actionname = $dispatcher->getActionName($this);
-    $controllername = explode("\\", get_called_class());
-    $controllername = $controllername[count($controllername) - 1];
-    $controllername = strtolower(substr($controllername, 0, -strlen(Dispatcher::getControllerExtension())));
+    // grab the name of this controller
+    $controllername = strtolower(substr(get_called_class(),
+      ($pos = strrpos(get_called_class(), "\\")) === false ? 0 : $pos + 1,
+      -strlen(Dispatcher::getControllerExtension())));
+
+    // call the action
     call_user_func_array(Array($this, Dispatcher::getMethodPrefix() . $actionname), $dispatcher->getParams());
+
+    // create the template for the base layout
     $layout = new Template(Array('layout', 'application'));
+    // also use '$view_vars' to store all the variables
     $layout->setReference($this->getReference());
+
+    // create the template for this controller
     $this->view = $layout->_content = new Template(Array(
       $controllername,
       $actionname
     ));
+    // also use '$view_vars' to store all the variables
     $this->view->setReference($this->getReference());
+
+    // render the layout
   	return $layout->render();
   }
 
