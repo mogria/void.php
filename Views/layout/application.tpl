@@ -3,12 +3,12 @@
   <head>
     <title>{=isset($title) ? $title . " - " : ""}Void.php</title>
     <meta charset="utf-8" />
-    {=$this->linkTag('blueprint/screen', Array('media' => 'screen, projection'))}
-    {=$this->linkTag('blueprint/print', Array('media' => 'print'))}
+    {=:linkTag('blueprint/screen', Array('media' => 'screen, projection'))}
+    {=:linkTag('blueprint/print', Array('media' => 'print'))}
     <!--[if lt IE 8]>
     {=$this->linkTag('blueprint/ie', Array('media' => 'screen, projection'))}
     <![endif]-->
-    {=$this->linkTag('application')}
+    {=:linkTag('application')}
   </head>
   <body>
     <div id="wrapper" class="container">

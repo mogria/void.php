@@ -57,17 +57,40 @@ class Template extends VirtualAttribute {
    * @return string
    */
   public function parse($string) {
-    return preg_replace("/(\?>)$/m", "\\1\n", preg_replace(Array(
-      '/\{>(.*?)\}/',
-      '/\{\[(.*?)\}/',
-      '/\{=(.*?)\}/',
-      '/\{(.*?)\}/'
-    ), Array(
-      "<?php print(htmlspecialchars(\\1)) ?>",
-      "<?php print(\\1->render()) ?>",
-      "<?php print(\\1) ?>",
-      "<?php \\1 ?>"
-    ), $string));
+    return preg_replace_callback(
+      "/\\{(\\[|>|=|)\s*(:|)(.*)\\}($)?/m",
+      function($match) {
+        $before = '<?php ';
+        $after = ' ?>';
+        switch($match[1]) {
+          case '>':
+            $before .= "print(htmlspecialchars(";
+            $after = "))" . $after;
+            break;
+          case '=':
+            $before .= "print(";
+            $after = ")" . $after;
+            break;
+          case '[':
+            $before .= "print(";
+            $after = '->render())' . $after;
+            break;
+          case '':
+            break;
+          default:
+            return $match[0];
+            break;
+        }
+
+        if($match[2] === ':') {
+          $before .= '$this->';
+        }
+        
+        if(isset($match[4])) {
+          $after .= "\n";
+        }
+        return $before . $match[3] . $after;
+      }, $string);
   }
 
   /**
