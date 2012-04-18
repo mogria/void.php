@@ -23,8 +23,8 @@
         <nav class="span-12 last">
           <ul class="menu">
             <li><a href="{{ site.baseurl }}">Home</a></li>
-            <!-- <li><a href="{{ site.baseurl }}pages/about.html">About</a></li>
-            <li><a href="{{ site.baseurl }}pages/about.html">Documentation</a></li> -->
+            <li><a href="{{ site.baseurl }}pages/about.html">About</a></li>
+            <li><a href="{{ site.baseurl }}pages/getting-started.html">Getting Started</a></li>
             <li><a href="http://github.com/mogria/void.php">Git Repository</a></li>
           </ul>
         </nav>
@@ -32,7 +32,11 @@
     </div>
     <div id="wrapper">
       <div class="container">
+        {% if page.title == 'Home'  %}
         <section class="span-16">
+        {% else %}
+        <section class="span-24 last">
+        {% endif %}
           {{ content }}
         </section>
 
