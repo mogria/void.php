@@ -49,6 +49,7 @@ The `--recursive` parameter is needed, because void.php uses git submodules (git
      |- Views/
      |  |-layout/
      |  `-pages/
+     |- Models/
      |- images/
      |- javascripts/
      |- stylesheets/
@@ -147,6 +148,8 @@ This is a short example for a controller:
 
 In here there is a subfolder for every controller which contains a .tpl file for (almost) all methods.
 
+#### The curly braces
+
 In these template you can use PHP between the curly braces `{` & `}`. A little example.
 
     {if($post->errors):}
@@ -155,7 +158,41 @@ In these template you can use PHP between the curly braces `{` & `}`. A little e
 
 if you put PHP-Code between `{=` & `}`, the return value will be echoed out. Example:
 
-    {
+    <h1>{=$post->title}</h1>
+
+The imaginary title of the post will be printed out inside of the `h1`-Tag
+
+But this title might contain some malicious stuff like `script`-tags etc. If you want to savely output text you should use `{>` & `}`. Example:
+
+    {>"<b>This Text is not bold<b>"}
+
+This will convert the `<` to `&lt;`, the `>` to `&gt;` etc.
+
+There is also the possibility to write `{[` & `}`, but this is rarely used and means basicly if the contents inside these brackets is a Template object, it will be rendered automaticly.
+
+
+#### Template methods
+
+But what if you want to create a Hyperlink inside a template or you want to include an other template? No Problem. There are some methods which you can use. You cann call these methods if you use `:` and the method name after the opening curly brace. A little example:
+    
+    {:aMethod($param1, 'param2')}
+    {>:anOtherMethod('param1')}
+    {=:imaginary(15)}
+    {>:test()}
+
+
+##### Create a link
+
+To create a link you can use the `aTag` method as follows:
+
+    {=:aTag("Label", Array('controller', 'action', 'params' =>
+        Array('param1')), Array('target', '_blank')}
+
+
+(**Note**: This should all be on the same line)<br />
+this will return you something like this:
+    
+    <a href="/app/index.php/controller/action/param1" target="_blank">Label</a>
 
 
 
@@ -170,6 +207,79 @@ This is the place where the template of the current controller is rendered.
 All other template files in this folder have no special effect. But you can use the following code to include these files.
 
     {=:render(Array('layout', 'filename'), Array('variablename' => 'value'))}
+
+### Models/ (create it if it doesn't exist!)
+
+Basicly the whole Model part of the framework is based on [PHP-ActiveRecord](http://phpactiverecord.org). The reference on the Website is pretty good, so I think i don't have to write  much more. But let's begin:
+
+For every table in the database you should create a Class in the `Models/` directory. Your table has to be in plural, and the model has to be in singular. For Example
+
+<table>
+  <tr>
+    <th>tablename</th>
+    <th>classname of the Model</th>
+  </tr>
+  <tr>
+    <td>posts</td>
+    <td>Post</td>
+  </tr>
+  <tr>
+    <td>users</td>
+    <td>User</td>
+  </tr>
+  <tr>
+    <td>comments</td>
+    <td>Comment</td>
+  </tr>
+  <tr>
+    <td>tags</td>
+    <td>Tag</td>
+  </tr>
+  <tr>
+    <td>categories</td>
+    <td>Category</td>
+  </tr>
+</table>
+
+Lets create a sample Model:
+
+// must be in the namespace Void for easy access from the Controller
+namespace Void;
+
+
+/*
+  table structure
+  ===============
+
+  Field	Type	  Null        	Key 	Default 	Extra
+  ----------------------------------------------------------
+  id	          int(11)     	NO  	PRI	NULL	auto_increment
+  title	        varchar(255)	NO		NULL	
+  body        	text        	NO		NULL	
+  created     	datetime    	NO		NULL	
+  updated     	datetime    	YES		NULL	
+  user_id     	int(11)     	YES		NUL
+
+*/
+// Every model must extend \ActiveRecord\Model
+// this gives the Model much functionality
+class Post extends \ActiveRecord\Model {
+  // which attributes can be changed via form
+  static $attr_accessible = Array('title', 'body', 'user_id');
+
+  // relationships
+  static $belongs_to = Array('user');
+  static $has_many = Array('comments', 'tags');
+
+  // validations
+  static $validates_presence_of = Array(
+    Array('title'),
+    Array('body')
+  );
+  
+  // more validations etc.
+}
+
 
 ### images/
 

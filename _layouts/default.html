@@ -32,16 +32,11 @@
     </div>
     <div id="wrapper">
       <div class="container">
-        {% if page.title == 'Home'  %}
         <section class="span-16">
-        {% else %}
-        <section class="span-24 last">
-        {% endif %}
           {{ content }}
         </section>
 
         <aside class="span-8 last">
-          {% if page.title == 'Home'  %}
           <div class="box" id="downloads">
             <h3>Downloads</h3>
               <div id="zip" class="span-3">
@@ -52,7 +47,6 @@
               </div>
               <p>Or you just want to clone a git-repository? See the <a href="https://github.com/mogria/void.php">GitHub-Project page</a>.</p>
           </div>
-          {% endif %}
         </aside>
         <footer class="span-24 last">
         </footer>
