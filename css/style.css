@@ -77,3 +77,20 @@ nav {
   border-radius: 5px;
   box-shadow: 0px 0px 20px #BBB;
 }
+
+
+
+/** code **/
+
+code, pre {
+  border-radius: 2px;
+  background-color: #DDD;
+  border: 1px solid #777;
+}
+
+pre code {
+  background-color: transparent;
+  border: 0px;
+}
+
+
