@@ -85,9 +85,25 @@ CONTROLLER;
   }
 }
 
+class ModelGenerator extends Generator {
+  public function __construct($name, $params) {
+    $name = ucfirst($name);
+    $this->files["Models"] = true;
+    $this->files["Models/$name.php"] = <<<MODEL
+<?php
+
+namespace Void;
+
+class {$name} extends \\ActiveRecord\\Model {
+}
+
+MODEL;
+  }
+}
+
 try {
   if(count($argv) > 1) {
-    switch($argv[1]) {
+    switch(strtolower($argv[1])) {
       case 'c':
       case 'ctrl':
       case 'controller':
@@ -95,6 +111,14 @@ try {
           throw new InvalidArgumentException("missing argument 'name'");
         }
         $generator = new ControllerGenerator($argv[2], @array_slice($argv, 3));
+        break;
+      case 'm':
+      case 'mod':
+      case 'model':
+        if(!isset($argv[2])) {
+          throw new InvalidArgumentException("missing argument 'name'");
+        }
+        $generator = new ModelGenerator($argv[2], @array_slice($argv, 3));
         break;
       default:
         throw new InvalidArgumentException("no such generator '{$argv[1]}'");
