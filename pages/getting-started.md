@@ -241,44 +241,63 @@ For every table in the database you should create a Class in the `Models/` direc
   </tr>
 </table>
 
-Lets create a sample Model:
+Lets create a sample Model in `Models/Post.php`
 
-// must be in the namespace Void for easy access from the Controller
-namespace Void;
+    // must be in the namespace Void for easy access from the Controller
+    namespace Void;
 
 
-/*
-  table structure
-  ===============
+    /*
+      table structure
+      ===============
 
-  Field	Type	  Null        	Key 	Default 	Extra
-  ----------------------------------------------------------
-  id	          int(11)     	NO  	PRI	NULL	auto_increment
-  title	        varchar(255)	NO		NULL	
-  body        	text        	NO		NULL	
-  created     	datetime    	NO		NULL	
-  updated     	datetime    	YES		NULL	
-  user_id     	int(11)     	YES		NUL
+      Field Type    Null          Key   Default   Extra
+      ----------------------------------------------------------
+      id            int(11)       PRI   NULL      auto_increment
+      title         varchar(255)  NO    NULL  
+      body          text          NO    NULL  
+      created       datetime      NO    NULL  
+      updated       datetime      YES   NULL  
+      user_id       int(11)       YES   NULL
 
-*/
-// Every model must extend \ActiveRecord\Model
-// this gives the Model much functionality
-class Post extends \ActiveRecord\Model {
-  // which attributes can be changed via form
-  static $attr_accessible = Array('title', 'body', 'user_id');
+    */
+    // Every model must extend \ActiveRecord\Model
+    // this gives the Model much functionality
+    class Post extends \ActiveRecord\Model {
+      // which attributes can be changed via form
+      static $attr_accessible = Array('title', 'body', 'user_id');
+      
+      // relationships
+      static $belongs_to = Array('user');
+      static $has_many = Array('comments', 'tags');
+      
+      // validations
+      static $validates_presence_of = Array(
+        Array('title'),
+        Array('body')
+      );
 
-  // relationships
-  static $belongs_to = Array('user');
-  static $has_many = Array('comments', 'tags');
+      static $validates_length_of = Array(
+        Array('title', 'maximum' => 255)
+      );
+      // more validations etc.
+      
+      // this automaticly updates the 'created' & the 'updated' attributes
+      static $before_save = Array('fill_in_created', 'fill_in_updated');
+      static $before_update = Array('fill_in_updated');
 
-  // validations
-  static $validates_presence_of = Array(
-    Array('title'),
-    Array('body')
-  );
-  
-  // more validations etc.
-}
+      public function fill_in_created() {
+        $this->created = $this->get_current_time();
+      }
+
+      public function fill_in_updated() {
+        $this->updated = $this->get_current_time();
+      }
+
+      public function get_current_time() {
+        return date('d-m-YH:i:s');
+      }
+    }
 
 
 ### images/
