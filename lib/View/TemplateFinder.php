@@ -51,7 +51,9 @@ class TemplateFinder extends VoidBase {
       $file = ROOT . self::$config->dir . DS . $controller . DS . $action . "." . self::$config->ext;
     } else {
       $file = $this->filespec;
-    }
+      !preg_match("/\\." . preg_quote(self::$config->ext . "$/", $file)
+        && $file .= "." . self::$config->ext;
+
     if(!is_file($file)) {
       throw new InexistentFileException("Template File '$file' not found.");
     }
