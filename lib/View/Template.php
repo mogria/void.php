@@ -65,7 +65,7 @@ class Template extends VirtualAttribute {
         switch($match[1]) {
           case '>':
             $before .= "print(htmlspecialchars(";
-            $after = "))" . $after;
+            $after = ", ENT_QUOTES, 'UTF-8'))" . $after;
             break;
           case '=':
             $before .= "print(";

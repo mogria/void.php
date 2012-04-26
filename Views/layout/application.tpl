@@ -6,14 +6,14 @@
     {=:linkTag('blueprint/screen', Array('media' => 'screen, projection'))}
     {=:linkTag('blueprint/print', Array('media' => 'print'))}
     <!--[if lt IE 8]>
-    {=$this->linkTag('blueprint/ie', Array('media' => 'screen, projection'))}
+    {=:linkTag('blueprint/ie', Array('media' => 'screen, projection'))}
     <![endif]-->
     {=:linkTag('application')}
   </head>
   <body>
     <div id="wrapper" class="container">
       <div class="container">
-        {=$this->render(Array('layout', '_header'))}
+        {=:render('layout/_header')}
         <hr />
         <section class="span-16">
           {[$_content}
@@ -23,7 +23,8 @@
           <p class="box">Random text, Random text, Random text, Random text, Random text, Random text, Random text, Random text</p>
         </aside>
         <hr />
-        {=$this->render(Array('layout', '_footer'))}
+        {=:render('layout/_footer')}
+        /
       </div>
     </div>
   </body>

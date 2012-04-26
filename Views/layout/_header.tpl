@@ -2,5 +2,5 @@
   <div id="headerimage" class="span-12">
     <img src="{>BASEURL}images/void.php.png" alt="void.php - change the way you write php" title="void.php - change the way you write php" />
   </div>
-  {=$this->render(Array('layout', '_navigation'))}
+  {=:render('layout/_navigation')}
 </header>

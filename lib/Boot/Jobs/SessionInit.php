@@ -2,7 +2,7 @@
 
 namespace Void;
 
-class SessionInit extends Job {
+class SessionInit implements Job {
   /**
    * initializes the
    * session & enables regeneration of the session id (improves security) 
