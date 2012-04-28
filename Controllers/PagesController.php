@@ -13,4 +13,8 @@ class PagesController extends ControllerBase {
   public function action_help() {
     $this->title = "Help";
   }
+
+  public function action_test_forms() {
+    $this->title = "Just testing the Form helper";
+  }
 }

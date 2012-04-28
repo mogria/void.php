@@ -24,7 +24,6 @@
         </aside>
         <hr />
         {=:render('layout/_footer')}
-        /
       </div>
     </div>
   </body>
