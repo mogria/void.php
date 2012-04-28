@@ -58,7 +58,7 @@ class Template extends VirtualAttribute {
    */
   public function parse($string) {
     return preg_replace_callback(
-      "/\\{(\\[|>|=|)\s*(:|)(.*)\\}($)?/m",
+      "/\\{(\\[|>|=|)\s*(:|)(.*({(?:.*|(?3))}|).*)\\}($)?/m",
       function($match) {
         $before = '<' . '?php ';
         $after = ' ?' . '>';
@@ -68,8 +68,7 @@ class Template extends VirtualAttribute {
             $after = ", ENT_QUOTES, 'UTF-8'))" . $after;
             break;
           case '=':
-            $before .= "print(";
-            $after = ")" . $after;
+            $before .= "echo ";
             break;
           case '[':
             $before .= "print(";
@@ -109,12 +108,17 @@ class Template extends VirtualAttribute {
   public function render($filespec = null, $initializers = Array()) {
     if($filespec === null) {
       extract($this->toArray());
+      $__void_template_parsed_file = $this->parse(file_get_contents($this->file));
       ob_start();
-      eval( <<<_VOID_TEMPLATE
-namespace Void; ?>{$this->parse(file_get_contents($this->file))}
+      $back = eval( <<<_VOID_TEMPLATE
+namespace Void; ?>{$__void_template_parsed_file}
 _VOID_TEMPLATE
       );
-      $content = ob_get_contents();
+      if($back !== NULL && self::$config->onDevelopment()) {
+        $content = "<pre>" . htmlspecialchars($__void_template_parsed_file, ENT_QUOTES, 'UTF-8') . "</pre>" . ob_get_contents();
+      } else {
+        $content = ob_get_contents();
+      }
       ob_end_clean();
       return $content;
     } else {
@@ -134,6 +138,48 @@ _VOID_TEMPLATE
    */
   public function link($controller = null, $action = null, Array $params = Array()) {
     return Router::link($controller, $action, $params);
+  }
+
+  /**
+   * create a form
+   * 
+   * @param mixed $model      the method of the form or ActiveRecord\Model
+   * @param mixed $action     an action of a controller to send this form to
+   * @param array $attributes additional attributes for the form (or the
+   *                          callback if you don't have some)
+   * @param mixed $callback   a callback function (first parameter is the form)
+   * @access public
+   * @return string  - the finished form as HTML
+   */
+  public function form($model, $action, $attributes = Array(), $callback = null) {
+    // use POST as defailt method
+    $method = "post";
+    // use "get" if given instead of an model
+    strtolower($method) === "get" && $method == "get";
+
+    if($callback === null) {
+      $callback = $attributes;
+      $attributes = Array();
+      // throw an exception if $callback isn't callable?
+    }
+
+    // create tje form tag
+    $form = new FormTag($method, $action, $attributes);
+
+    // give the model to the form if there is one
+    if($model instanceof \ActiveRecord\Model) {
+      $form->setModel($model);
+    }
+    
+    // grab the output of the callback function and set it as content of the form
+    ob_start();
+    $callback($form);
+    $contents = ob_get_contents();
+    ob_end_clean();
+    $form->setContent($contents);
+
+    // return the finish html of the form
+    return $form->output();
   }
 
   /**
