@@ -93,19 +93,19 @@ class Tag extends VirtualAttribute {
     return $this->output();
   }
 
-  public function __get($name, $value) {
+  public function __get($name) {
     if(method_exists($this, $method = 'get' . ucfirst($name))) {
       return $this->$method($value);
     } else {
-      return parent::__get($name, $value);
+      return parent::__get($name);
     }
   }
 
   public function __set($name, $value) {
-    if(method_exists($this, $method = 'get' . ucfirst($name)) {
+    if(method_exists($this, $method = 'set' . ucfirst($name))) {
       return $this->$method($value);
     } else {
-      return parent::__get($name, $value);
+      return parent::__set($name, $value);
     }
   }
 }
