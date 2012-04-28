@@ -8,13 +8,21 @@ use \ActiveRecord\Model;
 class FormTag extends Tag {
   protected $contents = Array();
   protected $model = null;
-  public function __construct($method, $action, $content = null, Array $attributes = Array()) {
+
+  protected static $fields = Array(
+    'text_field' => 'InputTextTag',
+    'password' => 'InputPasswordTag',
+    'text_box' => 'InputTextTag'
+  );
+
+  public function __construct($method, $action, Array $attributes = Array()) {
     $this->method = $method;
-    parent::__construct("form", $content, $attributes);
+    parent::__construct("form", null, $attributes);
+    $this->setTarget($action);
   }
 
   public function setTarget($action) {
-    $this->action = $action;
+    $this->action = Router::link($action);
   }
 
   public function getTarget() {
@@ -34,13 +42,18 @@ class FormTag extends Tag {
       if($this->model !== null) {
         $for = array_shift($params);
         if($for) {
-          $attributes = array_shift($params);
-          return new LabelTag($this->model, $for , !is_array($attributes) ? array() : $attributes);
+          return new LabelTag($this->model, $for, $this->grabAttributes($params, 0));
         } else {
           // throw exception ?
         }
       }
-    } else {
+    } elseif(array_key_exists(self::$fields, $method)) {
+      $classname = self::$fields[$method];
+      return new $classname($name, $this->model->$name, $this->grabAttributes($params, 1));
     }
+  }
+
+  private function grabAttributes($params, $nr) {
+    return isset($params[$nr]) && is_array($params[$nr]) ? $params[$nr] : array();
   }
 }
