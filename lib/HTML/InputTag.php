@@ -3,12 +3,20 @@
 namespace Void;
 
 class InputTag extends Tag {
-  protected $tag_name = "input";
-  public function __construct($name, $type, $content, $attributes = Array()) {
-    parent::__construct($this->tag_name, null, $attributes);
+  protected static $tag_name = "input";
+  public function __construct($name, $type, $content, Array $attributes = Array()) {
+    parent::__construct(static::$tag_name, null, $attributes);
     $this->setName($name);
     $this->setType($type);
     $this->setContent($content);
+  }
+
+  public function setType($type) {
+    $this->type = $type;
+  }
+
+  public function getType() {
+    return $this->type;
   }
 
   public function setName($value) {
@@ -25,10 +33,10 @@ class InputTag extends Tag {
 
   public function getContent() {
     return $this->getValue();
-
+  }
 
   public function setValue($value) {
-    this->value = $value;
+    $this->value = $value;
   }
 
   public function getValue() {
