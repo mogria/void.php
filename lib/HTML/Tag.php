@@ -79,7 +79,7 @@ class Tag extends VirtualAttribute {
   public function output() {
     $attributes = $this->getReference();
     array_walk($attributes, function(&$value, $key) {
-      $value = " " . htmlspecialchars($key) . ( $value !== null ? "=\"" . htmlspecialchars($value) . "\"" : "");
+      $value = " " . htmlspecialchars($key, ENT_QUOTES, 'UTF-8') . ( $value !== null ? "=\"" . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . "\"" : "");
     });
     return "<" . $this->name . implode("", $attributes) . ($this->content !== null ? ">" . $this->content . "</" . $this->name . ">" : " />");
   }
@@ -94,7 +94,7 @@ class Tag extends VirtualAttribute {
   }
 
   public function __get($name, $value) {
-    if(method_exists($this, $method = 'get' . ucfirst($name)) {
+    if(method_exists($this, $method = 'get' . ucfirst($name))) {
       return $this->$method($value);
     } else {
       return parent::__get($name, $value);
