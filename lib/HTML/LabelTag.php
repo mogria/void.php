@@ -2,7 +2,7 @@
 
 namespace Void;
 
-use \ActiveRecord\Model
+use \ActiveRecord\Model;
 
 class LabelTag extends Tag {
   public function __construct($name, $for, $attributes = Array()) {

@@ -14,7 +14,7 @@ class Tag extends VirtualAttribute {
    * The name of the HTML Tag
    * @var string
    */
-  protected $name;
+  protected $tagname;
 
   /**
    * the content of the HTML Tag
@@ -25,32 +25,32 @@ class Tag extends VirtualAttribute {
   /**
    * Constructor
    *
-   * @param string $name
+   * @param string $tagname
    * @param string $content
    * @param Array $attributes
    */
-  public function __construct($name, $content = null, Array $attributes = Array()) {
-    $this->setName($name);
+  public function __construct($tagname, $content = null, Array $attributes = Array()) {
+    $this->setTagname($tagname);
     $this->setContent($content);
     $this->_ = $attributes;
   }
 
   /**
-   * setter for property name
+   * setter for property tagname
    *
-   * @param string $name
+   * @param string $tagname
    */
-  public function setName($name) {
-    $this->name = strtolower($name);
+  public function setTagname($tagname) {
+    $this->tagname = strtolower($tagname);
   }
 
   /**
-   * getter for property name
+   * getter for property tagname
    *
-   * @return string $name
+   * @return string $tagname
    */
-  public function getName() {
-    return $this->name;
+  public function getTagname() {
+    return $this->tagname;
   }
 
   /**
@@ -81,7 +81,7 @@ class Tag extends VirtualAttribute {
     array_walk($attributes, function(&$value, $key) {
       $value = " " . htmlspecialchars($key, ENT_QUOTES, 'UTF-8') . ( $value !== null ? "=\"" . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . "\"" : "");
     });
-    return "<" . $this->name . implode("", $attributes) . ($this->content !== null ? ">" . $this->content . "</" . $this->name . ">" : " />");
+    return "<" . $this->tagname . implode("", $attributes) . ($this->content !== null ? ">" . $this->content . "</" . $this->tagname . ">" : " />");
   }
 
   /**
@@ -91,21 +91,5 @@ class Tag extends VirtualAttribute {
    */
   public function __toString() {
     return $this->output();
-  }
-
-  public function __get($name) {
-    if(method_exists($this, $method = 'get' . ucfirst($name))) {
-      return $this->$method($value);
-    } else {
-      return parent::__get($name);
-    }
-  }
-
-  public function __set($name, $value) {
-    if(method_exists($this, $method = 'set' . ucfirst($name))) {
-      return $this->$method($value);
-    } else {
-      return parent::__set($name, $value);
-    }
   }
 }

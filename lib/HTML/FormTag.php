@@ -12,7 +12,7 @@ class FormTag extends Tag {
   protected static $fields = Array(
     'text_field' => 'InputTextTag',
     'password' => 'InputPasswordTag',
-    'text_box' => 'InputTextTag'
+    'text_area' => 'TextareaTag'
   );
 
   public function __construct($method, $action, Array $attributes = Array()) {
@@ -39,17 +39,19 @@ class FormTag extends Tag {
 
   public function __call($method, $params) {
     if($method === 'label') {
-      if($this->model !== null) {
-        $for = array_shift($params);
-        if($for) {
-          return new LabelTag($this->model, $for, $this->grabAttributes($params, 0));
-        } else {
-          // throw exception ?
-        }
+      $name = $this->model;
+      if($name === null) {
+        $name = array_shift($params);
       }
-    } elseif(array_key_exists(self::$fields, $method)) {
-      $classname = self::$fields[$method];
-      return new $classname($name, $this->model->$name, $this->grabAttributes($params, 1));
+      $for = array_shift($params);
+      if($for) {
+        $tag = new LabelTag($name, $for, $this->grabAttributes($params, 0));
+        return $tag->output();
+      }
+    } elseif(array_key_exists($method, self::$fields)) {
+      $classname = __NAMESPACE__ . "\\" . self::$fields[$method];
+      $tag = new $classname($name = array_shift($params), $this->model === null ? "" : $this->model->$name, $this->grabAttributes($params, 0));
+      return $tag->output();
     }
   }
 

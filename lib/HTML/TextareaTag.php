@@ -18,7 +18,7 @@ class TextareaTag extends InputTag {
 
   /** we dont need a 'type' - attribute **/
   public function setType($type) { }
-  public function getType($type) {
+  public function getType() {
     return null;
   }
 }
