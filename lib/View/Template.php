@@ -58,21 +58,21 @@ class Template extends VirtualAttribute {
    */
   public function parse($string) {
     return preg_replace_callback(
-      "/\\{(\\[|>|=|)\s*(:|)(.*({(?:.*|(?3))}|).*)\\}($)?/m",
+      "/\\{(\\[|>|=|)\s*(:|)([^\\}]*?({(?:.*|(?3))}|)[^\\{]*)\\}($)?/m",
       function($match) {
         $before = '<' . '?php ';
         $after = ' ?' . '>';
         switch($match[1]) {
           case '>':
-            $before .= "print(htmlspecialchars(";
-            $after = ", ENT_QUOTES, 'UTF-8'))" . $after;
+            $before .= "echo htmlspecialchars(";
+            $after = ", ENT_QUOTES, 'UTF-8')" . $after;
             break;
           case '=':
             $before .= "echo ";
             break;
           case '[':
-            $before .= "print(";
-            $after = '->render())' . $after;
+            $before .= "echo ";
+            $after = '->render()' . $after;
             break;
           case '':
             break;

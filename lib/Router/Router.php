@@ -39,7 +39,7 @@ class Router extends VoidBase {
     }
 
     // is it an URL like http://example.com? if yes return it;
-    if(preg_match("/^[a-z\-]{3,}:\/\//i", $controller)) {
+    if(preg_match("/^[^a-z0-9\_]$/i", $controller)) {
       return $controller;
     }
 
