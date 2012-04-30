@@ -7,5 +7,6 @@
     {=$f->password('test_password')}</p>
     <p>{=$f->label('Test a Text Area:', 'test_area')}<br />
     {=$f->text_area('test_area')}</p>
+    {=$f->submit('Save')}</p>
   </fieldset>
 {})}

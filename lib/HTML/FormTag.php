@@ -11,8 +11,8 @@ class FormTag extends Tag {
 
   protected static $fields = Array(
     'text_field' => 'InputTextTag',
-    'password' => 'InputPasswordTag',
-    'text_area' => 'TextareaTag'
+    'password'   => 'InputPasswordTag',
+    'text_area'  => 'TextareaTag'
   );
 
   public function __construct($method, $action, Array $attributes = Array()) {
@@ -48,6 +48,9 @@ class FormTag extends Tag {
         $tag = new LabelTag($name, $for, $this->grabAttributes($params, 0));
         return $tag->output();
       }
+    } elseif($method === 'submit') {
+      $tag = new InputSubmitTag(array_shift($params), $this->grabAttributes($params, 0));
+      return $tag->output();
     } elseif(array_key_exists($method, self::$fields)) {
       $classname = __NAMESPACE__ . "\\" . self::$fields[$method];
       $tag = new $classname($name = array_shift($params), $this->model === null ? "" : $this->model->$name, $this->grabAttributes($params, 0));
