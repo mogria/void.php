@@ -115,7 +115,15 @@ namespace Void; ?>{$__void_template_parsed_file}
 _VOID_TEMPLATE
       );
       if($back !== NULL && self::$config->onDevelopment()) {
-        $content = "<pre>" . htmlspecialchars($__void_template_parsed_file, ENT_QUOTES, 'UTF-8') . "</pre>" . ob_get_contents();
+        $file = str_replace(Array("\r\n", "\r"), "\n", $__void_template_parsed_file);
+        $file = explode("\n", $file);
+        $lines = count($file);
+        $file = array_map(function(&$current_line) use ($lines) {
+          static $linenr = 0;
+          $linenr++;
+          return str_pad($linenr, strlen((string)$lines), " ", STR_PAD_LEFT) . " | " . $current_line;
+        }, $file);
+        $content = "<pre>" . htmlspecialchars(implode("\n", $file), ENT_QUOTES, 'UTF-8') . "</pre>" . ob_get_contents();
       } else {
         $content = ob_get_contents();
       }
