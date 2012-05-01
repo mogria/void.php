@@ -49,6 +49,11 @@ abstract class ControllerBase extends VirtualAttribute {
     // also use '$view_vars' to store all the variables
     $this->view->setReference($this->getReference());
 
+    // give access to the current controllername, the actionname and the given params
+    $this->_action = $actionname;
+    $this->_controller = $controllername;
+    $this->_params = $dispatcher->getParams();
+
     // render the layout
   	return $layout->render();
   }
