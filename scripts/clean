@@ -1,0 +1,47 @@
+#!/usr/bin/env php
+<?php
+
+define('DS', DIRECTORY_SEPARATOR);
+define('ROOT', realpath(dirname(__FILE__) . DS . "..") . DS);
+$file_list = Array(
+  'Controllers/*',
+  'Views/*',
+  'Models/*',
+  'images/*',
+  'stylesheets/*',
+  'javascripts/*'
+);
+
+$all = false;
+
+foreach($file_list as $file) {
+  $file = ROOT . $file;
+  $files = glob($file);
+  if(is_array($files)) {
+    foreach($files as $del_file) {
+      if(!$all) {
+        echo "delete file $del_file ? (y|n|a|q) ";
+        $handle = fopen("php://stdin", "r");
+        $out = fgets($handle, 80);
+        switch($out) {
+          case "y\n":
+            break;
+          case "n\n":
+          default:
+            continue;
+            break;
+          case "a\n":
+            $all = true;
+            break;
+          case "q\n":
+            exit;
+        }
+      }
+      echo "rm '$del_file'\n";
+      unlink($del_file);
+    }
+  }
+}
+
+touch("stylesheets/application.css");
+touch("javascripts/application.js");
