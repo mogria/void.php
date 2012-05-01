@@ -19,26 +19,31 @@ foreach($file_list as $file) {
   $files = glob($file);
   if(is_array($files)) {
     foreach($files as $del_file) {
-      if(!$all) {
-        echo "delete file $del_file ? (y|n|a|q) ";
-        $handle = fopen("php://stdin", "r");
-        $out = fgets($handle, 80);
-        switch($out) {
-          case "y\n":
-            break;
-          case "n\n":
-          default:
-            continue;
-            break;
-          case "a\n":
-            $all = true;
-            break;
-          case "q\n":
-            exit;
+      if(is_file($del_file)) {
+        $yes = $all;
+        if(!$all) {
+          echo "delete file $del_file ? (y|n|a|q) ";
+          $handle = fopen("php://stdin", "r");
+          $out = fgets($handle, 80);
+          switch($out) {
+            case "a\n":
+              $all = true;
+            case "y\n":
+              $yes = true;
+              break;
+            case "q\n":
+              exit;
+            case "n\n":
+            default:
+              break;
+          }
+        }
+
+        if($yes) {
+          echo "rm '$del_file'\n";
+          unlink($del_file);
         }
       }
-      echo "rm '$del_file'\n";
-      unlink($del_file);
     }
   }
 }
