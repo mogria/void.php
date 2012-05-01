@@ -175,6 +175,9 @@ class Asset extends VoidBase {
     // scan the given directory for files
     $cwd = getcwd();
     chdir($this->directory);
+    if(!is_dir($dir)) {
+      throw new \BadMethodCallException("The directory '$this->directory/$dir' does not exist!");
+    }
     $files = array_diff(scandir($dir), array(".", ".."));
     chdir($cwd);
 

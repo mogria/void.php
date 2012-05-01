@@ -5,6 +5,10 @@ namespace Void;
 
 use \ActiveRecord\Model;
 
+/**
+ * You can create HTML Forms using this class
+ *
+ */
 class FormTag extends Tag {
   protected $contents = Array();
   protected $model = null;
