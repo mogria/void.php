@@ -1,6 +1,18 @@
 #!/usr/bin/env php
 <?php
 
+/**
+ * Delete user files.
+ * 
+ * $ scripts/clean [search_pattern] [...]
+ *
+ */
+
+function pattern_match($str, $patterns) {
+  $patterns = implode("|", array_map('preg_quote', $patterns));
+  return preg_match("/(" . $patterns . ")/i", $str);
+}
+
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', realpath(dirname(__FILE__) . DS . "..") . DS);
 $file_list = Array(
@@ -14,12 +26,15 @@ $file_list = Array(
 
 $all = false;
 
+$patterns = array_slice($argv, 1);
+
+
 foreach($file_list as $file) {
   $file = ROOT . $file;
   $files = glob($file);
   if(is_array($files)) {
     foreach($files as $del_file) {
-      if(is_file($del_file)) {
+      if(is_file($del_file) && pattern_match($del_file, $patterns)) {
         $yes = $all;
         if(!$all) {
           echo "delete file $del_file ? (y|n|a|q) ";
@@ -37,11 +52,10 @@ foreach($file_list as $file) {
             default:
               break;
           }
-        }
-
-        if($yes) {
-          echo "rm '$del_file'\n";
-          unlink($del_file);
+          if($yes) {
+            echo "rm '$del_file'\n";
+            unlink($del_file);
+          }
         }
       }
     }
