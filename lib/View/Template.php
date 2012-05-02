@@ -115,15 +115,24 @@ namespace Void; ?>{$__void_template_parsed_file}
 _VOID_TEMPLATE
       );
       if($back !== NULL && self::$config->onDevelopment()) {
+        // replace all line breaks with unix line breaks
         $file = str_replace(Array("\r\n", "\r"), "\n", $__void_template_parsed_file);
         $file = explode("\n", $file);
         $lines = count($file);
+        // add the line number to each line
         $file = array_map(function(&$current_line) use ($lines) {
           static $linenr = 0;
           $linenr++;
           return str_pad($linenr, strlen((string)$lines), " ", STR_PAD_LEFT) . " | " . $current_line;
         }, $file);
-        $content = "<pre>" . htmlspecialchars(implode("\n", $file), ENT_QUOTES, 'UTF-8') . "</pre>" . ob_get_contents();
+        // open <pre> tag and add some space
+        $content  = "<pre>" . str_repeat(" ", strlen((string)$lines) + 3);
+        // output the file name (in bold)
+        $content .= "<b>" . $this->file . "</b> <i>(rendered)</i>\n";
+        // output the file & the line numbers
+        $content .= htmlspecialchars(implode("\n", $file), ENT_QUOTES, 'UTF-8');
+        // close pre tag & output the rest
+        $content .= "</pre>" . ob_get_contents();
       } else {
         $content = ob_get_contents();
       }
