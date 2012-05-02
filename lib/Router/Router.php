@@ -19,6 +19,22 @@ class Router extends VoidBase {
    */
   public static function link($controller = null, $action = null, Array $params = Array()) {
     // if it's an array pull out the required values
+    
+    // for notation like 'controller/action/param1'
+    if($action === null && $params === Array()
+      && (is_string($controller)
+        // if $controller is an array of size 1, use the first element as $controller
+        || (is_array($controller)
+          && count($controller) === 1
+          && $controller = array_shift($controller)))
+      // check for valid characters
+      && preg_match("/^[a-z0-9\\_\\/]*$/Di", $controller)
+      // there has to be a "/" inside the string
+      && strpos($controller, "/") !== false) {
+      // split it by "/" and create an array out of it
+      $controller = explode("/", $controller);
+    }
+      
     if (is_array($controller)) {
       $array = $controller;
       // get the controller
@@ -38,8 +54,8 @@ class Router extends VoidBase {
       }
     }
 
-    // is it an URL like http://example.com? if yes return it;
-    if(preg_match("/^[^a-z0-9\_]$/i", $controller)) {
+    // handle the things quite diffrent if $controller couldn't be a valid Class name
+    if(!preg_match("/^[a-z0-9\_]*$/Di", $controller)) {
       return $controller;
     }
 

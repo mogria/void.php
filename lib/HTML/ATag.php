@@ -18,7 +18,6 @@ class ATag extends Tag {
   public function __construct($content = null, $target = '#', Array $attributes = Array()) {
     parent::__construct("a", $content, $attributes);
     // if we get an array in the $target param, pass it to the Router::link() method and generate a link within this application
-    is_array($target) && $target = Router::link($target);
     // put the link into the href="" attribute
     $this->setTarget($target);
   }
@@ -31,7 +30,7 @@ class ATag extends Tag {
    */
   public function setTarget($link) {
     // put the link into the href="" attribute
-    $this->href = $link;
+    $this->href = Router::link($link);
   }
 
   /**
