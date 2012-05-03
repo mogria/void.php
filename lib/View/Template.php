@@ -43,7 +43,7 @@ class Template extends VirtualAttribute {
   public function setFile($file) {
     $this->template_finder->setFilespec($file);
     $helpername = ucfirst($this->template_finder->getController()) . self::$config->helper_postfix;
-    if(!class_exists($helpername)) {
+    if(!class_exists(__NAMESPACE__ . "\\" . $helpername, true)) {
       $helpername = "ApplicationHelper";
     }
     $helpername = __NAMESPACE__ . "\\" . $helpername;
@@ -252,7 +252,7 @@ _VOID_TEMPLATE
       return call_user_func_array(Array($this->helper, $method), $args);
     } else {
       // Nothing to do here 
-      throw new BadMethodCallException("There is no template or helper method '$method'.");
+      throw new BadMethodCallException("There is no template or helper method '$method'");
     }
   }
 }

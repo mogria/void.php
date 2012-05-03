@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>{=isset($title) ? $title . " - " : ""}Void.php</title>
+    <title>{=:title("Void.php", $title)}</title>
     <meta charset="utf-8" />
     {=:linkTag('blueprint/screen', Array('media' => 'screen, projection'))}
     {=:linkTag('blueprint/print', Array('media' => 'print'))}
