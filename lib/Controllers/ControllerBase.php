@@ -33,6 +33,8 @@ abstract class ControllerBase extends VirtualAttribute {
       ($pos = strrpos(get_called_class(), "\\")) === false ? 0 : $pos + 1,
       -strlen(Dispatcher::getControllerExtension())));
 
+    $this->initialize();
+
     // call the action
     call_user_func_array(Array($this, Dispatcher::getMethodPrefix() . $actionname), $dispatcher->getParams());
 

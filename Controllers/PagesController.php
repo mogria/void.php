@@ -2,7 +2,7 @@
 
 namespace Void;
 
-class PagesController extends ControllerBase {
+class PagesController extends ApplicationController {
   public function action_index() { }
   public function action_about() {
     $this->title = "About";
