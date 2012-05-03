@@ -19,7 +19,6 @@ $file_list = Array(
   'Controllers/*',
   'Views/*',
   'Models/*',
-  'images/*',
   'stylesheets/*',
   'javascripts/*'
 );
@@ -64,3 +63,25 @@ foreach($file_list as $file) {
 
 touch("stylesheets/application.css");
 touch("javascripts/application.js");
+file_put_contents("Helpers/ApplicationHelper.php", <<<APPLICATION_HELPER
+<?php
+
+namespace Void;
+
+class ApplicationHelper extends HelperBase {
+}
+APPLICATION_HELPER
+);
+
+file_put_contents("Controllers/ApplicationController.php", <<<APPLICATION_CONTROLLER
+<?php
+
+namespace Void;
+
+class ApplicationController extends ControllerBase {
+}
+APPLICATION_CONTROLLER
+)
+
+mkdir("Views/layout");
+touch("Views/layout/application.tpl");
