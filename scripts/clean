@@ -33,27 +33,35 @@ foreach($file_list as $file) {
   $files = glob($file);
   if(is_array($files)) {
     foreach($files as $del_file) {
-      if(is_file($del_file) && pattern_match($del_file, $patterns)) {
-        $yes = $all;
-        if(!$all) {
-          echo "delete file $del_file ? (y|n|a|q) ";
-          $handle = fopen("php://stdin", "r");
-          $out = fgets($handle, 80);
-          switch($out) {
-            case "a\n":
-              $all = true;
-            case "y\n":
-              $yes = true;
-              break;
-            case "q\n":
-              exit;
-            case "n\n":
-            default:
-              break;
+      if(pattern_match($del_file, $patterns)) {
+        if(is_file($del_file)) {
+          $yes = $all;
+          if(!$all) {
+            echo "delete file $del_file ? (y|n|a|q) ";
+            $handle = fopen("php://stdin", "r");
+            $out = fgets($handle, 80);
+            fclose($handle);
+            switch($out) {
+              case "a\n":
+                $yes = $all = true;
+                break;
+              case "y\n":
+                $yes = true;
+                break;
+              case "q\n":
+                exit;
+              default:
+                break;
+            }
+            if($yes) {
+              echo "rm    '$del_file'\n";
+              unlink($del_file);
+            }
           }
-          if($yes) {
-            echo "rm '$del_file'\n";
-            unlink($del_file);
+        } else if(is_dir($del_file)) {
+          echo "DIR: $del_file\n";
+          if(@rmdir($del_file)) {
+            echo "rmdir '$del_file'\n";
           }
         }
       }
@@ -78,10 +86,10 @@ file_put_contents("Controllers/ApplicationController.php", <<<APPLICATION_CONTRO
 
 namespace Void;
 
-class ApplicationController extends ControllerBase {
+abstract class ApplicationController extends ControllerBase {
 }
 APPLICATION_CONTROLLER
-)
+);
 
-mkdir("Views/layout");
+@mkdir("Views/layout");
 touch("Views/layout/application.tpl");
