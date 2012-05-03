@@ -9,6 +9,9 @@ function loadDefaultConfig($cfg) {
     // the extension of the template files
     $cfg->templatefinder_ext = "tpl";
 
+    /** Template **/
+    $cfg->template_helper_postfix = "Helper";
+
     /** Dispatcher */
     // all controllers have to have this suffix
     $cfg->dispatcher_controller_ext = "Controller";
@@ -21,7 +24,7 @@ function loadDefaultConfig($cfg) {
     $cfg->router_index_file = "index.php";
 
     /** Booter */
-    $cfg->booter_classes = Array('ErrorToException', 'MagicQuoteFix', 'PHPErrorMessages', 'SessionInit');
+    $cfg->booter_classes = Array('ErrorToException', 'MagicQuoteFix', 'PHPErrorMessages', 'SessionInit', 'RequestFilter');
 
     /** Assets */
     $cfg->cssasset_dir = "stylesheets";

@@ -11,10 +11,16 @@ use BadMethodCallException;
  * A Template System
  */
 class Template extends VirtualAttribute {
+
   /**
-   * @var string $file
+   * @var TemplateFinder
    */
-  protected $file;
+  protected $template_finder;
+
+  /**
+   * @var Helper
+   */
+  protected $helper;
 
   /**
    * Constructor
@@ -22,6 +28,7 @@ class Template extends VirtualAttribute {
    * @param Array $initializers
    */
   public function __construct($file, Array $initializers = Array()) {
+    $this->template_finder = new TemplateFinder();
     $this->setFile($file);
     $this->_ = $initializers;
   }
@@ -34,8 +41,14 @@ class Template extends VirtualAttribute {
    * @see TemplateFinder
    */
   public function setFile($file) {
-    $finder = new TemplateFinder($file);
-    $this->file = $finder->getPath();
+    $this->template_finder->setFilespec($file);
+    $helpername = ucfirst($this->template_finder->getController()) . self::$config->helper_postfix;
+    if(!class_exists($helpername)) {
+      $helpername = "ApplicationHelper";
+    }
+    $helpername = __NAMESPACE__ . "\\" . $helpername;
+    $this->helper = new $helpername($this);
+    
   }
 
   /**
@@ -106,9 +119,10 @@ class Template extends VirtualAttribute {
    * @return string the output of the template
    */
   public function render($filespec = null, $initializers = Array()) {
+    $file = $this->template_finder->getPath();
     if($filespec === null) {
       extract($this->toArray());
-      $__void_template_parsed_file = $this->parse(file_get_contents($this->file));
+      $__void_template_parsed_file = $this->parse(file_get_contents($file));
       ob_start();
       $back = eval( <<<_VOID_TEMPLATE
 namespace Void; ?>{$__void_template_parsed_file}
@@ -128,7 +142,7 @@ _VOID_TEMPLATE
         // open <pre> tag and add some space
         $content  = "<pre>" . str_repeat(" ", strlen((string)$lines) + 3);
         // output the file name (in bold)
-        $content .= "<b>" . $this->file . "</b> <i>(rendered)</i>\n";
+        $content .= "<b>" . $file . "</b> <i>(rendered)</i>\n";
         // output the file & the line numbers
         $content .= htmlspecialchars(implode("\n", $file), ENT_QUOTES, 'UTF-8');
         // close pre tag & output the rest
@@ -233,9 +247,12 @@ _VOID_TEMPLATE
       }
       // return the Tag Object
       return $tag;
+    } else if(method_exists($this->helper, $method)) {
+      // call the methods of the Helper Class
+      return call_user_func_array(Array($this->helper, $method), $args);
     } else {
       // Nothing to do here 
-      throw new BadMethodCallException("There is no magic method '$method'.");
+      throw new BadMethodCallException("There is no template or helper method '$method'.");
     }
   }
 }
