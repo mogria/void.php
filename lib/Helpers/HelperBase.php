@@ -2,6 +2,10 @@
 
 namespace Void;
 
+/**
+ * All the Helper classes extend this class
+ *
+ */
 class HelperBase extends VoidBase {
   protected $template;
   public function __construct(Template $template) {
