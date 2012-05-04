@@ -57,7 +57,7 @@ class Template extends VirtualAttribute {
    * @return string
    */
   public function getFile() {
-    return $this->file;
+    return $this->template_finder->getPath();
   }
 
   /**
@@ -119,7 +119,7 @@ class Template extends VirtualAttribute {
    * @return string the output of the template
    */
   public function render($filespec = null, $initializers = Array()) {
-    $file = $this->template_finder->getPath();
+    $file = $this->getFile();
     if($filespec === null) {
       extract($this->toArray());
       $__void_template_parsed_file = $this->parse(file_get_contents($file));
