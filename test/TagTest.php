@@ -24,8 +24,8 @@ class TagTest extends \PHPUnit_Framework_TestCase {
     unset($this->tag->disabled);
     $this->assertFalse(isset($this->tag->class));
     $this->assertEquals("<p>This is a test Text with other <b>Tags</b></p>", $this->tag->output());
-    $this->tag->setName("H1");
-    $this->assertEquals("h1", $this->tag->getName());
+    $this->tag->setTagname("H1");
+    $this->assertEquals("h1", $this->tag->getTagname());
     $this->assertEquals("<h1>This is a test Text with other <b>Tags</b></h1>", $this->tag->output());
     $this->tag->setContent(null);
     $this->assertEquals(null, $this->tag->getContent());
