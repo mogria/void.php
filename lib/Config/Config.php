@@ -49,6 +49,15 @@ class Config extends VirtualAttribute {
   protected $development = Array();
 
   /**
+   * wheter to set variables local or not
+   *
+   * @static
+   * @var bool
+   * @access protected
+   */
+  protected static $global = false;
+
+  /**
    * Constructor
    * defines the default environment and some default values
    * 
@@ -56,15 +65,16 @@ class Config extends VirtualAttribute {
    * @param string $environment     the default environment
    * @param mixed $mixed            the initializer for this object
    *                                (can be a callback function or an array)
+   * @param bool $global            wheter to set the variables in the global space or not
    * @see setEnvironment
    * @see config
    */
-  public function __construct($environment, $mixed = null) {
+  public function __construct($environment, $mixed = null, $global = false) {
     $this->setEnvironment($environment);
     if($this->getEnvironment() === null) {
       $this->setEnvironment(DEVELOPMENT);
     }
-    $mixed !== null && $this->config($mixed);
+    $mixed !== null && $this->config($mixed, $this->getEnvironment(), $global);
   }
 
   /**
@@ -234,7 +244,12 @@ class Config extends VirtualAttribute {
    * @see getCalledClass
    */
   public static function classNameKey($key) {
-    return self::concatKeys(self::convertClassName(self::getCalledClass()), $key);
+    if(self::$global || substr($key, 0, 1) === "_") {
+      $key = ltrim($key, "_");
+    } else {
+      $key = self::concatKeys(self::convertClassName(self::getCalledClass()), $key);
+    }
+    return $key;
   }
 
   /**
@@ -274,7 +289,7 @@ class Config extends VirtualAttribute {
   /**
    * This overrides the set() function of VirtualAttribute and make the
    * keys depend on the class which calls the methods
-   * 
+   *
    * @param  string $key 
    * @param mixed $value 
    * @access public
@@ -284,7 +299,13 @@ class Config extends VirtualAttribute {
    */
   public function set($key, $value) {
     // also convert the key first if we are setting a value
-    return parent::set(self::classNameKey($key), $value);
+    echo $this->getEnvironment() . ":";
+    $back = parent::set($key = self::classNameKey($key), $value);
+    echo $key;
+    echo " = '";
+    echo $value;
+    echo "'\n";
+    return $back;
   }
 
   /**
@@ -298,13 +319,17 @@ class Config extends VirtualAttribute {
    * @param mixed $mixed             the closure or the array
    * @param string $to_environment   the environment in which the changes will be made
    *                                 or 'all' to make the changes on all envorironments. 
+   * @param bool $global wheter so set variables globally or not
    * @access public
    * @return void
    * @see set
    * @see setEnvironment
    */
-  public function config($mixed, $to_environment = null) {
+  public function config($mixed, $to_environment = null, $global = false) {
     $environment = null;
+
+    $global_before = self::$global;
+    self::$global = $global;
 
     // change the environment if one is given
     if($to_environment !== null) {
@@ -329,6 +354,8 @@ class Config extends VirtualAttribute {
     if($to_environment !== null) {
       $this->setEnvironment($environment);
     }
+
+    self::$global = $global_before;
   }
 
   /**
@@ -337,9 +364,17 @@ class Config extends VirtualAttribute {
    * @access public
    * @return void
    */
-  public function debugDump() {
-    echo "\nENV: " . $this->getEnvironment() . "\n";
-    print_r($this->{$this->getEnvironment()});
+  public function debugDump($environment = null) {
+    if($environment !== 'all') {
+      $environment === null && $environment = $this->getEnvironment();
+      echo "\nENV: " . $environment . "\n";
+      print_r($this->{$environment});
+    } else {
+      $environments = Array(DEVELOPMENT, TEST, PRODUCTION);
+      foreach($environments as $environment) {
+        $this->debugDump($environment);
+      }
+    }
   }
 
 }
