@@ -71,6 +71,11 @@ class TemplateFinder extends VoidBase {
    * @param mixed $filespec
    */
   private function resolveFileSpec($filespec) {
+    if(is_file($filespec)) {
+      return $filespec;
+    } else if(is_file($filespec . "." . self::$config->ext)) {
+      return $filespec . "." . self::$config->ext;
+    }
     // filespec has to be an array || an string
     if(!is_array($filespec) && !is_string($filespec)) {
       throw new \InvalidArgumentException("Filespec has to be an array or an string");
