@@ -36,6 +36,10 @@ function loadDefaultConfig($cfg) {
     /** Model **/
     $cfg->modelconfig_dir = "Models";
 
+    /** Hash **/
+    $cfg->hash_iterations = 115;
+    $cfg->hash_algo = 'whirlpool';
+    $cfg->hash_secret = 'd9FbkL$[qI18G.Bl$g1 3_aGh,AuL.:tRoWq';
   }, 'all');
 
   // default configuration for the development environment
