@@ -5,20 +5,16 @@ namespace Void;
 require_once 'config/consts.php';
 require_once 'autoload.php';
 
-// we need the create the config out of the class, because the Config Objects traces back the Class
-$config = new Config(TEST, function($cfg) {
-  $cfg->test = 15;
-  $cfg->testconfigurable_test = "asdasd";
-});
-
-
 class ConfigTest extends \PHPUnit_Framework_TestCase {
   protected $config;
 
   public function setUp() {
     global $config;
     // clone the clobal config and use it for the tests
-    $this->config = clone $config; 
+    $this->config = $config = new Config(TEST, function($cfg) {
+      $cfg->test = 15;
+      $cfg->testconfigurable_test = "asdasd";
+    }, false);
     // create a configurable object
     $this->configurable = new TestConfigurable();
     // all the configurable objects should now use the cloned config
@@ -138,6 +134,8 @@ class TestConfigurable extends VoidBase {
         'test' => "hui"
       ), PRODUCTION);
     });
+
+    self::$config->debugDump('all');
 
     // is null returned if the key doesn't exists?
     $test->assertEquals(null, self::$config->inexistent_key);

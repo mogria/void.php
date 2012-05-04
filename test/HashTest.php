@@ -5,15 +5,16 @@ namespace Void;
 require_once 'config/consts.php';
 require_once 'autoload.php';
 
-VoidBase::setConfig($config = new Config(DEVELOPMENT, function($cfg) {
-  $cfg->hash_iterations = 42;
-  $cfg->hash_algo = 'whirlpool';
-  $cfg->hash_secret = 'DAFUQ!';
-}));
+
 
 class HashTest extends \PHPUnit_Framework_TestCase {
 
   public function setUp() {
+    Hash::setConfig(new Config(DEVELOPMENT, function($cfg) {
+      $cfg->hash_iterations = 42;
+      $cfg->hash_algo = 'whirlpool';
+      $cfg->hash_secret = 'DAFUQ!';
+    }, true));
   }
 
   public function testGenerateSalt() {
