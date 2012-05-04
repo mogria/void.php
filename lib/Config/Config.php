@@ -331,4 +331,15 @@ class Config extends VirtualAttribute {
     }
   }
 
+  /**
+   * prints to stdout in which environment we are and all the variables declared
+   *
+   * @access public
+   * @return void
+   */
+  public function debugDump() {
+    echo "\nENV: " . $this->getEnvironment() . "\n";
+    print_r($this->{$this->getEnvironment()});
+  }
+
 }
