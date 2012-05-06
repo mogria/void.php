@@ -231,8 +231,10 @@ _VOID_TEMPLATE
    * @throws BadMethodCallException 
    */
   public function __call($method, $args) {
+    if(method_exists($method) && $method !== '__call' && $reflection = new ReflectionMethod(__CLASS__, $method) && $reflection->isPublic()) {
+      call_user_func_array(Array(__CLASS__, $method, $args));
     // Check if the called function ends with "Tag"
-    if (substr($method, -strlen("Tag")) === "Tag") {
+    } else if (substr($method, -strlen("Tag")) === "Tag") {
       // generate the class name
       $tagname = ucfirst(strtolower(substr($method, 0, -strlen("Tag"))));
       // check if the class exists
@@ -247,6 +249,7 @@ _VOID_TEMPLATE
       }
       // return the Tag Object
       return $tag;
+    // is it a Helper-method
     } else if(method_exists($this->helper, $method)) {
       // call the methods of the Helper Class
       return call_user_func_array(Array($this->helper, $method), $args);
