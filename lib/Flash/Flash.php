@@ -15,7 +15,7 @@ class Flash extends VoidBase {
     if(in_array(self::$types, $method)) {
       !isset($_SESSION[self::SESSION_VARIABLE]) && $_SESSION[self::SESSION_VARIABLE] = Array();
       $flash_message = new FlashMessage($type, $message);
-      $_SESSION[self::SESSION_VARIABLE] = array_diff($_SESSION[self::SESSION_VARIABLE], $flash_message); // @todo: does this remove duplicate entries?
+      self::remove($flash_message);
       $_SESSION[self::SESSION_VARIABLE][] = new FlashMessage($type, $message);
     } else {
       throw new InvalidArgumentException("no such message type '$method'");
@@ -41,6 +41,10 @@ class Flash extends VoidBase {
 
   public static function clear() {
     $_SESSION[self::SESSION_VARIABLE] = Array();
+  }
+
+  public static function remove(FlashMessage $flash_message) {
+    $_SESSION[self::SESSION_VARIABLE] = array_diff($_SESSION[self::SESSION_VARIABLE], $flash_message); // @todo: does this remove duplicate entries?
   }
 }
 
