@@ -299,12 +299,7 @@ class Config extends VirtualAttribute {
    */
   public function set($key, $value) {
     // also convert the key first if we are setting a value
-    echo $this->getEnvironment() . ":";
     $back = parent::set($key = self::classNameKey($key), $value);
-    echo $key;
-    echo " = '";
-    echo $value;
-    echo "'\n";
     return $back;
   }
 
@@ -367,8 +362,6 @@ class Config extends VirtualAttribute {
   public function debugDump($environment = null) {
     if($environment !== 'all') {
       $environment === null && $environment = $this->getEnvironment();
-      echo "\nENV: " . $environment . "\n";
-      print_r($this->{$environment});
     } else {
       $environments = Array(DEVELOPMENT, TEST, PRODUCTION);
       foreach($environments as $environment) {
