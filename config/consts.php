@@ -6,8 +6,8 @@ define('BASEURL', rtrim(dirname($_SERVER['SCRIPT_NAME']), "/") . "/");
 
 // The full URL (example: http://example.org/myblog/)
 define('FULLURL','http' . (!empty($_SERVER['HTTPS']) ? "s" : "")  . '://'
-    . $_SERVER['HTTP_HOST']
-    . ($_SERVER['SERVER_PORT'] != 80 ? ":" . $_SERVER['SERVER_PORT'] : "")
+    . (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : "localhost")
+    . (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != 80 ? ":" . $_SERVER['SERVER_PORT'] : "")
     .  BASEURL);
 
 // the shorter the better ;-)
