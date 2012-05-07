@@ -231,7 +231,7 @@ _VOID_TEMPLATE
    * @throws BadMethodCallException 
    */
   public function __call($method, $args) {
-    if(method_exists($method) && $method !== '__call' && $reflection = new ReflectionMethod(__CLASS__, $method) && $reflection->isPublic()) {
+    if(method_exists($this, $method) && $method !== '__call' && $reflection = new ReflectionMethod(__CLASS__, $method) && $reflection->isPublic()) {
       call_user_func_array(Array(__CLASS__, $method, $args));
     // Check if the called function ends with "Tag"
     } else if (substr($method, -strlen("Tag")) === "Tag") {
