@@ -5,8 +5,13 @@ namespace Void;
 
 require_once 'config/consts.php';
 require_once 'autoload.php';
+require_once 'config/environments.php';
 
 class FlashTest extends \PHPUnit_Framework_TestCase {
+  public function setUp() {
+    $_SESSION = Array();
+  }
+
   public function testMessage() {
     Flash::message("error", "Error!");
     $this->assertEquals("error", $_SESSION[Flash::SESSION_VARIABLE][0]->getType());
@@ -43,8 +48,8 @@ class FlashTest extends \PHPUnit_Framework_TestCase {
     Flash::error("Error!");
     Flash::warning("Warning!");
     Flash::info("Info!");
-    Flash::sucess("Success!");
-    Flash::sucess("yeah!!", "Yippe!");
+    Flash::success("Success!");
+    Flash::success("yeah!!", "Yippe!");
     $this->assertEquals(6, count($_SESSION[Flash::SESSION_VARIABLE]));
   }
 

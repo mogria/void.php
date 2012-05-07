@@ -37,7 +37,7 @@ class Flash extends VoidBase {
    */
   public static function message($type, $message) {
     // check if the given type is in the list
-    if(in_array(self::$types, $method)) {
+    if(in_array($type, self::$types)) {
 
       // set the session variable
       !isset($_SESSION[self::SESSION_VARIABLE]) && $_SESSION[self::SESSION_VARIABLE] = Array();
@@ -50,7 +50,7 @@ class Flash extends VoidBase {
       // add it to the list
       $_SESSION[self::SESSION_VARIABLE][] = new FlashMessage($type, $message);
     } else {
-      throw new InvalidArgumentException("no such message type '$method'");
+      throw new \InvalidArgumentException("no such message type '$type'");
     }
   }
 
@@ -102,7 +102,7 @@ class Flash extends VoidBase {
    * @return Array
    */
   public static function toArray() {
-    return is_array($_SESSION[self::SESSION_VARIABLE]) ? $_SESSION[self::SESSION_VARIABLE] : array();
+    return isset($_SESSION[self::SESSION_VARIABLE]) && is_array($_SESSION[self::SESSION_VARIABLE]) ? $_SESSION[self::SESSION_VARIABLE] : array();
   }
 
   /**
@@ -124,7 +124,7 @@ class Flash extends VoidBase {
    */
   public static function remove(FlashMessage $flash_message) {
     $count_before = count($_SESSION[self::SESSION_VARIABLE]);
-    $_SESSION[self::SESSION_VARIABLE] = array_diff($_SESSION[self::SESSION_VARIABLE], $flash_message); // @todo: does this remove duplicate entries?
+    $_SESSION[self::SESSION_VARIABLE] = array_diff($_SESSION[self::SESSION_VARIABLE], array($flash_message)); // @todo: does this remove duplicate entries?
     return $count_before > count($_SESSION[self::SESSION_VARIABLE]);
   }
 }
