@@ -5,7 +5,7 @@ define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', realpath(dirname(__FILE__) . DS . "..") . DS);
 
 define('HELP', <<<HELP
-{$argv[0]} generator_name [params ...]
+{$argv[0]} generator_name name [params ...]
 
 generators: 
   controller (c, ctrl)
@@ -101,24 +101,48 @@ MODEL;
   }
 }
 
+class TestGenerator extends Generator {
+  public function __construct($name, $params) {
+    $name = ucfirst($name);
+    $this->files["test"] = true;
+    $this->files["test/{$name}Test.php"] = <<<TEST
+<?php
+
+namespace Void;
+
+require_once 'config/consts.php';
+require_once 'autoload.php';
+
+class {$name}Test extends \PHPUnit_Framework_TestCase {
+  
+  public function setUp() {
+  }
+
+  public function tearDown() {
+  }
+}
+
+TEST;
+  }
+}
+
 try {
-  if(count($argv) > 1) {
+  if(count($argv) > 2) {
     switch(strtolower($argv[1])) {
       case 'c':
       case 'ctrl':
       case 'controller':
-        if(!isset($argv[2])) {
-          throw new InvalidArgumentException("missing argument 'name'");
-        }
         $generator = new ControllerGenerator($argv[2], @array_slice($argv, 3));
         break;
       case 'm':
       case 'mod':
       case 'model':
-        if(!isset($argv[2])) {
-          throw new InvalidArgumentException("missing argument 'name'");
-        }
         $generator = new ModelGenerator($argv[2], @array_slice($argv, 3));
+        break;
+      case 't':
+      case 'tst':
+      case 'test':
+        $generator = new TestGenerator($argv[2], @array_slice($argv, 3));
         break;
       default:
         throw new InvalidArgumentException("no such generator '{$argv[1]}'");
