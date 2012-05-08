@@ -28,6 +28,17 @@ class Flash extends VoidBase {
   );
 
   /**
+   * initializes the Session variables if they don't exist
+   *
+   * @static
+   * @return void
+   */
+  public static function createSession() {
+    !isset($_SESSION) && $_SESSION = Array();
+    !isset($_SESSION[self::SESSION_VARIABLE]) && $_SESSION[self::SESSION_VARIABLE] = Array();
+  }
+
+  /**
    * Adds a Message to the list
    * 
    * @static
@@ -36,11 +47,9 @@ class Flash extends VoidBase {
    * @return void
    */
   public static function message($type, $message) {
+    self::createSession();
     // check if the given type is in the list
     if(in_array($type, self::$types)) {
-
-      // set the session variable
-      !isset($_SESSION[self::SESSION_VARIABLE]) && $_SESSION[self::SESSION_VARIABLE] = Array();
       // create a flash message object
       $flash_message = new FlashMessage($type, $message);
 
@@ -82,17 +91,18 @@ class Flash extends VoidBase {
 
   /**
    * Passes every Flash Message to the given $callback and if
-   * you wish clears all the Messages
+   * you wish also clears all the Messages
    *
    * @static
    * @param calblback $callback
    * @param bool $clear
    */
   public static function show($callback, $clear = true) {
+    self::createSession();
     foreach($_SESSION[self::SESSION_VARIABLE] as $flash_message) {
       $callback($flash_message);
     }
-    $this->clear && self::clear();
+    $clear && self::clear();
   }
 
   /**
@@ -102,7 +112,8 @@ class Flash extends VoidBase {
    * @return Array
    */
   public static function toArray() {
-    return isset($_SESSION[self::SESSION_VARIABLE]) && is_array($_SESSION[self::SESSION_VARIABLE]) ? $_SESSION[self::SESSION_VARIABLE] : array();
+    self::createSession();
+    return $_SESSION[self::SESSION_VARIABLE];
   }
 
   /**
@@ -112,6 +123,7 @@ class Flash extends VoidBase {
    * @return void
    */
   public static function clear() {
+    self::createSession();
     $_SESSION[self::SESSION_VARIABLE] = Array();
   }
 
@@ -123,6 +135,7 @@ class Flash extends VoidBase {
    * @return bool
    */
   public static function remove(FlashMessage $flash_message) {
+    self::createSession();
     $count_before = count($_SESSION[self::SESSION_VARIABLE]);
     $_SESSION[self::SESSION_VARIABLE] = array_diff($_SESSION[self::SESSION_VARIABLE], array($flash_message)); // @todo: does this remove duplicate entries?
     return $count_before > count($_SESSION[self::SESSION_VARIABLE]);
