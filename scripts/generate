@@ -1,14 +1,40 @@
 #!/usr/bin/env php
 <?php
 
-define('DS', DIRECTORY_SEPARATOR);
-define('ROOT', realpath(dirname(__FILE__) . DS . "..") . DS);
+define('REL', realpath(dirname(__FILE__) . ".."));
+
+require_once 'config/consts.php';
+require_once 'autoload.php';
+require_once 'config/environments.php';
+
+// all the diffrent generators & the shortcuts
+$generators = Array(
+  'controller' => 'ControllerGenerator',
+  'ctrl'       => 'ControllerGenerator',
+  'c'          => 'ControllerGenerator',
+  'model'      => 'ModelGenerator',
+  'mod'        => 'ModelGenerator',
+  'm'          => 'ModelGenerator',
+  'test'       => 'TestGenerator',
+  'tst'        => 'TestGenerator',
+  't'          => 'TestGenerator'
+);
+
+// get all the diffrent classes
+$generator_classes = array_unique($generators);
+$generators_str = "";
+
+foreach( $generator_classes as $class) {
+  // get all the shortcuts 
+  $shortcuts = array_keys(array_intersect($generators, array($class)));
+  $generators_str .= "\t" . array_shift($shortcuts) . " (" .  implode(", ", $shortcuts) . ")\n";
+}
 
 define('HELP', <<<HELP
 {$argv[0]} generator_name name [params ...]
 
 generators: 
-  controller (c, ctrl)
+$generators_str
 
 HELP
 );
@@ -128,26 +154,13 @@ TEST;
 
 try {
   if(count($argv) > 2) {
-    switch(strtolower($argv[1])) {
-      case 'c':
-      case 'ctrl':
-      case 'controller':
-        $generator = new ControllerGenerator($argv[2], @array_slice($argv, 3));
-        break;
-      case 'm':
-      case 'mod':
-      case 'model':
-        $generator = new ModelGenerator($argv[2], @array_slice($argv, 3));
-        break;
-      case 't':
-      case 'tst':
-      case 'test':
-        $generator = new TestGenerator($argv[2], @array_slice($argv, 3));
-        break;
-      default:
-        throw new InvalidArgumentException("no such generator '{$argv[1]}'");
+    if(array_key_exists($argv[1], $generators)) {
+      $generatorname = $generators[$argv[1]];
+      $generator = new $generatorname($argv[2], @array_slice($argv, 3));
+      $generator->generate();
+    } else {
+      throw new InvalidArgumentException("no such generator '{$argv[1]}'");
     }
-    $generator->generate();
   } else {
     echo HELP;
   }
