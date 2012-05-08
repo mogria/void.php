@@ -14,5 +14,3 @@
 * Forms
   * allow more tags
   * better integration with models
-* Flash Messages
-  * create a template to display them

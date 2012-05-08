@@ -16,6 +16,7 @@
         {=:render('layout/_header')}
         <hr />
         <section class="span-16">
+          {=:render('layout/_flash')}
           {[$_content}
         </section>
         <aside class="span-8 last">
