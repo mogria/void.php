@@ -9,7 +9,6 @@ require_once 'config/environments.php';
 
 class FlashTest extends \PHPUnit_Framework_TestCase {
   public function setUp() {
-    $_SESSION = Array();
   }
 
   public function testMessage() {
