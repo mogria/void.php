@@ -183,6 +183,22 @@ MODEL;
 class TestGenerator extends Generator {
   public function __construct($name, $params) {
     $name = ucfirst($name);
+
+    $properties = "";
+    $setup = "";
+    $methods = "";
+
+    if(class_exists("Void\\" . $name)) {
+      $properties = "protected $" . strtolower($name) . ";";
+      $setup = "\$this->" . strtolower($name) . " = new $name();";
+      $reflection = new \ReflectionClass("Void\\" . $name);
+      foreach($reflection->getMethods() as $method) {
+        if($method->class == "Void\\$name") {
+          $methods .= "\n\n" . $this->generateMethod($method->name);
+        }
+      }
+    }
+
     $this->files["test"] = true;
     $this->files["test/{$name}Test.php"] = <<<TEST
 <?php
@@ -194,14 +210,26 @@ require_once 'autoload.php';
 
 class {$name}Test extends \PHPUnit_Framework_TestCase {
   
+  $properties
+
   public function setUp() {
+    $setup
   }
 
   public function tearDown() {
-  }
+
+  }$methods
 }
 
 TEST;
+  }
+
+  public function generateMethod($name) {
+    $name = ucfirst($name);
+    return <<<METHOD
+  public function test$name() {
+  }
+METHOD;
   }
 }
 

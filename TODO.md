@@ -3,7 +3,6 @@
 * Write Utilities to camelcase & lowercase strings
   * Even write a dynamic String class?
 * Generators
-  * the test Generator should create a test{Methodname} Method for each method which exists in the given class
   * Parse arguments with getopt (e.g. -f for overwriting)
 * Autoloader
   * cache the class index
