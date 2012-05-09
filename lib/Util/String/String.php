@@ -16,9 +16,9 @@ class String {
   }
 
   public function uncamelize() {
-    $this->data = strtolower(preg_replace_callback("/^.([A-Z])/i", function($match) {
+    $this->data = ltrim(preg_replace_callback("/([A-Z])/", function($match) {
       return "_" . strtolower($match[1]);
-    }, $this->data));
+    }, $this->data), "_");
     return $this;
   }
 
