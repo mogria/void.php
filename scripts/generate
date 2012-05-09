@@ -1,11 +1,16 @@
 #!/usr/bin/env php
 <?php
 
-define('REL', realpath(dirname(__FILE__) . ".."));
+namespace Void;
+
+define('REL', realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . ".."));
+chdir(REL);
 
 require_once 'config/consts.php';
 require_once 'autoload.php';
 require_once 'config/environments.php';
+
+Booter::boot();
 
 // all the diffrent generators & the shortcuts
 $generators = Array(
@@ -39,6 +44,36 @@ $generators_str
 HELP
 );
 
+function ascii_table(Array $table) {
+  $lengths = Array();
+  $line = "+";
+  $result = "";
+  foreach($table as $row) {
+    foreach($row as $column_key => $column) {
+      !isset($lengths[$column_key]) && $lengths[$column_key] = 0;
+      if(($len = strlen($column)) > $lengths[$column_key]) {
+        $lengths[$column_key] = $len;
+      }
+    }
+  }
+
+  foreach($lengths as $length) {
+    $line .= str_repeat("-", $length + 2) . "+";
+  }
+  
+  $line = "\n" . $line . "\n";
+
+  $result .= $line;
+  foreach($table as $row) {
+    $result .= "| ";
+    foreach($row as $column_key => $column) {
+      $result .= str_pad($column, $lengths[$column_key]) . " | ";
+    }
+    $result .= $line;
+  }
+  return $result;
+}
+
 abstract class Generator {
   protected $files = Array();
   protected $flags = Array('force' => false);
@@ -70,7 +105,7 @@ abstract class Generator {
         }
       } else {
         if(is_file(ROOT . $file) && !$this->getFlag('force')) {
-          throw new BadMethodCallException("file '$file' already exists (use -f to force overwrite)");
+          throw new \BadMethodCallException("file '$file' already exists (use -f to force overwrite)");
         }
         echo "creating '$file'\n";
         file_put_contents(ROOT . $file, $content);
@@ -114,9 +149,27 @@ CONTROLLER;
 class ModelGenerator extends Generator {
   public function __construct($name, $params) {
     $name = ucfirst($name);
+
+    $table_overview = "";
+    try {
+      $table = Array();
+      $table[] = Array('Name', 'Type', 'Length', 'NULL', 'default', 'Primary Key',  'auto increment');
+      $model_creation = "class $name extends \\ActiveRecord\\Model{ };";
+      eval($model_creation);
+      $columns = $name::table()->columns;
+      foreach($columns as $column) {
+        $table[] = Array($column->name, $column->raw_type, $column->length, $column->nullable ? "yes" : "no", $column->default, $column->pk, $column->auto_increment);
+      }
+
+      $table_overview = ascii_table($table);
+      $table_overview = "/*\n$table_overview\n*/";
+    } catch(\Exception $ex) { print_r($ex); throw $ex; }
+
     $this->files["Models"] = true;
     $this->files["Models/$name.php"] = <<<MODEL
 <?php
+
+$table_overview
 
 namespace Void;
 
@@ -155,7 +208,7 @@ TEST;
 try {
   if(count($argv) > 2) {
     if(array_key_exists($argv[1], $generators)) {
-      $generatorname = $generators[$argv[1]];
+      $generatorname = "Void\\" . $generators[$argv[1]];
       $generator = new $generatorname($argv[2], @array_slice($argv, 3));
       $generator->generate();
     } else {
@@ -164,6 +217,6 @@ try {
   } else {
     echo HELP;
   }
-} catch(Exception $ex) {
+} catch(\Exception $ex) {
   echo "Error: {$ex->getMessage()}\n";
 }

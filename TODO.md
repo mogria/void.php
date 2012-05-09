@@ -4,7 +4,7 @@
   * Even write a dynamic String class?
 * Generators
   * the test Generator should create a test{Methodname} Method for each method which exists in the given class
-  * the model Generator should print the table structure on top
+  * Parse arguments with getopt (e.g. -f for overwriting)
 * Autoloader
   * cache the class index
 * Assets
