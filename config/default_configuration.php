@@ -24,7 +24,7 @@ function loadDefaultConfig($cfg) {
     $cfg->router_index_file = "index.php";
 
     /** Booter */
-    $cfg->booter_classes = Array('ErrorToException', 'MagicQuoteFix', 'PHPErrorMessages', 'SessionInit', 'RequestFilter');
+    $cfg->booter_classes = Array('ErrorToException', 'MagicQuoteFix', 'PHPErrorMessages', 'SessionInit', 'RequestFilter', 'ModelConfig');
 
     /** Assets */
     $cfg->cssasset_dir = "stylesheets";
