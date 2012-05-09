@@ -163,7 +163,7 @@ class ModelGenerator extends Generator {
 
       $table_overview = ascii_table($table);
       $table_overview = "/*\n$table_overview\n*/";
-    } catch(\Exception $ex) { print_r($ex); throw $ex; }
+    } catch(\Exception $ex) { }
 
     $this->files["Models"] = true;
     $this->files["Models/$name.php"] = <<<MODEL
