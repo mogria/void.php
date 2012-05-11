@@ -2,7 +2,6 @@
 
 namespace Void;
 
-echo "util shortcuts\n";
 class UtilShortcuts implements Job {
   /**
    * Some Util Classes which have shortcuts
