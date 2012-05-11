@@ -24,7 +24,9 @@ function loadDefaultConfig($cfg) {
     $cfg->router_index_file = "index.php";
 
     /** Booter */
-    $cfg->booter_classes = Array('ErrorToException', 'MagicQuoteFix', 'PHPErrorMessages', 'SessionInit', 'RequestFilter', 'ModelConfig');
+    $cfg->booter_classes = Array('ErrorToException', 'PHPErrorMessages', 'ModelConfig', 'UtilShortcuts');
+    $cfg->booter_classes_web   = Array('RequestFilter', 'SessionInit');
+    $cfg->booter_classes_shell = Array();
 
     /** Assets */
     $cfg->cssasset_dir = "stylesheets";
@@ -35,6 +37,9 @@ function loadDefaultConfig($cfg) {
 
     /** Model **/
     $cfg->modelconfig_dir = "Models";
+
+    /** Cache **/
+    $cfg->cache_dir = "tmp/cache";
 
     /** Hash **/
     $cfg->hash_iterations = 115;
