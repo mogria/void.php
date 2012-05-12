@@ -17,9 +17,9 @@ class Cache extends VoidBase {
     }
     
     if($content === null) {
-      return is_file($path) ? file_get_contents($path) : false;
+      return is_file($path) ? unserialize(file_get_contents($path)) : false;
     } else {
-      return file_put_contents($path, $content) !== false;
+      return file_put_contents($path, serialize($content)) !== false;
     }
   }
 
