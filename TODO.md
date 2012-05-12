@@ -4,8 +4,6 @@
   * Even write a dynamic String class?
 * Generators
   * Parse arguments with getopt (e.g. -f for overwriting)
-* Autoloader
-  * cache the class index
 * Assets
   * instead of merging files together create multiple tags?
   * cache the assets

@@ -26,7 +26,13 @@ class Autoloader {
    * @param string $dir Directory where the classes are
    */
   public static function init($dir) {
-    self::$index = self::create_index($dir);
+    !is_dir("tmp") && mkdir("tmp");
+    if(is_file("tmp/autoload-cache")) {
+      self::$index = unserialize(file_get_contents("tmp/autoload-cache"));
+    } else {
+      self::$index = self::create_index($dir);
+      file_put_contents("tmp/autoload-cache", serialize(self::$index));
+    }
   }
 
   /**
