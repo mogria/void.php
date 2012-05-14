@@ -29,7 +29,7 @@ class Cache extends VoidBase {
 
   public static function cache_modified($identifier) {
     $file = self::genPathByIdentifier($identifier);
-    return is_file($file) ? filemtime(self::genPathByIdentifier($identifier)) : 0;
+    return is_file($file) ? filemtime($file) : false;
   }
 
   public static function clear() {
