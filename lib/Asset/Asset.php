@@ -9,6 +9,7 @@ namespace Void;
  * -- application.css --
  * //= require style.css
  * //= require_tree modules
+ * 
  *
  * if the directory structure is something like this
  *
@@ -60,6 +61,18 @@ class Asset extends VoidBase {
   protected $main_file;
 
   /**
+   * the commands you can use in a Asset file
+   * @var Array $directives
+   * @access public
+   */
+  static protected $directives = Array(
+    'require',
+    'require_dir',
+    'require_tree',
+    'require_self',
+  );
+
+  /**
    * Simple Constructor.
    * Initializes the three protected properties $extension, $directory and $main_file
    *
@@ -81,55 +94,36 @@ class Asset extends VoidBase {
    * @return string - the $main_file & the composed content
    */
   public function load() {
-    // the three possible commands you can use in a Asset file
-    $directives = Array(
-      'require',
-      'require_dir',
-      'require_tree'
-    );
-
-    // read the main file
-    $content = file_get_contents($this->directory. DS . $this->main_file . "." . $this->extension);
-    $matches = Array();
-    $self = $this;
-
-    // search for all the three commands inside of the file
-    foreach($directives as $directive) {
-      // we are using a regular expression to do this
-      $content = preg_replace_callback(
-        '/^\/\/=[ ]*' . preg_quote($directive) . '[ ]+([^\\n$]*)/mi',
-        // this closure gets called if something as been found
-        function($matches) use ($directive, $self) {
-          // the following method will be called
-          $method = "handler_" . $directive;
-          return $self->$method(trim($matches[1]));
-        },
-        $content
-      );
+    $content = "";
+    foreach($this->getFileList() as $file) {
+      $content .= $this->require_single_file($file) {;
     }
-
     return $content;
   }
 
   /**
-   * This method gets called if a single file is included from the main file
+   * returns a list of files which are included by the main_file
    *
    * @access public
-   * @param string $file
-   * @return the file
+   * @return Array 
    */
-  public function handler_require($file) {
-    $str = "";
+  public function getFileList() {
+    // read the main file
+    $content = file_get_contents($this->directory. DS . $this->main_file . "." . $this->extension);
+    // search for all the three commands inside of the file
+    // we are using a regular expression to do this
+    preg_match(
+      '/^\/\/=[ ]*(' . implode("|", array_map('preg_quote', self::$directives)) . ')[ ]+([^\\n$]*)/mi',
+      $content,
+      $matches);
 
-    $cwd = getcwd();  // get the current directory
-    chdir($this->directory); // change to the assets directory
-    $files = glob($file); // returns all the files that matched the pattern
-    chdir($cwd); // change back to the original directory
-    foreach($files as $file) {
-      $str .= $this->require_single_file($file);
+    // iterate all the results and build an array of all the files
+    $list = Array();
+    foreach($matches as $match) {
+      $method = "handler_" . $match[1];
+      $list = array_merge($list, $this->$method(trim($match[2])));
     }
-
-    return $str;
+    return $list;
   }
 
   /**
@@ -151,11 +145,39 @@ class Asset extends VoidBase {
   }
 
   /**
+   * This method gets called if a single file is included from the main file
+   *
+   * @access public
+   * @param string $file
+   * @return Array - list of files
+   */
+  public function handler_require($file) {
+    $str = "";
+
+    $cwd = getcwd();  // get the current directory
+    chdir($this->directory); // change to the assets directory
+    $files = glob($file); // returns all the files that matched the pattern
+    chdir($cwd); // change back to the original directory
+
+    return $files;
+  }
+
+  /**
+   * This method gets called if the main_file includes itself by calling require_self
+   *
+   * @access public
+   * @return Array - list of files
+   */
+  public function handler_require_self() {
+    return $this->handler_require($this->main_file . "." . $this->extension);
+  }
+
+  /**
    * This includes all the files from a directory (but not the files in the subdirectories of the directory)
    *
    * @access public
    * @param string $dir - the directory
-   * @return string - all the files together
+   * @return Array - list of files
    */
   public function handler_require_dir($dir) {
     return $this->handler_require_tree($dir, 1);
@@ -167,10 +189,11 @@ class Asset extends VoidBase {
    * @access public
    * @param $dir - the directory
    * @param $depth
-   * @return string - all the files together
+   * @return Array - list of files
    */
   public function handler_require_tree($dir, $depth = -1) {
     $str = "";
+    $list = Array();
 
     // scan the given directory for files
     $cwd = getcwd();
@@ -183,14 +206,15 @@ class Asset extends VoidBase {
 
     // iterate through each file
     foreach($files as $file) {
+      $filename = $dir . DS . $file;
       // is it a file or a directory?
-      if(is_file($this->directory . DS . $dir . DS . $file)) {
-        // append it to the string if it is a file
-        $str .= $this->require_single_file($dir . DS . $file);
-      } else if(is_dir($this->directory . DS . $dir . DS . $file)) {
+      if(is_file($this->directory . DS . $filename)) {
+        // append it to the list if it is a file
+        $list[] = $filename;
+      } else if(is_dir($this->directory . DS . $filename)) {
         // do a recursive call if it is a directory until the $depth limit is reached
         if($depth == -1 || (--$depth > 0)) {
-          $str .= $this->handler_require_tree($dir . DS . $file, $depth);
+          $list = array_merge($list, $this->handler_require_tree($filename, $depth));
         }
       }
     }
