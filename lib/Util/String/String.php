@@ -2,30 +2,24 @@
 
 namespace Void;
 
+/***
+ * This represents a string. This adds some functionality to the string,
+ * and also lets you chain certain methods
+ *
+ */
 class String {
+
+  /**
+   * contains the string
+   * @var string $data
+   */
   protected $data;
-  public function __construct($string) {
-    $this->data = (string)$string;
-  }
 
-  public function camelize() {
-    $this->data = preg_replace_callback("/(?:_|^)([a-z])/i", function($match) {
-      return strtoupper($match[1]);
-    }, $this->data);
-    return $this;
-  }
-
-  public function uncamelize() {
-    $this->data = ltrim(preg_replace_callback("/([A-Z])/", function($match) {
-      return "_" . strtolower($match[1]);
-    }, $this->data), "_");
-    return $this;
-  }
-
-  public function __toString() {
-    return $this->data;
-  }
-
+  /**
+   * an array which defines which intern php gets called when you call certain 
+   * methods on this object
+   * @var Array $string_funcs
+   */
   protected static $string_funcs = Array(
     'replace' => Array('str_replace', 3, true),
     'ireplace' => Array('str_ireplace', 3, true),
@@ -41,6 +35,61 @@ class String {
     'repeat' => Array('str_repeat', 1, true)
   );
 
+  /**
+   * Constructor
+   * @param string $string - the string data
+   */
+  public function __construct($string) {
+    $this->data = (string)$string;
+  }
+
+  /**
+   * camelizes the intern string data
+   * For Example:
+   * test          -> Test       
+   * test_string   -> TestString
+   * a_test_string -> ATestString
+   *
+   * @return String - this
+   */
+  public function camelize() {
+    $this->data = preg_replace_callback("/(?:_|^)([a-z])/i", function($match) {
+      return strtoupper($match[1]);
+    }, $this->data);
+    return $this;
+  }
+
+  /**
+   * uncamelizes the intern string data
+   * For Example:
+   * Test        -> test         
+   * TestString  -> test_string  
+   * ATestString -> a_test_string
+   *
+   * @return String - this
+   */
+  public function uncamelize() {
+    $this->data = ltrim(preg_replace_callback("/([A-Z])/", function($match) {
+      return "_" . strtolower($match[1]);
+    }, $this->data), "_");
+    return $this;
+  }
+
+  /**
+   * returns the string data
+   * @return string - the intern string
+   */
+  public function __toString() {
+    return $this->data;
+  }
+
+  /**
+   * calls an intern php function with the given arguments
+   * 
+   * For Example:
+   * $string = new String("abc");
+   * echo $string->replace('a', 'b'); // calls str_replace() & outputs "bbc"
+   */
   public function __call($method, $args) {
     if(!isset(self::$string_funcs[$method])) {
       throw new BadMethodCallException();
@@ -60,6 +109,17 @@ class String {
   }
 }
 
+/**
+ * A shortcut `new String()`
+ *
+ * For Example:
+ * s("string")
+ * 
+ * is the same as
+ *
+ * new String("string")
+ *
+ */
 function s($data) {
   return new String($data);
 }
