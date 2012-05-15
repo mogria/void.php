@@ -3,12 +3,12 @@
   <head>
     <title>{=:title("Void.php", $title)}</title>
     <meta charset="utf-8" />
-    {=:linkTag('blueprint/screen', Array('media' => 'screen, projection'))}
-    {=:linkTag('blueprint/print', Array('media' => 'print'))}
+    {=:stylesheet('blueprint/screen', Array('media' => 'screen, projection'))}
+    {=:stylesheet('blueprint/print', Array('media' => 'print'))}
     <!--[if lt IE 8]>
-    {=:linkTag('blueprint/ie', Array('media' => 'screen, projection'))}
+    {=:stylesheet('blueprint/ie', Array('media' => 'screen, projection'))}
     <![endif]-->
-    {=:linkTag('application')}
+    {=:stylesheet('application')}
   </head>
   <body>
     <div id="wrapper" class="container">

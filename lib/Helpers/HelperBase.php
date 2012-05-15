@@ -34,4 +34,13 @@ class HelperBase extends VirtualAttribute {
   public function __call($method, $args) {
     return $this->template->__call($method, $args);
   }
+
+  public function stylesheet($main_file, Array $attributes = Array()) {
+    $tags = Array();
+    $asset = new CSSAsset($main_file);
+    foreach($asset->getFileList() as $file) {
+      $tags[] = $this->linkTag(BASEURL . $asset->getDirectory() . DS . $file, $attributes)->output();
+    }
+    return implode("\n", $tags);
+  }
 }
