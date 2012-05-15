@@ -9,6 +9,7 @@
     {=:stylesheet('blueprint/ie', Array('media' => 'screen, projection'))}
     <![endif]-->
     {=:stylesheet('application')}
+    {=:javascript('application')}
   </head>
   <body>
     <div id="wrapper" class="container">
