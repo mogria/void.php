@@ -96,7 +96,7 @@ class Asset extends VoidBase {
   public function load() {
     $content = "";
     foreach($this->getFileList() as $file) {
-      $content .= $this->require_single_file($file) {;
+      $content .= $this->require_single_file($file);
     }
     return $content;
   }
@@ -112,16 +112,20 @@ class Asset extends VoidBase {
     $content = file_get_contents($this->directory. DS . $this->main_file . "." . $this->extension);
     // search for all the three commands inside of the file
     // we are using a regular expression to do this
-    preg_match(
-      '/^\/\/=[ ]*(' . implode("|", array_map('preg_quote', self::$directives)) . ')[ ]+([^\\n$]*)/mi',
+    $ok = preg_match_all(
+      '/^\/\/=[^\S\\n]*(' . implode("|", array_map('preg_quote', self::$directives)) . ')[^\S\\n]+([^\\n$]*)/mi',
       $content,
-      $matches);
+      $matches, PREG_SET_ORDER);
 
-    // iterate all the results and build an array of all the files
     $list = Array();
-    foreach($matches as $match) {
-      $method = "handler_" . $match[1];
-      $list = array_merge($list, $this->$method(trim($match[2])));
+    if($ok) {
+      // iterate all the results and build an array of all the files
+      foreach($matches as $match) {
+        $method = "handler_" . $match[1];
+        $list = array_merge($list, $this->$method(trim($match[2])));
+      }
+    } else {
+      $list = array_merge($list, $this->handler_require_self());
     }
     return $list;
   }
@@ -192,7 +196,6 @@ class Asset extends VoidBase {
    * @return Array - list of files
    */
   public function handler_require_tree($dir, $depth = -1) {
-    $str = "";
     $list = Array();
 
     // scan the given directory for files
@@ -219,7 +222,11 @@ class Asset extends VoidBase {
       }
     }
 
-    return $str;
+    return $list;
+  }
+
+  public function getDirectory() {
+    return $this->directory;
   }
 }
 
