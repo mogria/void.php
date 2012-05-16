@@ -153,12 +153,20 @@ METHOD;
 
 namespace Void;
 
-class {$name}Controller extends ControllerBase {
+class {$name}Controller extends ApplicationController {
 $methods_string
 
 }
 
 CONTROLLER;
+    $this->files["Helpers/{$name}Helper.php"] = <<<HELPER
+<?php
+
+namespace Void;
+
+class {$name}Helper extends ApplicationHelper {
+}
+HELPER;
 
     $foldername = strtolower($name);
     $this->files["Views/$foldername"] = true;
