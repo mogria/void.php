@@ -7,3 +7,6 @@
 * Forms
   * allow more tags
   * better integration with models
+* Autoloader
+  * you always have to delete the cache to add a new class to the autoloader
+
