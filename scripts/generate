@@ -74,6 +74,28 @@ function ascii_table(Array $table) {
   return $result;
 }
 
+function php_array($array, $multiline = true) {
+  $multiline !== true && $multiline > 0 && $multiline--;
+  $keys = array_keys(array_values($array));
+  $elements = Array();
+  foreach($array as $key => $element) {
+    $out = $multiline ? "  " : "";
+    current($keys) != $key && $out .= "'" . $key . "' => ";
+    if(is_array($element)) {
+      $out .= str_replace("\n", "\n  ", php_array($element, $multiline));
+    } else if (is_string($element)) {
+      $out .= "'" . addslashes($element) . "'";
+    } else {
+      $out .= $element;
+    }
+    $elements[] = $out;
+    next($keys);
+  }
+  $space = $multiline ? "\n" : " ";
+  $break = $multiline ? "\n" : "";
+  return "Array(" . $break . implode("," . $space,  $elements) . $break . ")";
+}
+
 abstract class Generator {
   protected $files = Array();
   protected $flags = Array('force' => false);
@@ -151,6 +173,8 @@ class ModelGenerator extends Generator {
     $name = ucfirst($name);
 
     $table_overview = "";
+    $validates_presence_of = Array();
+    $validates_length_of = Array();
     try {
       $table = Array();
       $table[] = Array('Name', 'Type', 'Length', 'NULL', 'default', 'Primary Key',  'auto increment');
@@ -159,11 +183,20 @@ class ModelGenerator extends Generator {
       $columns = $name::table()->columns;
       foreach($columns as $column) {
         $table[] = Array($column->name, $column->raw_type, $column->length, $column->nullable ? "yes" : "no", $column->default, $column->pk, $column->auto_increment);
+        if(!$column->nullable && !$column->auto_increment) {
+          $validates_presence_of[] = Array($column->name);
+        }
+        if($column->length && !$column->auto_increment) {
+          $validates_length_of[] = Array($column->name, 'maximum' => $column->length);
+        }
       }
 
       $table_overview = ascii_table($table);
       $table_overview = "/*\n$table_overview\n*/";
     } catch(\Exception $ex) { }
+
+    $validates_presence_of = str_replace("\n", "\n  ", php_array($validates_presence_of, 2));
+    $validates_length_of = str_replace("\n", "\n  ", php_array($validates_length_of, 2));
 
     $this->files["Models"] = true;
     $this->files["Models/$name.php"] = <<<MODEL
@@ -174,6 +207,8 @@ $table_overview
 namespace Void;
 
 class {$name} extends \\ActiveRecord\\Model {
+  static \$validates_presence_of = $validates_presence_of;
+  static \$validates_length_of = $validates_length_of;
 }
 
 MODEL;
