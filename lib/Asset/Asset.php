@@ -160,7 +160,7 @@ class Asset extends VoidBase {
 
     $cwd = getcwd();  // get the current directory
     chdir($this->directory); // change to the assets directory
-    $files = glob($file); // returns all the files that matched the pattern
+    $files = glob($file . "." . $this->extension); // returns all the files that matched the pattern
     chdir($cwd); // change back to the original directory
 
     return $files;
@@ -173,7 +173,7 @@ class Asset extends VoidBase {
    * @return Array - list of files
    */
   public function handler_require_self() {
-    return $this->handler_require($this->main_file . "." . $this->extension);
+    return $this->handler_require($this->main_file);
   }
 
   /**
