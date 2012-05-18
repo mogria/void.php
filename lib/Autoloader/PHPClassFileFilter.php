@@ -48,24 +48,17 @@ class PHPClassFileFilter extends FilterIterator {
    */
   public function inExcludedDir($file) {
     $inside = false;
-    $file_before = $file;
-    $file = null;
+    $file = str_replace("/", DS , realpath($file));
     // iterate through each excluded directory
     foreach($this->excluded_dirs as $dir) {
       // replace all normal slashes in the path with the
       // directory separator (for windows compatibility)
-      $dir = str_replace("/", DS, $dir);
-      // go all directories back and check if the
-      // directories are matching with the current excluded directory
-      while($file != $file_before && $file != DS && $file != "." && !$inside) {
-        $file = $file_before;
-        // echo str_pad($file, 80, " ", STR_PAD_RIGHT) . ": "
-        //   . str_pad(substr($file, -strlen($dir)), strlen($dir), " ", STR_PAD_RIGHT)
-        //   . " === " . $dir . "\n";
-        if(substr($file, -strlen($dir)) === $dir) {
-          $inside = true;
-        }
-        $file_before = dirname($file);
+      $dir = str_replace("/", DS, realpath($dir));
+      // does the file path start with the directory path?
+      if(strpos($file, $dir) === 0) {
+        // the file is in the directory $dir
+        $inside = true;
+        break;
       }
     }
     return $inside;
