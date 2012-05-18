@@ -81,7 +81,7 @@ class Tag extends VirtualAttribute {
     array_walk($attributes, function(&$value, $key) {
       $value = " " . htmlspecialchars($key, ENT_QUOTES, 'UTF-8') . ( $value !== null ? "=\"" . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . "\"" : "");
     });
-    return "<" . $this->tagname . implode("", $attributes) . ($this->content !== null ? ">" . $this->content . "</" . $this->tagname . ">" : " />");
+    return "<" . $this->tagname . implode("", $attributes) . ($this->content !== null ? ">" . $this->getContent(). "</" . $this->tagname . ">" : " />");
   }
 
   /**

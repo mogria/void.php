@@ -16,7 +16,10 @@ class FormTag extends Tag {
   protected static $fields = Array(
     'text_field' => 'InputTextTag',
     'password'   => 'InputPasswordTag',
-    'text_area'  => 'TextareaTag'
+    'text_area'  => 'TextareaTag',
+    'checkbox'   => 'InputCheckboxTag',
+    'radio'      => 'InputRadioTag',
+    'select'     => 'SelectTag'
   );
 
   public function __construct($method, $action, Array $attributes = Array()) {
