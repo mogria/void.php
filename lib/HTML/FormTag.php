@@ -14,12 +14,12 @@ class FormTag extends Tag {
   protected $model = null;
 
   protected static $fields = Array(
-    'text_field' => 'InputTextTag',
-    'password'   => 'InputPasswordTag',
-    'text_area'  => 'TextareaTag',
-    'checkbox'   => 'InputCheckboxTag',
-    'radio'      => 'InputRadioTag',
-    'select'     => 'SelectTag'
+    'text_field'     => 'InputTextTag',
+    'password_field' => 'InputPasswordTag',
+    'text_area'      => 'TextareaTag',
+    'check_box'      => 'InputCheckboxTag',
+    'radio_button'   => 'InputRadioTag',
+    'select'         => 'SelectTag'
   );
 
   public function __construct($method, $action, Array $attributes = Array()) {
