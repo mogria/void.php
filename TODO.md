@@ -4,8 +4,6 @@
   * Even write a dynamic String class?
 * Generators
   * Parse arguments with getopt (e.g. -f for overwriting)
-  * update the scripts/clean file to delete the files in Helpers/ & not to delete the Application Controllers etc.
-  * update the scripts/clean. It shouldnt delete blueprint css
   * add a possibility for a script to call an other script
 * Forms
   * allow more tags

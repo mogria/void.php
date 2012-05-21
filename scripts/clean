@@ -9,6 +9,7 @@
  */
 
 function pattern_match($str, $patterns) {
+  if($patterns == null) return true;
   $patterns = implode("|", array_map('preg_quote', $patterns));
   return preg_match("/(" . $patterns . ")/i", $str);
 }
@@ -16,80 +17,161 @@ function pattern_match($str, $patterns) {
 define('DS', DIRECTORY_SEPARATOR);
 define('ROOT', realpath(dirname(__FILE__) . DS . "..") . DS);
 $file_list = Array(
-  'Controllers/*',
-  'Views/*',
-  'Models/*',
-  'stylesheets/*',
-  'javascripts/*'
+  'Controllers/',
+  'Views/',
+  'Helpers/',
+  'Models/',
+  'stylesheets/',
+  'javascripts/'
 );
 
 $all = false;
 
 $patterns = array_slice($argv, 1);
 
-
 foreach($file_list as $file) {
   $file = ROOT . $file;
-  $files = glob($file);
-  if(is_array($files)) {
-    foreach($files as $del_file) {
-      if(pattern_match($del_file, $patterns)) {
-        if(is_file($del_file)) {
-          $yes = $all;
-          if(!$all) {
-            echo "delete file $del_file ? (y|n|a|q) ";
-            $handle = fopen("php://stdin", "r");
-            $out = fgets($handle, 80);
-            fclose($handle);
-            switch($out) {
-              case "a\n":
-                $yes = $all = true;
-                break;
-              case "y\n":
-                $yes = true;
-                break;
-              case "q\n":
-                exit;
-              default:
-                break;
-            }
-            if($yes) {
-              echo "rm    '$del_file'\n";
-              unlink($del_file);
-            }
+  $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($file));
+  foreach($files as $del_file) {
+    if(pattern_match($del_file, $patterns)) {
+      if(is_file($del_file)) {
+        $yes = $all;
+        if(!$all) {
+          echo "delete file $del_file ? (y|n|a|q) ";
+          $handle = fopen("php://stdin", "r");
+          $out = fgets($handle, 80);
+          fclose($handle);
+          switch($out) {
+            case "a\n":
+              $yes = $all = true;
+              break;
+            case "y\n":
+              $yes = true;
+              break;
+            case "q\n":
+              exit;
+            default:
+              break;
           }
-        } else if(is_dir($del_file)) {
-          echo "DIR: $del_file\n";
-          if(@rmdir($del_file)) {
-            echo "rmdir '$del_file'\n";
+          if($yes) {
+            echo "rm    '$del_file'\n";
+            unlink($del_file);
           }
+        }
+      } else if(is_dir($del_file)) {
+        if(@rmdir($del_file)) {
+          echo "rmdir '$del_file'\n";
         }
       }
     }
   }
 }
-
-touch("stylesheets/application.css");
-touch("javascripts/application.js");
-file_put_contents("Helpers/ApplicationHelper.php", <<<APPLICATION_HELPER
+$files = Array();
+$files['Controllers'] = null;
+$files['Views'] = null;
+$files['Helpers'] = null;
+$files['Models'] = null;
+$files['stylesheets'] = null;
+$files['javascripts'] = null;
+$files["stylesheets/application.css"]   = "";
+$files["javascripts/application.js"]    = "";
+$files["Helpers/ApplicationHelper.php"] = <<<APPLICATION_HELPER
 <?php
 
 namespace Void;
+
+/* all the methods you write in here are accessible
+ in the template. For instance:
+
+ helper method:
+ <code>
+ public function copyright() {
+   \$start_year = 2012;
+   return "copyright &copy; " . ("\$start_year" == date("Y") ? date("Y") :  \$start_year . " - " . date("Y")) . " by &lt;company_name&gt;";
+ }
+ </code>
+
+ template:
+ <code>
+ {=:copyright()} 
+ </code>
+ the above template calls the helper method `copyright` */ 
 
 class ApplicationHelper extends HelperBase {
 }
-APPLICATION_HELPER
-);
+APPLICATION_HELPER;
 
-file_put_contents("Controllers/ApplicationController.php", <<<APPLICATION_CONTROLLER
+$files["Controllers/ApplicationController.php"] = <<<APPLICATION_CONTROLLER
 <?php
 
 namespace Void;
 
-abstract class ApplicationController extends ControllerBase {
-}
-APPLICATION_CONTROLLER
-);
+/* All the Controllers should extend this Controller,
+ so all methods you write into this class are accessible
+ from all the Controller */
 
-@mkdir("Views/layout");
-touch("Views/layout/application.tpl");
+abstract class ApplicationController extends ControllerBase {
+
+  /* this method will always be called
+   before the action of the controller is called
+   
+   In here you can initialize some variables for the view, or do other things.
+   For instance:
+   <code>
+   // set the default title
+   \$this->title = "My Mega Site";
+   </code>
+
+   If you want to overwrite this method by your own Controller
+   do it like follows:
+   
+   <code>
+   class MyController extends ApplicationController {
+     public function initialize() {
+       // do some stuff ...
+
+       parent::initialize(); // don't forget this line
+     }
+   }
+   </code>
+   */
+  public function initialize() {
+  }
+}
+APPLICATION_CONTROLLER;
+
+$files["Views/layout"] = null;
+$files["Views/layout/application.tpl"] = <<<APPLICATION_TPL
+<!doctype html>
+<html>
+  <head>
+    <title>Your Page Title</title>
+    <meta charset="utf-8" />
+    {=:stylesheet('blueprint/screen', Array('media' => 'screen, projection'))}
+    {=:stylesheet('blueprint/print', Array('media' => 'print'))}
+    <!--[if lt IE 8]>
+    {=:stylesheet('blueprint/ie', Array('media' => 'screen, projection'))}
+    <![endif]-->
+    {=:stylesheet('application')}
+    {=:javascript('application')}
+    <!-- This file is located at `Views/layout/application.tpl` -->
+  </head>
+  <body>
+    <!-- this is where the current page is displayed, so better don't delete it -->
+    {[\$content} 
+  </body>
+</html>
+APPLICATION_TPL;
+
+// create all the files $files
+foreach($files as $path => $content) {
+  if($content === null)  {
+    @mkdir($path);
+    echo "create dir  '$path'\n";
+  } else {
+    if(!is_file($path)) {
+      echo "create file '$path'\n";
+      file_put_contents(ROOT . $path, $content);
+    }
+  }
+}
