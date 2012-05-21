@@ -61,4 +61,5 @@ abstract class ControllerBase extends VirtualAttribute {
   }
 
   abstract function action_index();
+  abstract function initialize();
 }
