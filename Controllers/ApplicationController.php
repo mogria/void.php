@@ -32,6 +32,5 @@ abstract class ApplicationController extends ControllerBase {
    </code>
    */
   public function initialize() {
-    $this->title = "Void.php";
   }
 }

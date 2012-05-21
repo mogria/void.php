@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>{=:title("Void.php", $title)}</title>
+    <title>Your Page Title</title>
     <meta charset="utf-8" />
     {=:stylesheet('blueprint/screen', Array('media' => 'screen, projection'))}
     {=:stylesheet('blueprint/print', Array('media' => 'print'))}
@@ -10,23 +10,10 @@
     <![endif]-->
     {=:stylesheet('application')}
     {=:javascript('application')}
+    <!-- This file is located at `Views/layout/application.tpl` -->
   </head>
   <body>
-    <div id="wrapper" class="container">
-      <div class="container">
-        {=:render('layout/_header')}
-        <hr />
-        <section class="span-16">
-          {=:render('layout/_flash')}
-          {[$_content}
-        </section>
-        <aside class="span-8 last">
-          <h1>by the way ...</h1>
-          <p class="box">Random text, Random text, Random text, Random text, Random text, Random text, Random text, Random text</p>
-        </aside>
-        <hr />
-        {=:render('layout/_footer')}
-      </div>
-    </div>
+    <!-- this is where the current page is displayed, so better don't delete it -->
+    {[$content} 
   </body>
 </html>
