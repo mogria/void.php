@@ -14,6 +14,6 @@
   </head>
   <body>
     <!-- this is where the current page is displayed, so better don't delete it -->
-    {[$content} 
+    {[$_content} 
   </body>
 </html>
