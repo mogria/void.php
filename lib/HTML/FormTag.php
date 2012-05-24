@@ -13,11 +13,17 @@ class FormTag extends Tag {
   protected $contents = Array();
   protected $model = null;
 
-  protected static $fields = Array(
+  protected static $buttons = Array(
+    'submit' => 'InputSubmitTag'
+  );
+  protected static $normal_fields = Array(
     'text_field'     => 'InputTextTag',
     'password_field' => 'InputPasswordTag',
-    'text_area'      => 'TextareaTag',
     'check_box'      => 'InputCheckboxTag',
+    'text_area'      => 'TextareaTag'
+  );
+
+  protected static $multiple_fields = Array(
     'radio_button'   => 'InputRadioTag',
     'select'         => 'SelectTag'
   );
@@ -55,12 +61,21 @@ class FormTag extends Tag {
         $tag = new LabelTag($name, $for, $this->grabAttributes($params, 0));
         return $tag->output();
       }
-    } elseif($method === 'submit') {
-      $tag = new InputSubmitTag(array_shift($params), $this->grabAttributes($params, 0));
-      return $tag->output();
-    } elseif(array_key_exists($method, self::$fields)) {
-      $classname = __NAMESPACE__ . "\\" . self::$fields[$method];
-      $tag = new $classname($name = array_shift($params), $this->model === null ? "" : $this->model->$name, $this->grabAttributes($params, 0));
+    } else {
+      $type = "";
+      $tag;
+      if(array_key_exists($method, self::$buttons)) {
+        $classname = __NAMESPACE__ . "\\" . self::$buttons[$method];
+        $tag = new InputSubmitTag(array_shift($params), $this->grabAttributes($params, 0));
+      } elseif(array_key_exists($method, self::$normal_fields)) {
+        $classname = __NAMESPACE__ . "\\" . self::$normal_fields[$method];
+        $tag = new $classname($name = array_shift($params), $this->model === null ? "" : $this->model->$name, $this->grabAttributes($params, 0));
+      } elseif(array_key_exists($method, self::$multiple_fields)) {
+        $classname = __NAMESPACE__ . "\\" . self::$multiple_fields[$method];
+        $tag = new $classname($name = array_shift($params), array_shift($params), $this->grabAttributes($params, 0));
+      } else {
+        throw new BadMethodCallException("no such form element '$method'");
+      }
       return $tag->output();
     }
   }

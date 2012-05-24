@@ -2,13 +2,11 @@
 
 namespace Void;
 
-
-class SelectTag extends InputTag {
-  protected static $tag_name = "select";
+class RadioTag extends InputTag {
+  protected static $tag_name = "";
 
   public function __construct($name, $content, Array $attributes = Array()) {
-    parent::__construct($name, "select", $content, $attributes);
-    $this->exists('type') && $this->delete('type');
+    parent::__construct($name, "", $content, $attributes);
   }
 
   public function setType($new_type) {
@@ -16,7 +14,7 @@ class SelectTag extends InputTag {
   }
 
   public function getType() {
-    return "select";
+    return "radio";
   }
 
   public function setContent($content) {
@@ -24,11 +22,12 @@ class SelectTag extends InputTag {
     $keys = array_values($content) == $content;
     foreach($content as $key => $value) {
       if($keys) {
-        $this->content[] = new OptionTag($value);
+        $this->content[$value] = new InputRadioTag($value);
       } else {
-        $this->content[] = new OptionTag($key, $value);
+        $this->content[$key] = new InputRadioTag($value);
       }
     }
+
   }
 
   public function getContent() {
