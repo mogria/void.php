@@ -1,0 +1,8 @@
+body, html {
+  background-color: #EEE;
+}
+
+#wrapper {
+  background-color: #FFF;
+  box-shadow: 0px 0px 20px #AAA;
+}

@@ -1,0 +1,47 @@
+#wrapper nav {
+  overflow: auto;
+  background-color: #555;
+  border-radius: 5px;
+  box-shadow: 0px 0px 20px #999, 0px 0px 20px #999;
+  margin-left: 20px;
+  margin-right: 20px;
+  width: auto;
+  display: block;
+  float: none;
+  clear: left;
+}
+
+#wrapper nav ul {
+  margin: 0px;
+  padding: 0px;
+  padding-left: 5px;
+  padding-right: 5px;
+  list-style-type: none;
+}
+
+#wrapper nav ul li {
+}
+
+
+#wrapper nav ul li a {
+  text-decoration: none;
+  padding: 10px;
+  float: left;
+  color: white;
+  border-color: #999;
+  border-style: solid;
+  border-left-width: 1px;
+}
+
+#wrapper nav ul li a:hover {
+  text-shadow: 0px 0px 20px #fff;
+  background-color: #999;
+  box-shadow: 0px 0px 20px #999;
+}
+
+#wrapper nav ul li:first-child a {
+}
+
+#wrapper nav ul li:last-child a {
+  border-right-width: 1px;
+}
