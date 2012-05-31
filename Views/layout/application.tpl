@@ -19,7 +19,7 @@
       <nav class="push-1 span-22">
         <ul>
           <li>{=:aTag("Home", null)}</li>
-          <li>{=:aTag("About", null)}</li>
+          <li>{=:aTag("About", "pages/about")}</li>
           <li>{=:aTag("Categories", null)}</li>
         </ul>
       </nav>
