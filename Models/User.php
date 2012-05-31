@@ -35,6 +35,7 @@
 namespace Void;
 
 class User extends \ActiveRecord\Model {
+  static $has_many = Array('posts');
   static $validates_presence_of = Array(
     Array('name'),
     Array('password'),
@@ -53,4 +54,8 @@ class User extends \ActiveRecord\Model {
     Array('updated_at', 'maximum' => 19),
     Array('fullname', 'maximum' => 50)
   );
+
+  public function get_fullname() {
+    return null === ($fullname = $this->read_attribute('fullname')) ? $this->name : $fullname;
+  }
 }

@@ -24,7 +24,6 @@
         </ul>
       </nav>
       <section class="push-1 span-16 clear">
-        section
         {[$_content} 
       </section>
       <aside class="span-7 last">

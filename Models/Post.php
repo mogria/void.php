@@ -23,6 +23,8 @@
 namespace Void;
 
 class Post extends \ActiveRecord\Model {
+  static $belongs_to = Array('user');
+
   static $validates_presence_of = Array(
     Array('title'),
     Array('user_id')
