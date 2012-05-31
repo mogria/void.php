@@ -26,7 +26,7 @@
       <section class="push-1 span-16 clear">
         {[$_content} 
       </section>
-      <aside class="span-7 last">
+      <aside class="push-1 span-6 last">
         <h3>test</h3>
       </aside>
       <footer class="clear">
