@@ -1,6 +1,7 @@
 <?php
 
 namespace Void;
+use Exception;
 
 class PostsController extends ApplicationController {
 
@@ -8,9 +9,12 @@ class PostsController extends ApplicationController {
     $this->posts = Post::all();
   }
 
-  public function action_show($id) {
+  public function action_show($id = null) {
     try {
-      $this->post = Post::find($id);
+      if($id === null) {
+        throw new \Exception();
+      }
+      $this->post = Post::find((int)$id);
     } catch(Exception $ex) {
       header("404 Not Found");
       $this->post = null;
