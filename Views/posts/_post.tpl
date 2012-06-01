@@ -1,5 +1,5 @@
 <article class="post">
-  <h1 class="title">{>$post->title}</h1>
+  <h1 class="title">{=:aTag($post->title, Array('posts', 'show', $post->id))}</h1>
   <div class="content">{>$post->content}</div>
   <div class="meta-data small">
     Written by <span class="author">{>$post->user->fullname}</span>
