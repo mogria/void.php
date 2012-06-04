@@ -32,7 +32,14 @@ class PostsController extends ApplicationController {
   }
   public function action_edit() {
   }
-  public function action_delete() {
+  public function action_delete($id = null) {
+    try {
+      Post::find($id)->delete();
+      Flash::success('The post was sucessfully deleted');
+      Router::redirect('posts');
+    } catch(Exception $ex) {
+      Router::redirect('posts', 'show', Array($id));
+    }
   }
 
 }
