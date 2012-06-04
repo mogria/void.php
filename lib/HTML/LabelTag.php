@@ -10,7 +10,7 @@ class LabelTag extends Tag {
     if($name instanceof Model) {
       $this->for = $for;
       // call the proper method on the model to get the Columnname
-      $this->setContent($name);
+      $this->setContent($for);
     } else {
       $this->setContent($name);
       $this->for = $for;
