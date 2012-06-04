@@ -21,6 +21,12 @@ class PostsController extends ApplicationController {
     }
   }
   public function action_new() {
+    $this->post = new Post($_POST);
+    // @todo: change this when we have an authentification system
+    $this->post->user_id = 1;
+    if($this->post->save()) {
+      Router::redirect('posts', 'show', Array($this->post->id));
+    }
   }
   public function action_create() {
   }

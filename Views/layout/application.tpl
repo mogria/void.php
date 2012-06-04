@@ -23,11 +23,12 @@
           <li>{=:aTag("Categories", null)}</li>
         </ul>
       </nav>
-      <section class="push-1 span-16 clear">
+      <section class="push-1 span-15 clear">
         {[$_content} 
       </section>
-      <aside class="push-1 span-6 last">
-        <h3>test</h3>
+      <aside class="push-2 span-6 last">
+        <h3>Actions</h3>
+        {=:aTag('Create a new Post', Array('posts', 'new'))}
       </aside>
       <footer class="clear">
         &copy; Copyright {>:copyright_year()} by Mogria | powered by <a href="http://github.com/mogria/void.php" target="_blank">void.php</a>
