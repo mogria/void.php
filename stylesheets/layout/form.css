@@ -1,0 +1,26 @@
+input[type="text"], input[type="password"]{
+  width: 300px;
+}
+textarea {
+  width: 340px;
+}
+form fieldset > div {
+  clear: left;
+  display: block;
+}
+
+
+form fieldset > div > label {
+  display: block;
+  float: left;
+  width: 200px;
+}
+
+form fieldset > div > input[type="submit"] {
+  margin-left: 200px;
+}
+
+
+form fieldset > div > * + input[type="submit"] {
+  margin-left: auto;
+}
