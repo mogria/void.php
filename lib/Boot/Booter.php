@@ -16,9 +16,12 @@ class Booter extends JobCollection {
    * Only this class can create instances of this class
    */
   protected function __construct() {
-    foreach(self::$config->classes as $class) {
-      $class = __NAMESPACE__ . "\\" . $class;
-      $this->add(new $class());
+    $types = Array('classes', isset($_SERVER['SHELL']) ? 'classes_shell' : 'classes_web');
+    foreach($types as $type) {
+      foreach(self::$config->$type as $class) {
+        $class = __NAMESPACE__ . "\\" . $class;
+        $this->add(new $class());
+      }
     }
   }
   
