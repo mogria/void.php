@@ -24,6 +24,7 @@
         </ul>
       </nav>
       <section class="push-1 span-15 clear">
+        {=:render('layout/_flash')}
         {[$_content} 
       </section>
       <aside class="push-2 span-6 last">
