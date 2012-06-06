@@ -30,7 +30,15 @@ class PostsController extends ApplicationController {
   }
   public function action_create() {
   }
-  public function action_edit() {
+  public function action_edit($id = null) {
+    try {
+      $this->post = Post::find($id);
+      if($this->post->update_attributes($_POST)) {
+        throw Exception();
+      }
+    } catch(Exception $ex) {
+      Router::redirect('posts', 'show', Array($id));
+    }
   }
   public function action_delete($id = null) {
     try {
