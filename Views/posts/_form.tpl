@@ -17,7 +17,6 @@
     </div>
 
     <div>
-      {=$f->label("asd")}
       {=$f->submit("Save")}
     </div>
   </fieldset>
