@@ -20,7 +20,7 @@
         <ul>
           <li>{=:aTag("Home", null)}</li>
           <li>{=:aTag("About", "pages/about")}</li>
-          <li>{=:aTag("Categories", null)}</li>
+          <li>{=:aTag("Categories", "categories")}</li>
         </ul>
       </nav>
       <section class="push-1 span-15 clear">
@@ -29,7 +29,10 @@
       </section>
       <aside class="push-2 span-6 last">
         <h3>Actions</h3>
-        {=:aTag('Create a new Post', Array('posts', 'new'))}
+        <ul>
+          <li>{=:aTag('create a post', Array('posts', 'new'))}</li>
+          <li>{=:aTag('create a category', Array('categories', 'new'))}</li>
+        </ul>
       </aside>
       <footer class="clear">
         &copy; Copyright {>:copyright_year()} by Mogria | powered by <a href="http://github.com/mogria/void.php" target="_blank">void.php</a>
