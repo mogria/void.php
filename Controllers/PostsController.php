@@ -11,9 +11,6 @@ class PostsController extends ApplicationController {
 
   public function action_show($id = null) {
     try {
-      if($id === null) {
-        throw new \Exception();
-      }
       $this->post = Post::find((int)$id);
     } catch(Exception $ex) {
       header("404 Not Found");
