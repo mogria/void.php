@@ -6,6 +6,7 @@ use \Exception;
 class CategoriesController extends ApplicationController {
 
   public function action_index() {
+    $this->categories = Category::all();
   }
 
   public function action_new() {
