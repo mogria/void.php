@@ -17,6 +17,7 @@
 namespace Void;
 
 class Category extends \ActiveRecord\Model {
+  static $attr_accessible = Array('name', 'parent_category_id');
   static $validates_presence_of = Array(
     Array('name')
   );
