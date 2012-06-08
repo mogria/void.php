@@ -6,6 +6,7 @@
 namespace Void;
 
 use BadMethodCallException;
+use Exception;
 
 /**
  * A Template System
@@ -124,10 +125,16 @@ class Template extends VirtualAttribute {
       extract($this->toArray());
       $__void_template_parsed_file = $this->parse(file_get_contents($file));
       ob_start();
+      try {
       $back = eval( <<<_VOID_TEMPLATE
 namespace Void; ?>{$__void_template_parsed_file}
 _VOID_TEMPLATE
       );
+      } catch (Exception $ex) {
+        $back = false;
+        echo $ex;
+      }
+
       if($back !== NULL && self::$config->onDevelopment()) {
         // replace all line breaks with unix line breaks
         $file = str_replace(Array("\r\n", "\r"), "\n", $__void_template_parsed_file);
