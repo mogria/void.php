@@ -142,7 +142,7 @@ _VOID_TEMPLATE
         // open <pre> tag and add some space
         $content  = "<pre>" . str_repeat(" ", strlen((string)$lines) + 3);
         // output the file name (in bold)
-        $content .= "<b>" . $file . "</b> <i>(rendered)</i>\n";
+        $content .= "<b>" . $this->getFile() . "</b> <i>(parsed)</i>\n";
         // output the file & the line numbers
         $content .= htmlspecialchars(implode("\n", $file), ENT_QUOTES, 'UTF-8');
         // close pre tag & output the rest
