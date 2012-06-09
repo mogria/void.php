@@ -8,7 +8,7 @@
     </div>
 
     <div>
-      {=$f->label("category")}
+      {=$f->label("parent category")}
     </div>
 
     <div>

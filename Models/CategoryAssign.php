@@ -25,4 +25,10 @@ class CategoryAssign extends \ActiveRecord\Model {
     Array('post_id', 'maximum' => 11),
     Array('category_id', 'maximum' => 11)
   );
+
+  static $belongs_to = Array(
+      Array('category'),
+      Array('post')
+  );
+
 }

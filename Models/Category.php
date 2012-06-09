@@ -25,4 +25,12 @@ class Category extends \ActiveRecord\Model {
     Array('name', 'maximum' => 255),
     Array('parent_category_id', 'maximum' => 11)
   );
+
+  static $belongs_to = Array(
+      //Array('category_assign')
+  );
+  static $has_many = Array(
+    Array('category_assigns'),
+    Array('posts', 'through' => 'category_assign')
+  );
 }

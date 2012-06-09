@@ -25,6 +25,9 @@ namespace Void;
 class Post extends \ActiveRecord\Model {
   static $attr_accessible = Array('title', 'content');
 
+  static $has_many = Array(
+    Array('category_assign')
+  );
   static $belongs_to = Array('user');
 
   static $validates_presence_of = Array(
