@@ -1,4 +1,4 @@
-{=:form('post', Array('categories', 'new'), function($f) use ($category){}
+{=:form('post', $action, function($f) use ($category){}
   {$f->setModel($category)}
   <fieldset>
     <legend>{>$category->id === null ? "Create" : "Edit"} a Category</legend>

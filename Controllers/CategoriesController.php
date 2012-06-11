@@ -28,11 +28,11 @@ class CategoriesController extends ApplicationController {
   public function action_edit($id = null) {
     try {
       $this->category = Category::find($id);
-      if($this->category->update_attributes($_POST)) {
-        throw Exception();
+      if(isset($_POST['form_sent']) && $this->category->update_attributes($_POST)) {
+        throw new Exception();
       }
     } catch(Exception $ex) {
-      Router::redirect('category', 'show', Array($id));
+      Router::redirect('categories', 'show', Array($id));
     }
   }
 
