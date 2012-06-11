@@ -31,6 +31,6 @@ class Category extends \ActiveRecord\Model {
   );
   static $has_many = Array(
     Array('category_assigns'),
-    Array('posts', 'through' => 'category_assign')
+    Array('posts', 'through' => 'category_assigns')
   );
 }
