@@ -7,6 +7,10 @@
     {if($post->created_at != $post->updated_at):}
       last updated at <span class="updated">{>$post->updated_at->format("d-m-Y H:i:s")}</span>
     {endif}
+    {if(count($post->categories)):} 
+    <br />
+    Categories: {>:categories($post->categories)}
+    {endif}
   </div>
 </article>
 
