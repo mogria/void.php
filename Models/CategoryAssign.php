@@ -27,8 +27,8 @@ class CategoryAssign extends \ActiveRecord\Model {
   );
 
   static $belongs_to = Array(
-      Array('category'),
-      Array('post')
+    Array('category'),
+    Array('post')
   );
 
 }

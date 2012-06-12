@@ -21,4 +21,12 @@ class Tag extends \ActiveRecord\Model {
   static $validates_length_of = Array(
     Array('name', 'maximum' => 255)
   );
+  static $has_many = Array(
+    Array('tag_assigns'),
+    Array('posts', 'through' => 'category_assigns')
+  );
+
+  public function set_name($value) {
+    $this->assign_attribute('name', strtolower($value));
+  }
 }

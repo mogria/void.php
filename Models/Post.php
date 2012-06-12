@@ -27,18 +27,19 @@ class Post extends \ActiveRecord\Model {
 
   static $has_many = Array(
     Array('category_assigns'),
-    Array('categories', 'through' => 'category_assigns')
+    Array('categories', 'through' => 'category_assigns'),
+    Array('tag_assigns'),
+    Array('tags', 'through' => 'tag_assigns')
   );
+
   static $belongs_to = Array('user');
 
   static $validates_presence_of = Array(
     Array('title'),
     Array('user_id')
   );
+
   static $validates_length_of = Array(
-    Array('title', 'maximum' => 255),
-    Array('created_at', 'maximum' => 19),
-    Array('updated_at', 'maximum' => 19),
-    Array('user_id', 'maximum' => 11)
+    Array('title', 'maximum' => 255)
   );
 }
