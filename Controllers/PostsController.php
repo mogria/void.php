@@ -25,13 +25,11 @@ class PostsController extends ApplicationController {
       Router::redirect('posts', 'show', Array($this->post->id));
     }
   }
-  public function action_create() {
-  }
   public function action_edit($id = null) {
     try {
       $this->post = Post::find($id);
-      if($this->post->update_attributes($_POST)) {
-        throw Exception();
+      if(isset($_POST['form_sent']) && $this->post->update_attributes($_POST)) {
+        throw new Exception();
       }
     } catch(Exception $ex) {
       Router::redirect('posts', 'show', Array($id));

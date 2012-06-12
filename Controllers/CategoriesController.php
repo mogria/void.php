@@ -18,7 +18,7 @@ class CategoriesController extends ApplicationController {
 
   public function action_show($id = null) {
     try {
-      $this->category = Category::find($id);
+      $this->category = Category::find((int)$id);
     } catch(Exception $ex) {
       header("404 Not Found");
       $this->category = null;
@@ -42,6 +42,7 @@ class CategoriesController extends ApplicationController {
       Flash::success('The category was successfully deleted');
       Router::redirect('categories');
     } catch(Exception $ex) {
+      Router::redirect('posts', 'show', Array($id));
     }
   }
 }
