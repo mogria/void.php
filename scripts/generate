@@ -138,7 +138,8 @@ abstract class Generator {
 
 class ControllerGenerator extends Generator {
  public function __construct($name, $methods) {
-   $name = ucfirst($name);
+   $camelized = s($name)->camelize();
+   $uncamelized = s($name)->uncamelize();
    $methods = array_merge(array('index'), $methods);
    $methods_string = "";
    foreach($methods as $method) {
@@ -148,18 +149,18 @@ class ControllerGenerator extends Generator {
   }
 METHOD;
    }
-   $this->files["Controllers/{$name}Controller.php"] = <<<CONTROLLER
+   $this->files["Controllers/{$camelized}Controller.php"] = <<<CONTROLLER
 <?php
 
 namespace Void;
 
-class {$name}Controller extends ApplicationController {
+class {$camelized}Controller extends ApplicationController {
 $methods_string
 
 }
 
 CONTROLLER;
-    $this->files["Helpers/{$name}Helper.php"] = <<<HELPER
+    $this->files["Helpers/{$camelized}Helper.php"] = <<<HELPER
 <?php
 
 namespace Void;
@@ -168,17 +169,16 @@ class {$name}Helper extends ApplicationHelper {
 }
 HELPER;
 
-    $foldername = strtolower($name);
-    $this->files["Views/$foldername"] = true;
+    $this->files["Views/$uncamelized"] = true;
     foreach($methods as $method) {
-      $this->files["Views/$foldername/$method.tpl"] = "";
+      $this->files["Views/$uncamelized/$method.tpl"] = "";
     }
   }
 }
 
 class ModelGenerator extends Generator {
   public function __construct($name, $params) {
-    $name = ucfirst($name);
+    $name = s($name)->camelize();
 
     $table_overview = "";
     $validates_presence_of = Array();

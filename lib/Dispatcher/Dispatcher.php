@@ -138,7 +138,7 @@ class Dispatcher extends VoidBase {
    * @return string
    */
   public static function buildControllerName($name) {
-    return __NAMESPACE__ . "\\" . ucfirst($name) . self::$config->controller_ext;
+    return __NAMESPACE__ . "\\" . s($name)->camelize() . self::$config->controller_ext;
   }
 
   /**
@@ -172,7 +172,7 @@ class Dispatcher extends VoidBase {
    * @return string
    */
   public static function buildMethodName($name) {
-    return self::$config->method_prefix . strtolower($name);
+    return self::$config->method_prefix . s($name)->uncamelize();
   }
 
   /**

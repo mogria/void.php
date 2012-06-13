@@ -1,6 +1,6 @@
 <?php
 
-namespace Void;
+namespace Void\HTML;
 
 /**
  * represents a HTML <link>-Tag

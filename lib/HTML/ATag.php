@@ -1,6 +1,7 @@
 <?php
 
-namespace Void;
+namespace Void\HTML;
+use Void\Router;
 
 /**
  * This represents a HTML <a>-Tag

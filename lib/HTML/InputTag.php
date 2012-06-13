@@ -1,6 +1,6 @@
 <?php
 
-namespace Void;
+namespace Void\HTML;
 
 class InputTag extends Tag {
   protected static $tag_name = "input";

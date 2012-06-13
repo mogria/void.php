@@ -1,6 +1,6 @@
 <?php
 
-namespace Void;
+namespace Void\HTML;
 
 class InputTextTag extends InputTag {
   public function __construct($name, $content = "", Array $attributes = Array()) {

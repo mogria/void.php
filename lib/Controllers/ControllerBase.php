@@ -29,9 +29,9 @@ abstract class ControllerBase extends VirtualAttribute {
     // get the name of the action called
   	$actionname = $dispatcher->getActionName($this);
     // grab the name of this controller
-    $controllername = strtolower(substr(get_called_class(),
+    $controllername = substr(get_called_class(),
       ($pos = strrpos(get_called_class(), "\\")) === false ? 0 : $pos + 1,
-      -strlen(Dispatcher::getControllerExtension())));
+      -strlen(Dispatcher::getControllerExtension()));
 
     $this->initialize();
 

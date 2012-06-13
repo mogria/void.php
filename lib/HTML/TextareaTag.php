@@ -1,6 +1,6 @@
 <?php
 
-namespace Void;
+namespace Void\HTML;
 
 class TextareaTag extends InputTag {
   protected static $tag_name = "textarea";

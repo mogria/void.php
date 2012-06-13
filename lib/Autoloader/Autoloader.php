@@ -30,8 +30,10 @@ class Autoloader {
    */
   public static function init($dir) {
     self::$index_dir = $dir;
-    !is_dir("tmp") && mkdir("tmp");
-    if(is_file("tmp/autoload-cache")) {
+    !is_dir("tmp") && mkdir("tmp", 0777);
+
+    clearstatcache();
+    if(is_file("tmp/autoload-cache") && filemtime($dir) <= filemtime("tmp/autoload-cache")) {
       self::load_index();
     } else {
       self::recreate_index();
@@ -54,27 +56,20 @@ class Autoloader {
    *
    * @param string $classname The classname of the Class
    */
-  public static function load($classname) {
+  public static function load($nclassname) {
     // don't let the index be recreated twice
     static $reloaded = false;
 
     // the class has to be in the Void namespace
-    if(strpos($classname, "Void\\") === 0) {
-      // remove the Void\ prefix
-      $classname = substr($classname, strlen("Void\\"));
-
-      do {
-        $again = false;
-
-        // is the class in the index ?
-        if(isset(self::$index[$classname]) && is_file(self::$index[$classname])) {
-          require_once self::$index[$classname];
-        } else if(!$reloaded) {
-          $reloaded = true;
-          self::recreate_index();
-          $again = true;
-        }
-      } while($again);
+    if(strpos($nclassname, __NAMESPACE__ . "\\") === 0) {
+      $classname = substr($nclassname, ($lpos = strrpos($nclassname, "\\")) + 1);
+      $namespace = trim(substr($nclassname, $fpos = strlen(__NAMESPACE__ . "\\"), $lpos - $fpos + 1), "\\");
+      // is the class in the index ?
+      if(isset(self::$index[$classname])
+        && isset(self::$index[$classname][$namespace])
+        && is_file(self::$index[$classname][$namespace])) {
+        require_once self::$index[$classname][$namespace];
+      }
     }
   }
 
@@ -89,7 +84,19 @@ class Autoloader {
     $files = $iterator = new PHPClassFileFilter(new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir, FilesystemIterator::SKIP_DOTS)));
     foreach($files as $file) {
       $classname = substr($file->getFilename(), 0, strrpos($file->getFilename(), "."));
-      $list[$classname] = $file->getPathname();
+      if(!isset($list[$classname])) {
+        $list[$classname] = Array();
+        $list[$classname][''] = $file->getPathname();
+      }
+
+      $directory = dirname($file->getPathname());
+      $libdir = realpath($dir) . DS . "lib";
+      if(strpos($directory, $libdir) === 0) {
+        $namespace = trim(substr($directory, strlen($libdir)), DS);
+        $list[$classname][$namespace] = $file->getPathname();
+      } else {
+        $list[$classname][''] = $file->getPathname();
+      }
     }
     return $list;
   }

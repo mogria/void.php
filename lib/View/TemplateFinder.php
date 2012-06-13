@@ -101,7 +101,7 @@ class TemplateFinder extends VoidBase {
                         : $element);
 
     // build the path
-    $file = ROOT . self::$config->dir . DS . $this->controller . DS . $this->action;
+    $file = ROOT . self::$config->dir . DS . s($this->controller)->uncamelize() . DS . $this->action;
 
     // append the extension if not given
     !preg_match("/\\." . preg_quote(self::$config->ext) . "$/", $file)

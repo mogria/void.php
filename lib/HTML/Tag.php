@@ -1,6 +1,6 @@
 <?php
 
-namespace Void;
+namespace Void\HTML;
 
 /**
  * This represents an HTML Tag.
@@ -8,7 +8,7 @@ namespace Void;
  * @author Mogria
  * @package void.php
  */
-class Tag extends VirtualAttribute {
+class Tag extends \Void\VirtualAttribute {
 
   /**
    * The name of the HTML Tag
@@ -77,6 +77,9 @@ class Tag extends VirtualAttribute {
    * @return string
    */
   public function output() {
+    if($this->getTagname() == "") {
+      return $this->getContent();
+    }
     $attributes = $this->getReference();
     array_walk($attributes, function(&$value, $key) {
       $value = " " . htmlspecialchars($key, ENT_QUOTES, 'UTF-8') . ( $value !== null ? "=\"" . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . "\"" : "");
