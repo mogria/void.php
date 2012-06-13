@@ -1,3 +1,4 @@
+{=:render('layout/_errors', Array('object' => $post))}
 {=:form('post', Array('posts', 'new'), function($f) use ($post){}
   {$f->setModel($post)}
   <fieldset>

@@ -1,3 +1,4 @@
+{=:render('layout/_errors', Array('object' => $category))}
 {=:form('post', $action, function($f) use ($category){}
   {$f->setModel($category)}
   <fieldset>
