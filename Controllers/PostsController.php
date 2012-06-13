@@ -21,7 +21,7 @@ class PostsController extends ApplicationController {
     $this->post = new Post($_POST);
     // @todo: change this when we have an authentification system
     $this->post->user_id = 1;
-    if($this->post->save()) {
+    if(isset($_POST['form_sent']) && $this->post->save()) {
       Router::redirect('posts', 'show', Array($this->post->id));
     }
   }

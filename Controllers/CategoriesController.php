@@ -11,7 +11,7 @@ class CategoriesController extends ApplicationController {
 
   public function action_new() {
     $this->category = new Category($_POST);
-    if($this->category->save()) {
+    if(isset($_POST['form_sent']) && $this->category->save()) {
       Router::redirect('categories', 'show', Array($this->category->id));
     }
   }
