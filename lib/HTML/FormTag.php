@@ -3,6 +3,7 @@
 namespace Void\HTML;
 
 use \ActiveRecord\Model;
+use \Void\Router;
 
 /**
  * You can create HTML Forms using this class
