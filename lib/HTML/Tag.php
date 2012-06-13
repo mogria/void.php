@@ -1,6 +1,6 @@
 <?php
 
-namespace Void;
+namespace Void\HTML;
 
 /**
  * This represents an HTML Tag.
@@ -8,7 +8,7 @@ namespace Void;
  * @author Mogria
  * @package void.php
  */
-class Tag extends VirtualAttribute {
+class Tag extends \Void\VirtualAttribute {
 
   /**
    * The name of the HTML Tag

@@ -245,14 +245,14 @@ _VOID_TEMPLATE
       // generate the class name
       $tagname = ucfirst(strtolower(substr($method, 0, -strlen("Tag"))));
       // check if the class exists
-      if(class_exists($classname = __NAMESPACE__ . "\\" . $tagname . "Tag")) {
+      if(class_exists($classname = __NAMESPACE__ . "\\HTML\\" . $tagname . "Tag")) {
         // create an instance and call the constructor
         $tag = new $classname();
         // pass all the arguments to the contructor
         call_user_func_array(Array($tag, '__construct'), $args);
       } else {
         // create a instance of the common Tag class
-        $tag = new Tag($tagname, array_shift($args), ($params = array_shift($args)) === null ? Array() : $params);
+        $tag = new HTML\Tag($tagname, array_shift($args), ($params = array_shift($args)) === null ? Array() : $params);
       }
       // return the Tag Object
       return $tag;

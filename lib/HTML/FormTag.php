@@ -1,7 +1,6 @@
 <?php
 
-
-namespace Void;
+namespace Void\HTML;
 
 use \ActiveRecord\Model;
 

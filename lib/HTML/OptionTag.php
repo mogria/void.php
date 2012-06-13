@@ -1,6 +1,6 @@
 <?php
 
-namespace Void;
+namespace Void\HTML;
 
 class OptionTag extends Tag {
   public function __construct($value, $label = null, Array $attributes = Array()) {

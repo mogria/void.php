@@ -1,6 +1,6 @@
 <?php
 
-namespace Void;
+namespace Void\HTML;
 
 class RadioTag extends InputTag {
   protected static $tag_name = "";
