@@ -202,7 +202,7 @@ _VOID_TEMPLATE
     }
 
     // create tje form tag
-    $form = new FormTag($method, $action, $attributes);
+    $form = new HTML\FormTag($method, $action, $attributes);
 
     // give the model to the form if there is one
     if($model instanceof \ActiveRecord\Model) {
