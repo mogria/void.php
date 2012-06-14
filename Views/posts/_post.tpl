@@ -9,7 +9,11 @@
     {endif}
     {if(count($post->categories)):} 
     <br />
-    Categories: {>:categories($post->categories)}
+    categories: {>:categories($post->categories)}
+    {endif}
+    {if(count($post->tags)):} 
+    <br />
+    tags: {>$post->taglist}
     {endif}
   </div>
 </article>
