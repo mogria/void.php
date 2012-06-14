@@ -21,12 +21,12 @@ class TagAssign extends \ActiveRecord\Model {
     Array('post_id'),
     Array('tag_id')
   );
-  static $validates_length_of = Array(
-    Array('post_id', 'maximum' => 11),
-    Array('tag_id', 'maximum' => 11)
-  );
   static $belongs_to = Array(
     Array('tag'),
     Array('post')
+  );
+
+  static $validates_uniqueness_of = Array(
+    Array(Array('post_id', 'tag_id'))
   );
 }

@@ -23,7 +23,7 @@
 namespace Void;
 
 class Post extends \ActiveRecord\Model {
-  static $attr_accessible = Array('title', 'content');
+  static $attr_accessible = Array('title', 'content', 'taglist');
 
   static $has_many = Array(
     Array('category_assigns'),
@@ -42,4 +42,51 @@ class Post extends \ActiveRecord\Model {
   static $validates_length_of = Array(
     Array('title', 'maximum' => 255)
   );
+
+  public function get_taglist() {
+    if($this->taglist === null) {
+      $tags = $this->tags;
+      !$tags && $tags = Array();
+      foreach($tags as &$tag) {
+        $tag = $tag->name;
+        if(strpos($tag, " ") !== false) {
+          $tag = '"' . $tag . '"';
+        }
+      }
+      return $this->taglist = implode(", ", $tags);
+    } else {
+      return $this->taglist;
+    }
+  }
+
+  public function set_taglist($str) {
+    $this->taglist = $str;
+  }
+
+  private $taglist;
+
+  static $after_save = Array('create_tags');
+
+  public function create_tags() {
+    $tags = explode(",", $this->taglist);
+    foreach($tags as $key => $tag) {
+      $tag = Tag::tagify($tag);
+      $found_tag = Tag::find_by_name($tag);
+      if($found_tag === null) {
+        $created_tag = new Tag(Array('name' => $tag));
+        if($created_tag->save()) {
+          $tags[$key] = $created_tag;
+        } else {
+          unset($tags[$key]);
+        }
+      } else {
+        $tags[$key] = $found_tag;
+      }
+    }
+    TagAssign::table()->delete(Array('post_id' => $this->id));
+    foreach($tags as $tag) {
+      $attrs = Array('tag_id' => $tag->id, 'post_id' => $this->id);
+      TagAssign::create($attrs);
+    }
+  }
 }

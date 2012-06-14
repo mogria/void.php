@@ -1,1 +1,1 @@
-{=:render('posts/_form.tpl', Array('post' => $post))}
+{=:render('posts/_form.tpl', Array('post' => $post, 'action' => Array('posts', 'new')))}

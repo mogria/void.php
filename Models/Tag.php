@@ -15,6 +15,7 @@
 namespace Void;
 
 class Tag extends \ActiveRecord\Model {
+  static $attr_accessible = Array('name');
   static $validates_presence_of = Array(
     Array('name')
   );
@@ -25,8 +26,16 @@ class Tag extends \ActiveRecord\Model {
     Array('tag_assigns'),
     Array('posts', 'through' => 'category_assigns')
   );
+  static $validates_uniqueness_of = Array(
+    Array('name')
+  );
+
 
   public function set_name($value) {
-    $this->assign_attribute('name', strtolower($value));
+    $this->assign_attribute('name', self::tagify($value));
+  }
+
+  public static function tagify($value) {
+    return strtolower(trim($value, " '\""));
   }
 }
