@@ -24,7 +24,7 @@ class Tag extends \ActiveRecord\Model {
   );
   static $has_many = Array(
     Array('tag_assigns'),
-    Array('posts', 'through' => 'category_assigns')
+    Array('posts', 'through' => 'tag_assigns')
   );
   static $validates_uniqueness_of = Array(
     Array('name')

@@ -21,6 +21,7 @@
           <li>{=:aTag("Home", null)}</li>
           <li>{=:aTag("About", "pages/about")}</li>
           <li>{=:aTag("Categories", "categories")}</li>
+          <li>{=:aTag("Tags", "tags")}</li>
         </ul>
       </nav>
       <section class="push-1 span-15 clear">
