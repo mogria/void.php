@@ -17,7 +17,7 @@ class RoleManager {
   }
   public static function register($id, RoleBase $role) {
     self::validateId($id);
-    $roles[$id] = $role;
+    self::$roles[$id] = $role;
   }
 
   public static function get($id) {
