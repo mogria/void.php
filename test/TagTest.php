@@ -9,7 +9,7 @@ class TagTest extends \PHPUnit_Framework_TestCase {
   protected $tag;
 
   public function setUp() {
-    $this->tag = new Tag("p", "This is a test Text with other <b>Tags</b>", array('class' => 'small'));
+    $this->tag = new HTML\Tag("p", "This is a test Text with other <b>Tags</b>", array('class' => 'small'));
   }
 
   public function testOutput() {
