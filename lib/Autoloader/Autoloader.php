@@ -96,38 +96,39 @@ class Autoloader {
       $dir = rtrim($dir, DS);
       // remove  ./ in the front
       $dir = preg_replace("@^((\./)+)@", '', $dir);
+      if(!self::inExcludedDir($dir)) { // the file mustn't be in an excluded directory
+        // read each directory entry
+        while(false !== ($entry = readdir($handle))) {
 
-      // read each directory entry
-      while(false !== ($entry = readdir($handle))) {
+          // create the full path
+          $file = $dir . DS . $entry;
+          if($entry === "." || $entry === "..") {
+            // dont do something with ./ and ../
+          } elseif (is_dir($file)) {
+            // recursive call
+            self::create_index($file, $list);
+          } elseif (is_file($file) // only index file under the following conditions
+            && ucfirst($entry) == $entry // first letter of filename has to be uppercase
+            && ($position = strrpos($entry, ".php")) !== false // extension .php needed
+            && strlen($entry) - strlen(".php") === $position ) {
+            $classname = substr($entry, 0, $position); // get classname out of the filename
+            // initialize the key if it doesn't exist
 
-        // create the full path
-        $file = $dir . DS . $entry;
-        if($entry === "." || $entry === "..") {
-          // dont do something with ./ and ../
-        } elseif (is_dir($file)) {
-          // recursive call
-          self::create_index($file, $list);
-        } elseif (is_file($file) // only index file under the following conditions
-          && ucfirst($entry) == $entry // first letter of filename has to be uppercase
-          && ($position = strrpos($entry, ".php")) !== false // extension .php needed
-          && strlen($entry) - strlen(".php") === $position 
-          && !self::inExcludedDir($file)) { // the file mustn't be in an excluded directory
-          $classname = substr($entry, 0, $position); // get classname out of the filename
+            if(!isset($list[$classname])) {
+              $list[$classname] = Array();
+            }
 
-          // initialize the key if it doesn't exist
-          if(!isset($list[$classname])) {
-            $list[$classname] = Array();
-          }
-
-          $libdir = "lib";
-          if(strpos($dir, $libdir) === 0) {
-            // detect the namespaces in where the class could be
-            $namespace = trim(substr($dir, strlen($libdir)), DS);
-            $namespace = str_replace("/", "\\", $namespace);
-            $list[$classname][$namespace] = $file;
-          } else {
-            // the class is in no namespace
-            $list[$classname][''] = $file;
+            $libdir = "lib";
+            if(strpos($dir, $libdir) === 0) {
+              // detect the namespaces in where the class could be
+              $namespace = trim(substr($dir, strlen($libdir)), DS);
+              $namespace = str_replace("/", "\\", $namespace);
+              $list[$classname][$namespace] = $file;
+              !isset($list[$classname]['']) && $list[$classname][''] = $file;
+            } else {
+              // the class is in no namespace
+              $list[$classname][''] = $file;
+            }
           }
         }
       }
@@ -147,7 +148,7 @@ class Autoloader {
   private static function inExcludedDir($file) {
     $inside = false;
     $file = str_replace("/", DS, $file);
-    $excluded = Array("lib/Model");
+    $excluded = Array("lib/Model", "test");
     // iterate through each excluded directory
     foreach($excluded as $dir) {
       // replace all normal slashes in the path with the
