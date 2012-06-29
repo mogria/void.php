@@ -225,15 +225,16 @@ MODEL;
 
 class TestGenerator extends Generator {
   public function __construct($name, $params) {
-    $name = ucfirst($name);
+    $name = s($name)->camelize();
+    $uncamelized_name = s($name)->uncamelize();
 
     $properties = "";
     $setup = "";
     $methods = "";
 
     if(class_exists("Void\\" . $name)) {
-      $properties = "protected $" . strtolower($name) . ";";
-      $setup = "\$this->" . strtolower($name) . " = new $name();";
+      $properties = "protected $" . $uncamelized_name . ";";
+      $setup = "\$this->" . $uncamelized_name . " = new $name();";
       $reflection = new \ReflectionClass("Void\\" . $name);
       foreach($reflection->getMethods() as $method) {
         if($method->class == "Void\\$name") {
@@ -268,7 +269,7 @@ TEST;
   }
 
   public function generateMethod($name) {
-    $name = ucfirst($name);
+    $name = s($name)->camelize();
     return <<<METHOD
   public function test$name() {
   }
