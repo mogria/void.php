@@ -1,7 +1,5 @@
 # @TODO
 
-* Write Utilities to camelcase & lowercase strings
-  * Even write a dynamic String class?
 * Generators
   * Parse arguments with getopt (e.g. -f for overwriting)
   * add a possibility for a script to call an other script
