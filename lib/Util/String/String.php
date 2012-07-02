@@ -92,12 +92,14 @@ class String {
    */
   public function __call($method, $args) {
     if(!isset(self::$string_funcs[$method])) {
-      throw new BadMethodCallException();
+      throw new \BadMethodCallException();
     }
 
-    $args = array_slice($args, 0, self::$string_funcs[$method][1] - 1)
-            + array($this->data)
-            + array_slice($args, self::$string_funcs[$method][1]);
+    $args = array_merge(
+      array_slice($args, 0, self::$string_funcs[$method][1] - 1),
+      array($this->data),
+      array_slice($args, self::$string_funcs[$method][1] - 1)
+    );
     $back = call_user_func_array(self::$string_funcs[$method][0], $args);
 
     if(self::$string_funcs[$method][2]) {
