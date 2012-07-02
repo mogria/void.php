@@ -37,6 +37,104 @@ class StringTest extends \PHPUnit_Framework_TestCase {
 
   }
 
-  public function tearDown() {
+  /**
+   * @expectedException \BadMethodCallException
+   */
+  public function testCall() {
+    $this->string->a_random_method_which_doesnt_exist();
+  }
+
+  public function testCallReplace() {
+    $str_before = (string)$this->string;
+    $back = $this->string->replace(":", "|");
+    $this->assertTrue($back instanceof String);
+    $this->assertEquals(str_replace(":", "|", $str_before), (string)$back);
+  }
+
+  public function testCallIReplace() {
+    $str_before = (string)$this->string;
+    $back = $this->string->ireplace("A", "V");
+    $this->assertTrue($back instanceof String);
+    $this->assertEquals(str_ireplace("A", "V", $str_before), (string)$back);
+  }
+
+  public function testCallPregReplace() {
+    $str_before = (string)$this->string;
+    $back = $this->string->preg_replace("/(.):(.)/", "\\2:\\1");
+    $this->assertTrue($back instanceof String);
+    $this->assertEquals(preg_replace("/(.):(.)/", "\\2:\\1", $str_before), (string)$back);
+  }
+
+  public function testCallPregReplaceCallback() {
+    $callback = function($value) {
+      return strtoupper($value[2] . "|" . $value[1]);
+    };
+    $str_before = (string)$this->string;
+    $back = $this->string->preg_replace_callback("/(.):(.)/", $callback);
+    $this->assertTrue($back instanceof String);
+    $this->assertEquals(preg_replace_callback("/(.):(.)/", $callback, $str_before), (string)$back);
+  }
+
+  public function testCallPos() {
+    $str_before = (string)$this->string;
+    $back = $this->string->pos(":");
+    $this->assertFalse($back instanceof String);
+    $this->assertEquals(strpos($str_before, ":"), $back);
+  }
+
+  public function testCallIPos() {
+    $str_before = (string)$this->string;
+    $back = $this->string->ipos("S");
+    $this->assertFalse($back instanceof String);
+    $this->assertEquals(stripos($str_before, "S"), $back);
+  }
+
+  public function testCallRPos() {
+    $str_before = (string)$this->string;
+    $back = $this->string->rpos(":");
+    $this->assertFalse($back instanceof String);
+    $this->assertEquals(strrpos($str_before, ":"), $back);
+  }
+
+  public function testCallIRPos() {
+    $str_before = (string)$this->string;
+    $back = $this->string->ripos("S");
+    $this->assertFalse($back instanceof String);
+    $this->assertEquals(strripos($str_before, "S"), $back);
+  }
+
+  public function testCallSubstr() {
+    $str_before = (string)$this->string;
+    $back = $this->string->substr(1, -3);
+    $this->assertTrue($back instanceof String);
+    $this->assertEquals(substr($str_before, 1, -3), (string)$back);
+  }
+
+  public function testCallExplode() {
+    $str_before = (string)$this->string;
+    $back = $this->string->explode(":");
+    $this->assertFalse($back instanceof String);
+    $this->assertEquals(explode(":", $str_before), $back);
+  }
+
+  public function testCallSplit() {
+    $str_before = (string)$this->string;
+    $back = $this->string->split();
+    $this->assertFalse($back instanceof String);
+    $this->assertEquals(str_split($str_before), $back);
+  }
+
+  public function testCallSplitWithOptionalParameter() {
+    $str_before = (string)$this->string;
+    $back = $this->string->split(3);
+    $this->assertFalse($back instanceof String);
+    $this->assertEquals(str_split($str_before, 3), $back);
+  }
+
+  public function testCallRepeat() {
+    $str_before = (string)$this->string;
+    $back = $this->string->repeat(5);
+    $this->assertTrue($back instanceof String);
+    $this->assertEquals(str_repeat($str_before, 5), (string)$back);
   }
 }
