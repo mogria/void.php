@@ -5,6 +5,16 @@ namespace Void;
 require_once 'config/consts.php';
 require_once 'autoload.php';
 
+class dynamic_call_test {
+  public function call(&$arg1) {
+    $args = Array(&$arg1);
+    $this->__call('call', $args);
+  }
+  public function __call($method, $args) {
+    $args[0] = 15;
+  }
+}
+
 class StringTest extends \PHPUnit_Framework_TestCase {
   
   public function setUp() {
@@ -136,5 +146,29 @@ class StringTest extends \PHPUnit_Framework_TestCase {
     $back = $this->string->repeat(5);
     $this->assertTrue($back instanceof String);
     $this->assertEquals(str_repeat($str_before, 5), (string)$back);
+  }
+
+  public function testCallMatch() {
+    $str_before = (string)$this->string;
+    $back = $this->string->match("/:\w+:/");
+    $this->assertFalse($back instanceof String);
+    $this->assertEquals(preg_match("/:\w+:/", $str_before), $back);
+  }
+
+  public function test_dyamic_call() {
+    $test = new dynamic_call_test();
+    $value = 14;
+    $test->call($value);
+    $this->assertEquals(15, $value);
+  }
+
+  public function testCallMatchAll() {
+    $matches = Array();
+    $matches2 = Array();
+    $str_before = (string)$this->string;
+    $back = $this->string->match_all("/\w+:/", $matches);
+    $this->assertFalse($back instanceof String);
+    $this->assertEquals(preg_match_all("/\w+:/", $str_before, $matches2), $back);
+    $this->assertEquals($matches, $matches2);
   }
 }

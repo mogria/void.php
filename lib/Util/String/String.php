@@ -23,6 +23,8 @@ class String {
   protected static $string_funcs = Array(
     'replace' => Array('str_replace', 3, true),
     'ireplace' => Array('str_ireplace', 3, true),
+    'match' => Array('preg_match', 2, false),
+    'match_all' => Array('preg_match_all', 2, false),
     'preg_replace' => Array('preg_replace', 3, true),
     'preg_replace_callback' => Array('preg_replace_callback', 3, true),
     'pos' => Array('strpos', 1, false),
@@ -109,17 +111,26 @@ class String {
       return $back;
     }
   }
+
+  /**
+   * A little Helper method to make references work with __call()
+   *
+   */
+  public function match_all($pattern, &$matches, $flags = 0) {
+    $args = array($pattern, &$matches, $flags);
+    return $this->__call('match_all', $args);
+  }
 }
 
 /**
  * A shortcut `new String()`
  *
  * For Example:
- * s("string")
+ * s("string");
  * 
  * is the same as
  *
- * new String("string")
+ * new String("string");
  *
  */
 function s($data) {
