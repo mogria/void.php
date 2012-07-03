@@ -59,7 +59,7 @@ function loadDefaultConfig($cfg) {
     $cfg->phperrormessages_level = E_ALL;
   }, TEST);
 
-  // default configuration for the test environment
+  // default configuration for the production environment
   $cfg->config(function($cfg) {
     $cfg->phperrormessages_on = false;
     $cfg->phperrormessages_level = 0;
