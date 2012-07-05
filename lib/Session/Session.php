@@ -18,9 +18,9 @@ class Session extends VoidBase {
     if(count($args) > 0) {
       $back = self::set($method, array_shift($args));
     } else {
-      if($ending = "exists" && self::ends_with($method, $ending)) {
+      if(($ending = "exists") && self::ends_with($method, $ending)) {
         $back = self::exists($method);
-      } else if($ending = "delete" && self::ends_with($method, $ending)) {
+      } else if(($ending = "delete") && self::ends_with($method, $ending)) {
         $back = self::delete($method);
       } else {
         $back = self::get($method);
@@ -38,7 +38,7 @@ class Session extends VoidBase {
   }
 
   public static function exists($key) {
-    return array_key_exists($key, $_SESSION);
+    return (bool)array_key_exists($key, $_SESSION);
   }
 
   public static function delete($key) {
