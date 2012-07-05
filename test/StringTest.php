@@ -171,4 +171,60 @@ class StringTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(preg_match_all("/\w+:/", $str_before, $matches2), $back);
     $this->assertEquals($matches, $matches2);
   }
+
+  /**
+   *
+   * @expectedException \InvalidArgumentException
+   */
+  public function testOffsetGetEmpty() {
+    $this->string[""];
+  }
+
+
+  /**
+   * 
+   * @expectedException \InvalidArgumentException
+   */
+  public function testOffsetGetRandom() {
+    $this->string["asdfadfasdfadsfafasdfasdfasdferasdfvqwf"];
+  }
+
+  public function testOffsetGetWithNumber() {
+    $len = strlen($this->string) + 1;
+    $string = (string)$this->string;
+    $this->assertEquals(substr($string, 4, 1), (string)$this->string[4]);
+    $this->assertEquals(substr($string, $len, 1), (string)$this->string[$len]);
+    $this->assertEquals(substr($string, -4, 1), (string)$this->string[-4]);
+    $this->assertEquals(substr($string, -$len, 1), (string)$this->string[-$len]);
+  }
+
+  public function testOffsetGetWithNumber1AndColon() {
+    $len = strlen($this->string) + 1;
+    $string = (string)$this->string;
+    $this->assertEquals(substr($string, 4), (string)$this->string["4:"]);
+    $this->assertEquals(substr($string, $len), (string)$this->string[$len . ":"]);
+    $this->assertEquals(substr($string, -4), (string)$this->string["-4:"]);
+    $this->assertEquals(substr($string, -$len), (string)$this->string["-" . $len . ":"]);
+  }
+
+  public function testOffsetGetWithNumer2AndColon() {
+  }
+
+  public function testOffsetGetWithColon() {
+    $string = $this->string[":"];
+    $this->assertTrue($string instanceof String);
+    $this->assertTrue($this->string instanceof String);
+    $this->assertTrue($this->string == $string);
+    $this->assertTrue($this->string !== $string);
+  }
+
+  public function testOffsetGetWithTwoNumbers() {
+    $string = (string)$this->string;
+    $this->assertEquals(substr($string, 2, 2), (string)$this->string["2:4"]);
+    $this->assertEquals(substr($string, 2, 2), (string)$this->string["4:2"]);
+    $this->assertEquals(substr($string, -12, 3), (string)$this->string["-12:10"]);
+    $this->assertEquals(substr($string, 2, -4), (string)$this->string["2:-4"]);
+    $this->assertEquals(substr($string, -5, -1), (string)$this->string["-5:-1"]);
+    $this->assertEquals(substr($string, -5, -1), (string)$this->string["-1:-5"]);
+  }
 }

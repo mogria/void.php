@@ -1,13 +1,15 @@
 <?php
 
 namespace Void;
+use \ArrayAccess;
+use \InvalidArgumentException;
 
 /***
  * This represents a string. This adds some functionality to the string,
  * and also lets you chain certain methods
  *
  */
-class String {
+class String implements ArrayAccess {
 
   /**
    * contains the string
@@ -119,6 +121,55 @@ class String {
   public function match_all($pattern, &$matches, $flags = 0) {
     $args = array($pattern, &$matches, $flags);
     return $this->__call('match_all', $args);
+  }
+
+  const REGEX_OFFSET = '/^(-?[0-9]+)?(:)?(-?[0-9]+?)?$/D';
+
+  /* implements the ArrayAccess interface. Make the strings 'python'-like */
+  public function offsetGet($offset) {
+    if(!$this->offsetExists($offset)) {
+      throw new InvalidArgumentException("offset has to be a number or in format " . self::REGEX_OFFSET);
+    }
+    $matches = Array();
+    s($offset)->match_all(self::REGEX_OFFSET, $matches);
+    $matches = array_slice($matches, 1);
+    
+    $colon = $matches[1][0];
+    $number1 = $matches[0][0];
+    $number2 = $matches[2][0];
+    $clone = clone $this;
+ 
+    if($colon === ":") {
+      if($number1 === '' && $number2 === '')  {
+      } else if($number1 === '') {
+        $clone->substr(0, $number2);
+      } else if($number2 === '') {
+        $clone->substr($number1);
+      } else {
+        $number1 < 0 && $number1 = strlen($this->data) + $number1;
+        $number2 < 0 && $number2 = strlen($this->data) + $number2;
+        if($number1 > $number2) {
+          $tmp = $number1;
+          $number1 = $number2;
+          $number2 = $tmp;
+        }
+        $clone->substr($number1, $number2 - $number1);
+      }
+    } else {
+      $clone->substr($number1, 1);
+    }
+    return $clone;
+  }
+
+  public function offsetSet($offset, $value) {
+  }
+
+  public function offsetUnset($offset) {
+  }
+
+  public function offsetExists($offset) {
+    $offset = (string)$offset;
+    return $offset != '' && (bool)s($offset)->match(self::REGEX_OFFSET);
   }
 }
 
