@@ -36,7 +36,8 @@ class String implements ArrayAccess {
     'substr' => Array('substr', 1, true),
     'explode' => Array('explode', 2, false),
     'split' => Array('str_split', 1, false),
-    'repeat' => Array('str_repeat', 1, true)
+    'repeat' => Array('str_repeat', 1, true),
+    'length' => Array('strlen', 1, false)
   );
 
   /**
@@ -171,7 +172,7 @@ class String implements ArrayAccess {
   }
 
   private function toPositiveOffset(&$pos1, &$pos2, $colon) {
-    $length = strlen($this->data);
+    $length = $this->length();
 
     $make_positive = function($value) use ($length) {
       // resolve the relative negative offset

@@ -171,6 +171,13 @@ class StringTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(preg_match_all("/\w+:/", $str_before, $matches2), $back);
     $this->assertEquals($matches, $matches2);
   }
+  
+  public function testCallLength() {
+    $str_before = (string)$this->string;
+    $back = $this->string->length();
+    $this->assertFalse($back instanceof String);
+    $this->assertEquals(strlen($str_before), $back);
+  }
 
   /**
    *
