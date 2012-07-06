@@ -127,49 +127,88 @@ class String implements ArrayAccess {
 
   /* implements the ArrayAccess interface. Make the strings 'python'-like */
   public function offsetGet($offset) {
-    if(!$this->offsetExists($offset)) {
-      throw new InvalidArgumentException("offset has to be a number or in format " . self::REGEX_OFFSET);
-    }
-    $matches = Array();
-    s($offset)->match_all(self::REGEX_OFFSET, $matches);
-    $matches = array_slice($matches, 1);
-    
-    $colon = $matches[1][0];
-    $number1 = $matches[0][0];
-    $number2 = $matches[2][0];
+    $pos1 = $pos2 = null;
+    $this->parseOffset($offset, $pos1, $pos2);
+
     $clone = clone $this;
- 
-    if($colon === ":") {
-      if($number1 === '' && $number2 === '')  {
-      } else if($number1 === '') {
-        $clone->substr(0, $number2);
-      } else if($number2 === '') {
-        $clone->substr($number1);
-      } else {
-        $number1 < 0 && $number1 = strlen($this->data) + $number1;
-        $number2 < 0 && $number2 = strlen($this->data) + $number2;
-        if($number1 > $number2) {
-          $tmp = $number1;
-          $number1 = $number2;
-          $number2 = $tmp;
-        }
-        $clone->substr($number1, $number2 - $number1);
-      }
-    } else {
-      $clone->substr($number1, 1);
-    }
-    return $clone;
+    return $clone->substr($pos1, $pos2 - $pos1);
   }
 
   public function offsetSet($offset, $value) {
+    $pos1 = $pos2 = null;
+    $this->parseOffset($offset, $pos1, $pos2);
+      
+    $this->data = substr($this->data, 0, $pos1) . $value . substr($this->data, $pos2);
+    return $this;
   }
 
   public function offsetUnset($offset) {
+    $this->offsetSet($offset, "");
+    return $this;
   }
 
   public function offsetExists($offset) {
     $offset = (string)$offset;
     return $offset != '' && (bool)s($offset)->match(self::REGEX_OFFSET);
+  }
+
+  public function checkOffsetExists($offset) {
+    if(!$this->offsetExists($offset)) {
+      throw new InvalidArgumentException("offset has to be a number or in format " . self::REGEX_OFFSET);
+    }
+  }
+
+  private function parseOffset($offset, &$pos1, &$pos2) {
+    $this->checkOffsetExists($offset);
+    $matches = Array();
+    s($offset)->match_all(self::REGEX_OFFSET, $matches);
+    $matches = array_slice($matches, 1);
+    
+    $colon = $matches[1][0];
+    $pos1 = $matches[0][0];
+    $pos2 = $matches[2][0];
+    $this->toPositiveOffset($pos1, $pos2, $colon);
+  }
+
+  private function toPositiveOffset(&$pos1, &$pos2, $colon) {
+    $length = strlen($this->data);
+
+    $make_positive = function($value) use ($length) {
+      // resolve the relative negative offset
+      $value = $value != '' && $value < 0 ? $length + $value : $value;
+      // value may still be negative, fix that
+      return $value < 0 ? 0 : $value;
+    };
+
+    // no negative offsets like -1, -15 etc.
+    $pos1 = $make_positive($pos1);
+    $pos2 = $make_positive($pos2);
+
+    // position1 should be lower than position 2
+    if($pos1 !== '' && $pos2 !== '' && $pos1 > $pos2) {
+      $tmp = $pos1;
+      $pos1 = $pos2;
+      $pos2 = $tmp;
+    }
+
+    // if nothing set, set position 1 to 0 
+    if($pos1 === '') {
+      $pos1 = 0;
+    }
+
+    // if a colon is given two positions are given, if not only 1 (an index)
+    if($colon) {
+      // set position 2 to the length of the string if nothing is given
+      if($pos2 === '') {
+        $pos2 = $length;
+      }
+    } else {
+      // if only 1 position is given, position 2 has to be one more than position 1 
+      $pos2 = $pos1 + 1;
+    }
+
+    $pos1 = (int)$pos1;
+    $pos2 = (int)$pos2;
   }
 }
 

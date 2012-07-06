@@ -227,4 +227,32 @@ class StringTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(substr($string, -5, -1), (string)$this->string["-5:-1"]);
     $this->assertEquals(substr($string, -5, -1), (string)$this->string["-1:-5"]);
   }
+
+  public function testOffsetSet() {
+    $this->string[":4"] = "trol";
+    $this->assertEquals("trol:awesome:string", (string)$this->string);
+    $this->string[-4] = "rrrrrrrr";
+    $this->assertEquals("trol:awesome:strrrrrrrring", (string)$this->string);
+    $this->string["-2:"] = "nnnnnnnnng";
+    $this->assertEquals("trol:awesome:strrrrrrrrinnnnnnnnng", (string)$this->string);
+    $this->string["-1:-3"] = "";
+    $this->assertEquals("trol:awesome:strrrrrrrrinnnnnnng", (string)$this->string);
+    $this->string["5:12"] = "fantastic";
+    $this->assertEquals("trol:fantastic:strrrrrrrrinnnnnnng", (string)$this->string);
+    $this->string["-1:"] = "ggg";
+    $this->assertEquals("trol:fantastic:strrrrrrrrinnnnnnnggg", (string)$this->string);
+  }
+
+  public function testOffsetUnset() {
+    unset($this->string[4]);
+    $this->assertEquals("megaawesome:string", (string)$this->string);
+    unset($this->string[-7]);
+    $this->assertEquals("megaawesomestring", (string)$this->string);
+    unset($this->string["-6:"]);
+    $this->assertEquals("megaawesome", (string)$this->string);
+    unset($this->string["-4:-7"]);
+    $this->assertEquals("megasome", (string)$this->string);
+    unset($this->string["4:8"]);
+    $this->assertEquals("mega", (string)$this->string);
+  }
 }
