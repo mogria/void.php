@@ -124,6 +124,16 @@ class String implements ArrayAccess {
     return $this->__call('match_all', $args);
   }
 
+  /* some aliases */
+  public function len() {
+    return $this->__call('length', array());
+  }
+
+  public function substring($pos1, $pos2 = null) {
+    $args = array($pos1, $pos2);
+    return $this->__call('substr', $args);
+  }
+
   const REGEX_OFFSET = '/^(-?[0-9]+)?(:)?(-?[0-9]+?)?$/D';
 
   /* implements the ArrayAccess interface. Make the strings 'python'-like */

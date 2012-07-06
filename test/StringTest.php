@@ -179,6 +179,12 @@ class StringTest extends \PHPUnit_Framework_TestCase {
     $this->assertEquals(strlen($str_before), $back);
   }
 
+  public function testCallAliases() {
+    $this->string->len();
+    $this->string->substring(0);
+    $this->string->sub(0);
+  }
+
   /**
    *
    * @expectedException \InvalidArgumentException
@@ -262,4 +268,5 @@ class StringTest extends \PHPUnit_Framework_TestCase {
     unset($this->string["4:8"]);
     $this->assertEquals("mega", (string)$this->string);
   }
+
 }
