@@ -182,7 +182,6 @@ class StringTest extends \PHPUnit_Framework_TestCase {
   public function testCallAliases() {
     $this->string->len();
     $this->string->substring(0);
-    $this->string->sub(0);
   }
 
   /**

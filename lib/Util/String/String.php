@@ -116,8 +116,8 @@ class String implements ArrayAccess {
   }
 
   /**
-   * A little Helper method to make references work with __call()
-   *
+   * A little Helper method to make references work with __call() for
+   * the method preg_match_all
    */
   public function match_all($pattern, &$matches, $flags = 0) {
     $args = array($pattern, &$matches, $flags);
@@ -129,59 +129,162 @@ class String implements ArrayAccess {
     return $this->__call('length', array());
   }
 
-  public function substring($pos1, $pos2 = null) {
-    $args = array($pos1, $pos2);
+  public function substring($pos1, $pos2 = Array()) {
+    if($pos2 === array()) {
+      $args = array($pos1);
+    } else {
+      $args = array($pos1, $pos2);
+    }
     return $this->__call('substr', $args);
   }
 
+  /*------ the following methods implement the ArrayAccess interface. ------*\
+  \*------ This makes the strings 'python'-like                       ------*/
+
+  /* regex for an valid specification of a part of a string */
   const REGEX_OFFSET = '/^(-?[0-9]+)?(:)?(-?[0-9]+?)?$/D';
 
-  /* implements the ArrayAccess interface. Make the strings 'python'-like */
+
+  /**
+   * part of the ArrayAccess interface
+   *
+   * called if you do something like
+   *
+   * $string = new String("just a test");
+   *
+   * echo $string[5]; // 'a'
+   * echo $string[":3"]; // 'just'
+   * echo $string["-4:"]; // 'test'
+   * echo $string["3:5"]; // 't a'
+   * echo $string["5:3"]; // 't a'
+   * echo $string["-8:-6"]; // 't a'
+   */
   public function offsetGet($offset) {
     $pos1 = $pos2 = null;
+    // parse the given offset
     $this->parseOffset($offset, $pos1, $pos2);
 
+    // clone the string (we don't want to manipulate the current one)
     $clone = clone $this;
+    // cut out the piece specified and return the $clone
     return $clone->substr($pos1, $pos2 - $pos1);
   }
 
+  /**
+   * part of the ArrayAccess interface
+   *
+   * called if you do something like
+   *
+   * $string = new String("a string");
+   * $string["3:"] = "text"; // "a text"
+   *
+   * set the specified part of the string to something else
+   *
+   * @param $offset - the part of the string
+   * @return boolean
+   */
   public function offsetSet($offset, $value) {
     $pos1 = $pos2 = null;
+    // parse the given offset
     $this->parseOffset($offset, $pos1, $pos2);
       
+    // cut out the part before and after the specifified
+    // offset and place the $value in the middle
     $this->data = substr($this->data, 0, $pos1) . $value . substr($this->data, $pos2);
     return $this;
   }
 
+  /**
+   * part of the ArrayAccess interface
+   *
+   * called if you do something like
+   *
+   * $string = new String("a very cool string");
+   * unset($string["2:7"]); // "a cool string"
+   *
+   * simply removes the specified part from the string
+   *
+   * @param $offset - the part of the string which should get deleted
+   * @return boolean
+   */
   public function offsetUnset($offset) {
     $this->offsetSet($offset, "");
     return $this;
   }
 
+  /**
+   * part of the ArrayAccess interface
+   *
+   * called if you do something like
+   *
+   * $string = new String();
+   * isset($string["2:4"])
+   *
+   * checks if $offset is valid 
+   *
+   * @param $offset - the index requested
+   * @return boolean - wheter $offset is valid or not
+   */
   public function offsetExists($offset) {
     $offset = (string)$offset;
     return $offset != '' && (bool)s($offset)->match(self::REGEX_OFFSET);
   }
 
-  public function checkOffsetExists($offset) {
+  /**
+   * this thing throws an exception if the given offset doesn't exist
+   *
+   * @param $offset
+   *
+   * @return void
+   */
+  private function checkOffsetExists($offset) {
     if(!$this->offsetExists($offset)) {
       throw new InvalidArgumentException("offset has to be a number or in format " . self::REGEX_OFFSET);
     }
   }
 
+  /**
+   * parses a string given as offset
+   *
+   * @param string $offset - the given offset
+   * @param mixed &$pos1 - reference to save the absolute first position
+   * @param mixed &$pos2 - reference to save the absolute second position
+   *
+   * @return void
+   */
   private function parseOffset($offset, &$pos1, &$pos2) {
+    // throw an exception if it's not an valid offset
     $this->checkOffsetExists($offset);
+
+    // grab the offsets via regex
     $matches = Array();
     s($offset)->match_all(self::REGEX_OFFSET, $matches);
+
+    // remove the first part of the matches (always the whole string)
     $matches = array_slice($matches, 1);
     
+    // grab out the values of the match
     $colon = $matches[1][0];
     $pos1 = $matches[0][0];
     $pos2 = $matches[2][0];
-    $this->toPositiveOffset($pos1, $pos2, $colon);
+  
+    // resolve the relative positions
+    $this->toPositiveOffset($pos1, $pos2, (bool)$colon);
   }
 
+  /**
+   * resolves the negative position and positions not given
+   * for offsetGet(), offsetSet() etc. 
+   *
+   * @param string/int &$pos1 first position (content may be relative (negative))
+   * @param string/int &$pos2 second position (content may be relative (negative))
+   * @param boolean $colon if the parsed string had a colon in it or not
+   *
+   * @return void
+   */
   private function toPositiveOffset(&$pos1, &$pos2, $colon) {
+    // get the length of the current string
+    // needed to calculate absolute positions from negative relative positions
     $length = $this->length();
 
     $make_positive = function($value) use ($length) {
