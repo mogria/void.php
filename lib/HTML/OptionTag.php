@@ -3,6 +3,7 @@
 namespace Void\HTML;
 
 class OptionTag extends Tag {
+
   public function __construct($value, $label = null, Array $attributes = Array()) {
     $label === null && $label = $value;
     $attributes['value'] = $value;
@@ -18,7 +19,7 @@ class OptionTag extends Tag {
   }
 
   public function isSelected() {
-    $this->exists('selected');
+    return (bool)$this->exists('selected');
   }
 
   public function setLabel($new_label) {
@@ -28,8 +29,6 @@ class OptionTag extends Tag {
   public function getLabel() {
     return $this->getContent();
   }
-
-  protected $value;
 
   public function setValue($new_value) {
     $this->value = $new_value;
