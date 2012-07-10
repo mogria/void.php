@@ -4,6 +4,8 @@ namespace Void;
 
 require dirname(__FILE__) . DS . 'default_configuration.php';
 
+!isset($ow_environment) && $overwrite_environment = null;
+
 
 /* The current environment we are in.
  * Set the value to DEVELOPMENT, TEST or PRODUCTION
@@ -18,7 +20,12 @@ $environment = DEVELOPMENT;
  */
 function getConfig() {
   // get the variable $environment from outside
-  global $environment;
+  global $environment, $overwrite_environment;
+
+  // overwrite the environment if $overwrite_environment is set
+  if($overwrite_environment !== null) {
+    $environment = $overwrite_environment;
+  }
 
   // create the Config object and return it
   return new Config($environment, function($cfg) {
@@ -35,19 +42,19 @@ function getConfig() {
     // the settings just for the development environment
     $cfg->config(function($cfg) {
       /** database configuration **/
-      $cfg->modelconfig_connection = 'mysql://root@localhost/development_database_name';
+      $cfg->modelconfig_connection = 'mysql://root@localhost/voidphp_development';
     }, DEVELOPMENT);
 
 
     // the settings for the test environment
     $cfg->config(function($cfg) {
-      $cfg->modelconfig_connection = 'mysql://root@localhost/test_database_name';
+      $cfg->modelconfig_connection = 'mysql://root@localhost/voidphp_test';
     }, TEST);
 
 
     // the settings for the production environment
     $cfg->config(function($cfg) {
-      $cfg->modelconfig_connection = 'mysql://root@localhost/production_database_name';
+      $cfg->modelconfig_connection = 'mysql://root@localhost/voidphp_procution';
     }, PRODUCTION);
   });
 }

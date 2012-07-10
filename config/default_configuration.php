@@ -55,8 +55,14 @@ function loadDefaultConfig($cfg) {
 
   // default configuration for the test environment
   $cfg->config(function($cfg) {
+    // directories
+    $cfg->modelconfig_dir = "test/Models";
+    $cfg->cssasset_dir = "test/stylesheets";
+    $cfg->javascriptasset_dir = "test/javascripts";
+    $cfg->templatefinder_dir = "test/Views";
+
     $cfg->phperrormessages_on = true;
-    $cfg->phperrormessages_level = E_ALL;
+    $cfg->phperrormessages_level = E_ALL | E_STRICT;
   }, TEST);
 
   // default configuration for the production environment
