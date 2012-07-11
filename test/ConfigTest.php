@@ -135,8 +135,6 @@ class TestConfigurable extends VoidBase {
       ), PRODUCTION);
     });
 
-    self::$config->debugDump('all');
-
     // is null returned if the key doesn't exists?
     $test->assertEquals(null, self::$config->inexistent_key);
     $test->assertEquals("test_value", self::$config->all);

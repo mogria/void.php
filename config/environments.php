@@ -2,9 +2,7 @@
 
 namespace Void;
 
-require dirname(__FILE__) . DS . 'default_configuration.php';
-
-!isset($ow_environment) && $overwrite_environment = null;
+require_once dirname(__FILE__) . DS . 'default_configuration.php';
 
 
 /* The current environment we are in.
@@ -15,48 +13,49 @@ require dirname(__FILE__) . DS . 'default_configuration.php';
 $environment = DEVELOPMENT;
 
 
-/**
- * Returns the Configuration with ALL THE settings for each environment
- */
-function getConfig() {
-  // get the variable $environment from outside
-  global $environment, $overwrite_environment;
+if(!function_exists('\Void\getConfig')) {
+  /**
+   * Returns the Configuration with ALL THE settings for each environment
+   */
+  function getConfig() {
+    // get the variable $environment from outside
+    global $environment;
 
-  // overwrite the environment if $overwrite_environment is set
-  if($overwrite_environment !== null) {
-    $environment = $overwrite_environment;
+    // create the Config object and return it
+    return new Config($environment, function($cfg) {
+      
+      // loading the default configuration into ALL the environments
+      loadDefaultConfig($cfg);
+      
+      // the settings for all environments
+      $cfg->config(function($cfg) {
+        // the default Controller (if none is given)
+        $cfg->dispatcher_default_controller = "Pages";
+      }, 'all');
+
+      // the settings just for the development environment
+      $cfg->config(function($cfg) {
+        /** database configuration **/
+        $cfg->modelconfig_connection = 'mysql://root@localhost/voidphp_development';
+      }, DEVELOPMENT);
+
+
+      // the settings for the test environment
+      $cfg->config(function($cfg) {
+        $cfg->modelconfig_connection = 'mysql://root@localhost/voidphp_test';
+      }, TEST);
+
+
+      // the settings for the production environment
+      $cfg->config(function($cfg) {
+        $cfg->modelconfig_connection = 'mysql://root@localhost/voidphp_procution';
+      }, PRODUCTION);
+    });
   }
-
-  // create the Config object and return it
-  return new Config($environment, function($cfg) {
-    
-    // loading the default configuration into ALL the environments
-    loadDefaultConfig($cfg);
-    
-    // the settings for all environments
-    $cfg->config(function($cfg) {
-      // the default Controller (if none is given)
-      $cfg->dispatcher_default_controller = "Pages";
-    }, 'all');
-
-    // the settings just for the development environment
-    $cfg->config(function($cfg) {
-      /** database configuration **/
-      $cfg->modelconfig_connection = 'mysql://root@localhost/voidphp_development';
-    }, DEVELOPMENT);
-
-
-    // the settings for the test environment
-    $cfg->config(function($cfg) {
-      $cfg->modelconfig_connection = 'mysql://root@localhost/voidphp_test';
-    }, TEST);
-
-
-    // the settings for the production environment
-    $cfg->config(function($cfg) {
-      $cfg->modelconfig_connection = 'mysql://root@localhost/voidphp_procution';
-    }, PRODUCTION);
-  });
 }
 
-VoidBase::setConfig(getConfig());
+$config = getConfig();
+if(isset($overwrite_environment)) {
+  $config->setEnvironment($overwrite_environment);
+}
+VoidBase::setConfig($config);

@@ -15,7 +15,9 @@ class ModelConfig extends VoidBase implements Job {
    */
   public function run() {
     // disable the ActiveRecord autoloader for Models
-    define('PHP_ACTIVERECORD_AUTOLOAD_DISABLE', 1);
+    if(!defined('PHP_ACTIVERECORD_AUTOLOAD_DISABLE')) {
+      define('PHP_ACTIVERECORD_AUTOLOAD_DISABLE', 1);
+    }
 
     // include ActiveRecord
     require_once ROOT . "lib" . DS . "Model" . DS . "ActiveRecord.php";
