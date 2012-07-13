@@ -27,6 +27,7 @@ class PostsController extends ApplicationController {
   }
   public function action_edit($id = null) {
     try {
+      $this->categories = Category::all();
       $this->post = Post::find((int)$id);
       if(isset($_POST['form_sent']) && $this->post->update_attributes($_POST)) {
         throw new Exception();

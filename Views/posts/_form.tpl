@@ -1,5 +1,5 @@
 {=:render('layout/_errors', Array('object' => $post))}
-{=:form('post', $action, function($f) use ($post){}
+{=:form('post', $action, function($f) use ($post, $categories){}
   {$f->setModel($post)}
   <fieldset>
     <legend>{>$post->id === null ? "Create" : "Edit"} a Post</legend>
@@ -20,6 +20,7 @@
 
     <div>
       {=$f->label("category")}
+      {=$f->select("category", $categories, Array('%s', 'name'))}
     </div>
 
     <div>
