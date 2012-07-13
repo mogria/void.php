@@ -362,6 +362,8 @@ class Config extends VirtualAttribute {
   public function debugDump($environment = null) {
     if($environment !== 'all') {
       $environment === null && $environment = $this->getEnvironment();
+      echo "ENVIRONMENT: $environment\n";
+      var_dump($this->$environment);
     } else {
       $environments = Array(DEVELOPMENT, TEST, PRODUCTION);
       foreach($environments as $environment) {
@@ -369,5 +371,4 @@ class Config extends VirtualAttribute {
       }
     }
   }
-
 }

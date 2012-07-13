@@ -24,21 +24,46 @@ class Booter extends JobCollection {
       }
     }
   }
+
   
   /**
    * Don't let someone clone this shit.
    */
   protected function __clone() {}
+
+  /**
+   * calls Booter::shutdown() if necessary
+   *
+   * @return void
+   */
+  public function __destruct() {
+    if(self::$instance instanceof Booter) {
+      self::shutdown();
+    }
+  }
   
   /**
    * this function boots the application up, this executes all the jobs added in __construct()
+   * 
+   * @param bool $reboot - wheter to boot or to reboot
+   * @return void
    */
-  public static function boot() {
-    if(self::$instance instanceof Booter) {
-      throw new \BadMethodCallException("already booted!");
+  public static function boot($reboot = false) {
+    if(!$reboot) {
+      // simply boot, throw an exception if already booted
+      if(self::$instance instanceof Booter) {
+        throw new \BadMethodCallException("already booted!");
+      }
+      self::$instance = new Booter();
+      self::$instance->run();
+    } else {
+      // reboot
+      if(self::$instance instanceof Booter) {
+        // only shut if already booted
+        self::shutdown();
+      }
+      self::boot();
     }
-    self::$instance = new Booter();
-    self::$instance->run();
   }
   
   /**
@@ -48,7 +73,8 @@ class Booter extends JobCollection {
     if(!self::$instance instanceof Booter) {
       throw new \BadMethodCallException("You need to " . __CLASS__ . "::boot() before you can call " . __METHOD__);
     }
-    self::$instance->cleanup();
+    $instance = self::$instance;
     self::$instance = null;
+    $instance->cleanup();
   }
 }

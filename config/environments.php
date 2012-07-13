@@ -2,7 +2,7 @@
 
 namespace Void;
 
-require dirname(__FILE__) . DS . 'default_configuration.php';
+require_once dirname(__FILE__) . DS . 'default_configuration.php';
 
 
 /* The current environment we are in.
@@ -52,4 +52,8 @@ function getConfig() {
   });
 }
 
-VoidBase::setConfig(getConfig());
+$config = getConfig();
+if(isset($overwrite_environment)) {
+  $config->setEnvironment($overwrite_environment);
+}
+VoidBase::setConfig($config);

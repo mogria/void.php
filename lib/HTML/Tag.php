@@ -82,7 +82,7 @@ class Tag extends \Void\VirtualAttribute {
     }
     $attributes = $this->getReference();
     array_walk($attributes, function(&$value, $key) {
-      $value = " " . htmlspecialchars($key, ENT_QUOTES, 'UTF-8') . ( $value !== null ? "=\"" . htmlspecialchars($value, ENT_QUOTES, 'UTF-8') . "\"" : "");
+      $value = " " . htmlspecialchars((string)$key, ENT_QUOTES, 'UTF-8') . ( $value !== null ? "=\"" . htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8') . "\"" : "");
     });
     return "<" . $this->tagname . implode("", $attributes) . ($this->content !== null ? ">" . $this->getContent(). "</" . $this->tagname . ">" : " />");
   }
