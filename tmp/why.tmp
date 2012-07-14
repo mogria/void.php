@@ -1,0 +1,8 @@
+This folder is used by void.php to store temporary data or to cache
+things like the class index (autoload-cache) or templates.
+
+The tmp/ directory and it's subfolders have to be writable by the php
+process.
+
+You can delete the contents of this directory if you want, but they
+might be recreated automaticly as soon as the php scripts get called.
