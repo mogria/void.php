@@ -23,7 +23,7 @@
 namespace Void;
 
 class Post extends \ActiveRecord\Model {
-  static $attr_accessible = Array('title', 'content', 'taglist');
+  static $attr_accessible = Array('title', 'content', 'taglist', 'categories');
 
   static $has_many = Array(
     Array('category_assigns'),
@@ -88,5 +88,19 @@ class Post extends \ActiveRecord\Model {
       $attrs = Array('tag_id' => $tag->id, 'post_id' => $this->id);
       TagAssign::create($attrs);
     }
+  }
+
+  public function set_categories($ids) {
+    !is_array($ids) && $ids = array($ids);
+
+    foreach($ids as $id) {
+      $data = Array('post_id' => $this->id, 'category_id' => $id);
+      if($this->id != null && !CategoryAssign::find($data)) {
+        CategoryAssign::create($data);
+      }
+    }
+
+    $this->id != null &&
+      CategoryAssign::table()->delete(Array('category_id NOT IN (?) AND post_id = ?', $ids, $this->id));
   }
 }
