@@ -4,6 +4,7 @@ namespace Void\HTML;
 
 use \ActiveRecord\Model;
 use \Void\Router;
+use \BadMethodCallException;
 
 /**
  * You can create HTML Forms using this class
