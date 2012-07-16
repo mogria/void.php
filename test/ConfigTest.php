@@ -114,15 +114,15 @@ class TestConfigurable extends VoidBase {
     self::$config->config(function($cfg) {
       // for all the environments
       $cfg->config(function($cfg) {
-        $cfg->all = "test_value";
+        $cfg->testconfigurable_all = "test_value";
       }, 'all');
 
       // only for DEVELOPMENT
       $cfg->config(function($cfg) {
         // this overrides the value defined in 'all'
-        $cfg->all = "override_value";
+        $cfg->testconfigurable_all = "override_value";
         // this overrides the value defined when we created the Config object
-        $cfg->test = "explain";
+        $cfg->testconfigurable_test = "explain";
       }, DEVELOPMENT);
 
       $cfg->config(function($cfg) {
@@ -130,8 +130,8 @@ class TestConfigurable extends VoidBase {
 
       // this should also work using arrays
       $cfg->config(Array(
-        'key_in_production' => 123,
-        'test' => "hui"
+        'testconfigurable_key_in_production' => 123,
+        'testconfigurable_test' => "hui"
       ), PRODUCTION);
     });
 
