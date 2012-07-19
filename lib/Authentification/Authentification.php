@@ -2,21 +2,10 @@
 
 namespace Void;
 
-class Authentification extends VoidBase {
-  
- public function reload($model) {
-   $class = get_class($model);
-   $loaded = $class::find_by_id($model->id);
-   return $loaded;
- }
+interface Authentification {
 
- public function login($model) {
-   if($model instanceof Authorizeable) {
-     $_SESSION['role'] = $model->login();
-   }
- }
-
- public function logout($model) {
-
- }
+  public function login();
+  public function logout();
+  public function get_role();
+  public function reload();
 }
