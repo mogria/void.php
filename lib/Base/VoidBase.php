@@ -27,7 +27,19 @@ abstract class VoidBase {
    * @access public
    * @param Config $config - the new Config object
    */
-  public static function setConfig($config) {
+  public static function setConfig(Config $config) {
     static::$config = $config;
+  }
+
+  private static $route;
+
+  public static function setRoutes($closure) {
+    $route = new Route(Request::getPathLink());
+    $closure($route);
+    self::$route = $route;
+  }
+
+  public static function getRoutes() {
+    return self::$route;
   }
 }

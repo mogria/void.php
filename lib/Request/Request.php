@@ -48,7 +48,11 @@ class Request extends VoidBase {
    * Parses the requested URL
    */
   public static function getArray() {
-    return array_values(array_diff(explode("/", trim(str_replace($_SERVER['SCRIPT_NAME'], "", $_SERVER['PHP_SELF']), "/")), Array('')));
+    return array_values(array_diff(explode("/", trim(static::getRoutes()->parse(), "/")), Array('')));
+  }
+
+  public static function getPathLink() {
+    return str_replace($_SERVER['SCRIPT_NAME'], "", $_SERVER['PHP_SELF']);
   }
 
   /**

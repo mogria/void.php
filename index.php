@@ -15,6 +15,8 @@ require_once 'config/consts.php';
 require_once 'autoload.php';
 // the configuration
 require_once 'config/environments.php';
+// the routes
+require_once 'config/routes.php';
 
 // Startup
 Booter::boot();
