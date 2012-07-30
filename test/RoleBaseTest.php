@@ -38,4 +38,9 @@ class RoleBaseTest extends \PHPUnit_Framework_TestCase {
     $this->assertTrue($this->admin->allowedTo("admin"));
     $this->assertFalse($this->admin->allowedTo("some_random_shit"));
   }
+
+  public function testGetId() {
+    $this->assertEquals(15, UserRole::getId());
+    $this->assertEquals(27, AdminRole::getId());
+  }
 }

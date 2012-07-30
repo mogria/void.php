@@ -24,7 +24,7 @@ function loadDefaultConfig($cfg) {
     $cfg->router_index_file = "index.php";
 
     /** Booter */
-    $cfg->booter_classes = Array('ErrorToException', 'PHPErrorMessages', 'ModelConfig', 'UtilShortcuts');
+    $cfg->booter_classes = Array('ErrorToException', 'PHPErrorMessages', 'ModelConfig', 'UtilShortcuts', 'RoleLoader');
     $cfg->booter_classes_web   = Array('RequestFilter', 'SessionInit');
     $cfg->booter_classes_shell = Array();
 
@@ -45,6 +45,9 @@ function loadDefaultConfig($cfg) {
     $cfg->hash_iterations = 115;
     $cfg->hash_algo = 'whirlpool';
     $cfg->hash_secret = 'd9FbkL$[qI18G.Bl$g1 3_aGh,AuL.:tRoWq';
+
+    /** Roles **/
+    $cfg->roleloader_dir = "roles";
   }, 'all');
 
   // default configuration for the development environment
@@ -60,6 +63,7 @@ function loadDefaultConfig($cfg) {
     $cfg->cssasset_dir = "test/stylesheets";
     $cfg->javascriptasset_dir = "test/javascripts";
     $cfg->templatefinder_dir = "test/Views";
+    $cfg->roleloader_dir = "test/roles";
 
     $cfg->phperrormessages_on = true;
     $cfg->phperrormessages_level = E_ALL | E_STRICT;

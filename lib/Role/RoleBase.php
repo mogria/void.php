@@ -87,4 +87,14 @@ abstract class RoleBase {
   public function allowedTo($right_name) {
     return isset(static::${$right_name}) ? static::${$right_name} : false;
   }
+
+  /**
+   * returns the id of the role
+   *
+   * @static
+   * @return int $id
+   */
+  public static function getId() {
+    return static::$id;
+  }
 }

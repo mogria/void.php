@@ -1,3 +1,5 @@
 nbproject
-tmp
+!tmp
+tmp/*
+!tmp/why.tmp
 *.sw*
