@@ -34,7 +34,7 @@
 
 namespace Void;
 
-class User extends \ActiveRecord\Model {
+class User extends ModelAuthentification {
   static $has_many = Array('posts');
   static $validates_presence_of = Array(
     Array('name'),
@@ -55,7 +55,42 @@ class User extends \ActiveRecord\Model {
     Array('fullname', 'maximum' => 50)
   );
 
+  static $before_save = Array('hash_password');
+
+  public $text_password = null;
+
   public function get_fullname() {
     return null === ($fullname = $this->read_attribute('fullname')) ? $this->name : $fullname;
+  }
+
+  public function login() {
+    // are the hashes the same
+    $password_correct = Hash::compare($this->text_password, $this->password);
+
+    // set the session, if the hashes are the same
+    $password_correct && Session::user($this);
+    return $password_correct;
+  }
+
+  public function logout() {
+    Session::user(null);
+  }
+
+  public function get_role() {
+    if(Session::user_exists()) {
+      if($this->admin) {
+        return new AdminRole();
+      }
+      return new UserRole();
+    }
+    return new UnregistredRole();
+  }
+
+
+  public function hash_password() {
+    if(is_string($this->text_password)) {
+      $this->password = Hash::create($this->text_password);
+      $this->text_password = null;
+    }
   }
 }
