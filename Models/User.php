@@ -48,16 +48,23 @@ class User extends ModelAuthentification {
     Array('password_reset', 'maximum' => 12),
     Array('email', 'maximum' => 60),
     Array('status', 'maximum' => 255),
-    Array('admin', 'maximum' => 1),
-    Array('last_login', 'maximum' => 19),
-    Array('created_at', 'maximum' => 19),
-    Array('updated_at', 'maximum' => 19),
     Array('fullname', 'maximum' => 50)
   );
 
   static $before_save = Array('hash_password');
 
-  public $text_password = null;
+  protected $text_password = null;
+
+  public function set_text_password($new_text_password) {
+    $this->text_password = $new_text_password;
+
+    // setting attribute dirty so the model gets saved when calling save();
+    $this->flag_dirty("password");
+  }
+
+  public function get_text_password() {
+    return "";
+  }
 
   public function get_fullname() {
     return null === ($fullname = $this->read_attribute('fullname')) ? $this->name : $fullname;
