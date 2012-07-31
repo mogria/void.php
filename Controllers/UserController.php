@@ -8,6 +8,9 @@ class UserController extends ApplicationController {
   }
 
   public function action_login() {
+    if(Session::user_exists()) {
+      Router::redirect('user/show');
+    }
     $this->user = new User(Array('name' => ''));
     if(isset($_POST['name'], $_POST['text_password'])) {
       $user = User::find_by_name($_POST['name']);
@@ -22,7 +25,10 @@ class UserController extends ApplicationController {
   }
   public function action_logout() {
   }
-  public function action_show() {
+  public function action_show($id = null) {
+    $this->user = ($id === null) ? Session::user() : User::find_by_id($id);
+    if($this->user) {
+    }
   }
   public function action_new() {
   }

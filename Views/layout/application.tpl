@@ -17,11 +17,15 @@
         <h1>test-blog</h1>
       </header>
       <nav class="push-1 span-22">
-        <ul>
+        <ul class="navimenu">
           <li>{=:aTag("Home", null)}</li>
           <li>{=:aTag("About", "pages/about")}</li>
           <li>{=:aTag("Categories", "categories")}</li>
           <li>{=:aTag("Tags", "tags")}</li>
+        </ul>
+
+        <ul class="usermenu right">
+          <li>{=:aTag("Login", "user/login")}</li>
         </ul>
       </nav>
       <section class="push-1 span-15 clear">
