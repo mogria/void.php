@@ -18,6 +18,7 @@ class PostsController extends ApplicationController {
     }
   }
   public function action_new() {
+    $this->categories = Category::all();
     $this->post = new Post($_POST);
     // @todo: change this when we have an authentification system
     $this->post->user_id = 1;
