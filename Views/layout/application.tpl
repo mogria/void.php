@@ -23,9 +23,14 @@
           <li>{=:aTag("Categories", "categories")}</li>
           <li>{=:aTag("Tags", "tags")}</li>
         </ul>
-
+        
         <ul class="usermenu right">
+        {if(Session::user()):}
+          <li>{=:aTag("Profile", "user/show")}</li>
+          <li>{=:aTag("Logout", "user/logout")}</li>
+        {else:}
           <li>{=:aTag("Login", "user/login")}</li>
+        {endif}
         </ul>
       </nav>
       <section class="push-1 span-15 clear">

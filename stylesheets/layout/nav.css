@@ -45,3 +45,16 @@
 #wrapper nav ul li:last-child a {
   border-right-width: 1px;
 }
+
+#wrapper nav ul.right > li {
+  float: right;
+}
+
+#wrapper nav ul.right > li > a {
+  border-right-width: 1px;
+  border-left-width: 0px;
+}
+
+#wrapper nav ul.right > li:last-child > a {
+  border-left-width: 1px;
+}

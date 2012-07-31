@@ -12,3 +12,7 @@ footer {
   padding: 3px;
   border-top: 1px solid #DDD;
 }
+
+ul.right > li{
+  float: right;
+}
