@@ -49,12 +49,12 @@ class AuthentificationTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testGetRole() {
-    $this->assertTrue($this->user->get_role() instanceof UnregistredRole);
+    $this->assertTrue($this->user->get_role() instanceof UnknownRole);
     $this->user->text_password = "secretpasswd15";
     $this->user->login();
-    $this->assertTrue($this->user->get_role() instanceof UserRole);
-    $this->assertTrue(Session::user()->get_role() instanceof UserRole);
+    $this->assertTrue($this->user->get_role() instanceof RegistredRole);
+    $this->assertTrue(Session::user()->get_role() instanceof RegistredRole);
     $this->user->logout();
-    $this->assertTrue($this->user->get_role() instanceof UnregistredRole);
+    $this->assertTrue($this->user->get_role() instanceof UnknownRole);
   }
 }

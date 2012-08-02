@@ -22,7 +22,7 @@ class User extends ModelAuthentification {
   }
 
   public function get_role() {
-    return Session::user_exists() ? RoleManager::get($this->read_attribute('role')) : new UnregistredRole();
+    return Session::user_exists() ? RoleManager::get($this->read_attribute('role')) : new UnknownRole();
   }
 
   public function hash_password() {
