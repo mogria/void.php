@@ -95,7 +95,7 @@ class Autoloader {
       // remove tailing slashes
       $dir = rtrim($dir, DS);
       // remove  ./ in the front
-      $dir = preg_replace("@^((\./)+)@", '', $dir);
+      $dir = preg_replace("@^((\." . preg_quote(DS) . ")+)@", '', $dir);
       if(!self::inExcludedDir($dir)) { // the file mustn't be in an excluded directory
         // read each directory entry
         while(false !== ($entry = readdir($handle))) {
@@ -122,7 +122,7 @@ class Autoloader {
             if(strpos($dir, $libdir) === 0) {
               // detect the namespaces in where the class could be
               $namespace = trim(substr($dir, strlen($libdir)), DS);
-              $namespace = str_replace("/", "\\", $namespace);
+              $namespace = str_replace(DS, "\\", $namespace);
               $list[$classname][$namespace] = $file;
               !isset($list[$classname]['']) && $list[$classname][''] = $file;
             } else {
@@ -148,7 +148,7 @@ class Autoloader {
   private static function inExcludedDir($file) {
     $inside = false;
     $file = str_replace("/", DS, $file);
-    $excluded = Array("lib/Model", "test");
+    $excluded = Array("lib/Model", "test", "stylesheets", "javascripts", "images", ".git");
     // iterate through each excluded directory
     foreach($excluded as $dir) {
       // replace all normal slashes in the path with the
