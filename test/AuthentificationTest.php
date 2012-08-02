@@ -4,6 +4,8 @@ namespace Void;
 
 require_once 'config/consts.php';
 require_once 'autoload.php';
+require_once 'test/roles/UnknownRole.php';
+require_once 'test/roles/RegistredRole.php';
 require_once 'test/Models/User.php';
 
 
@@ -29,7 +31,12 @@ class AuthentificationTest extends \PHPUnit_Framework_TestCase {
     } else {
       $this->user = User::find(self::$user_id);
     }
-    Session::user(null);
+    User::auth_init();
+  }
+
+  public function testAuthInit() {
+    $this->assertEquals(null, Session::user()->id);
+    $this->assertEquals("Anonymous", Session::user()->name);
   }
 
   public function testLogin() {
@@ -43,9 +50,9 @@ class AuthentificationTest extends \PHPUnit_Framework_TestCase {
   public function testLogout() {
     $this->user->text_password = "secretpasswd15";
     $this->user->login();
-    $this->assertFalse(Session::user() === null);
+    $this->assertTrue(is_int(Session::user()->id) && null !== Session::user()->id);
     $this->user->logout();
-    $this->assertEquals(null, Session::user());
+    $this->assertEquals(null, Session::user()->id);
   }
 
   public function testGetRole() {

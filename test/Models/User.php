@@ -7,6 +7,10 @@ class User extends ModelAuthentification {
   public $text_password = null;
   static $before_save = Array('hash_password');
 
+  public static function auth_init() {
+    Session::user(new User(Array('name' => 'Anonymous')));
+  }
+
   public function login() {
     // are the hashes the same
     $password_correct = Hash::compare($this->text_password, $this->password);
@@ -18,11 +22,13 @@ class User extends ModelAuthentification {
   }
 
   public function logout() {
-    Session::user(null);
+    self::auth_init();
   }
 
   public function get_role() {
-    return Session::user_exists() ? RoleManager::get($this->read_attribute('role')) : new UnknownRole();
+    return Session::user()->id === null
+      ? new UnknownRole()
+      : RoleManager::get($this->read_attribute('role'));
   }
 
   public function hash_password() {
