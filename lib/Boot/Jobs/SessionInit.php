@@ -10,6 +10,13 @@ class SessionInit implements Job {
   public function run() {
     session_start();
     session_regenerate_id(true);
+    
+    $models = self::$config->models
+    if(is_array($models)) {
+      foreach($models as $model) {
+        $model::auth_init();
+      }
+    }
   }
 
   public function cleanup() {

@@ -43,6 +43,8 @@ if(!function_exists('\Void\getConfig')) {
       // the settings for the test environment
       $cfg->config(function($cfg) {
         $cfg->modelconfig_connection = 'mysql://root@localhost/voidphp_test';
+
+        $cfg->sessioninit_models = Array('User');
       }, TEST);
 
 
