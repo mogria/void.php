@@ -6,7 +6,8 @@ require_once 'config/consts.php';
 require_once 'autoload.php';
 
 
-require_once __DIR__  . DS . 'roles/UserRole.php';
+require_once __DIR__  . DS . 'roles/UnknownRole.php';
+require_once __DIR__  . DS . 'roles/RegistredRole.php';
 require_once __DIR__  . DS . 'roles/AdminRole.php';
 require_once __DIR__  . DS . 'roles/ReservedIdRole.php';
 require_once __DIR__  . DS . 'roles/InvalidIdFormatRole.php';
@@ -17,7 +18,7 @@ class RoleBaseTest extends \PHPUnit_Framework_TestCase {
   protected $admin;
 
   public function setUp() {
-    $this->user = new UserRole();
+    $this->user = new RegistredRole();
     $this->admin = new AdminRole();
   }
 
@@ -40,7 +41,7 @@ class RoleBaseTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testGetId() {
-    $this->assertEquals(15, UserRole::getId());
+    $this->assertEquals(15, RegistredRole::getId());
     $this->assertEquals(27, AdminRole::getId());
   }
 }

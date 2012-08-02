@@ -31,6 +31,7 @@ if(!function_exists('\Void\getConfig')) {
       $cfg->config(function($cfg) {
         // the default Controller (if none is given)
         $cfg->dispatcher_default_controller = "Posts";
+        $cfg->sessioninit_models = Array('User');
       }, 'all');
 
       // the settings just for the development environment

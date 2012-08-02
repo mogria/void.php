@@ -8,4 +8,9 @@
   * better integration with models
 * Autoloader
   * you always have to delete the cache to add a new class to the autoloader
-  * Autoloader:33 tried to create cache but the tmp directory didnt exist?
+
+* testing
+  * proper boot the application in the testing mode (will prevent problems when classes with the same name are in the test/ directory and somewhere else)
+
+* Authentication
+  * class Model Authentification is useless (ActiveRecord already has an reload method)

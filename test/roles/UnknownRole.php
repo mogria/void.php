@@ -2,6 +2,6 @@
 
 namespace Void;
 
-class UnregistredRole extends RoleBase {
+class UnknownRole extends RoleBase {
   protected static $id = 14;
 }

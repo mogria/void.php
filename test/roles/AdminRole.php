@@ -2,7 +2,7 @@
 
 namespace Void;
 
-class AdminRole extends UserRole {
+class AdminRole extends RegistredRole {
   protected static $id = 27;
 
   static $vote = false;
