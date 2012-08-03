@@ -25,7 +25,7 @@
         </ul>
         
         <ul class="usermenu right">
-        {if(Session::user()):}
+        {if(Session::user()->role->login):}
           <li>{=:aTag("Profile", "user/show")}</li>
           <li>{=:aTag("Logout", "user/logout")}</li>
         {else:}

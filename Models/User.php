@@ -70,6 +70,12 @@ class User extends ModelAuthentification {
     return null === ($fullname = $this->read_attribute('fullname')) ? $this->name : $fullname;
   }
 
+  public static function auth_init($force) {
+    if($force || !(Session::user() instanceof User)) {
+      Session::user(new User(Array('name' => 'Anonymous')));
+    }
+  }
+
   public function login() {
     // are the hashes the same
     $password_correct = Hash::compare($this->text_password, $this->password);
@@ -80,7 +86,7 @@ class User extends ModelAuthentification {
   }
 
   public function logout() {
-    Session::user(null);
+    self::auth_init();
   }
 
   public function get_role() {

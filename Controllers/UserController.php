@@ -8,7 +8,6 @@ class UserController extends ApplicationController {
   }
 
   public function action_login() {
-    // @todo: what if already logged in?
     $this->user = new User(Array('name' => ''));
     if(isset($_POST['name'], $_POST['text_password'])) {
       $user = User::find_by_name($_POST['name']);
@@ -25,7 +24,6 @@ class UserController extends ApplicationController {
   }
 
   public function action_logout() {
-    // @todo: what if not logged in?
     Session::user()->logout();
     Flash::success('Successfully logged out');
     Router::redirect(null);
@@ -33,8 +31,10 @@ class UserController extends ApplicationController {
 
   public function action_show($id = null) {
     // @todo: what if not logged in?
-    $this->user = ($id === null) ? Session::user() : User::find_by_id($id);
-    if($this->user === null) {
+    $this->user = ($id === null)
+      ? (Session::user()->role->login ? Session::user() : null)
+      : User::find_by_id($id);
+    if($this->user === null ) {
       Flash::error('This user doesn\'t exist');
       Router::redirect(null);
     }
