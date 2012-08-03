@@ -13,4 +13,6 @@
   * proper boot the application in the testing mode (will prevent problems when classes with the same name are in the test/ directory and somewhere else)
 
 * Authentication
-  * class Model Authentification is useless (ActiveRecord already has an reload method)
+  * class ModelAuthentification is useless (ActiveRecord already has an reload method)
+  * possibilty to protect actions from users with unsufficient rights via static directives in the controller
+
