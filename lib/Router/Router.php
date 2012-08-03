@@ -2,6 +2,7 @@
 
 namespace Void;
 use \InvalidArgumentException;
+use \BadMethodCallException;
 
 /**
  * This class generates links and redirects
@@ -58,123 +59,30 @@ class Router extends VoidBase {
     return $result;
   }
   
-  private static function assoc_link_to_indexed(array $link) {
-    $result = Array();
-    if(isset($link['controller'])) {
-      $result[] = $link['controller'];
-      unset($link['controller']);
-      if(isset($link['action'])) {
-        $result[] = $link['action'];
-        unset($link['action']);
-        if(isset($link['params'])) {
-          $result[] = $link['params'];
-          unset($link['params']);
-        }
-      }
-      
-      $result = array_merge($result, $link);
-    } else {
-      $result = $link;
+  public static function link($link_function, $params = null) {
+    if(count($args = func_get_args()) > 2) {
+      $params = $args;
+    } else if($params !== null && !is_array($params)) {
+      $params = array($params);
     }
-    return $result;
-  }
-  /**
-   * returns a link to the given $controller and $action with the given $params
-   *
-   * @param mixed $controller
-   * @param string $action
-   * @param Array $params
-   * @return string
-   */
-  public static function link($controller = null, $action = null, Array $params = Array()) {
     
-    // for notation like 'controller/action/param1'
-    if($action === null && $params === Array()
-      && (is_string($controller)
-        // if $controller is an array of size 1, use the first element as $controller
-        || (is_array($controller)
-          && count($controller) === 1
-          && $controller = array_shift($controller)))
-      // check for valid characters
-      && preg_match("/^[a-z0-9\\_\\/]*$/Di", $controller)
-      // there has to be a "/" inside the string
-      && strpos($controller, "/") !== false) {
-      // split it by "/" and create an array out of it
-      $controller = explode("/", $controller);
-    }
-      
-    if (is_array($controller)) {
-      $array = self::assoc_link_to_indexed($controller);
-      // get the controller
-      $controller =  array_shift($array);
-      // grab the action
-      $action =  array_shift($array);
-      // get the params
-      $params = array_values($array);
-
-      if(count($params) == 1 && is_array($params[0])) {
-        $params = array_values($params[0]);
-      }
-    }
-
-    // handle the things quite diffrent if $controller couldn't be a valid Class name
-    if(!preg_match("/^[a-z0-9\_]*$/Di", $controller)) {
-      return $controller;
-    }
-
-    // return link to root if no controller, action or any param is given
-    if($controller === null && $action === null && $params == null) {
-      return BASEURL;
-    } else if ($action === null &&  $params == null) { // if only controller is given
-      return BASEURL . urlencode(self::$config->index_file) . "/" . urlencode($controller);
+    if(isset($this->routes[$link_function])) {
+      return user_call_func_array(Array($this->routes[$link_function], 'link'), $params);
     } else {
-      // get the default controller if needed
-      $controller = $controller == null ? Dispatcher::getDefaultController() : $controller;
-      // get the default action if needed
-      $action = $action == null ? Dispatcher::getDefaultMethod() : $action;
-      // append / in front of each element and implode all the elements together
-      $paramstr = implode("", array_map(function(&$value) {
-        return "/" . urlencode($value);
-      }, $params));
-
-      // build and return the URL
-      return BASEURL . urlencode(self::$config->index_file) . "/" . urlencode($controller) . "/" . urlencode($action) . $paramstr;
+      throw new InvalidArgumentException("the link function '$link_function' doesn't exist!");
+    }
+  }
+  
+  public static function __callStatic($method, $args) {
+    if(substr($method, 0, 5) === "link_") {
+      return self::link(substr($method, 5), $args);
+    } else if(substr($method, 0, 9) === "redirect_") {
+      return self::redirect(substr($method, 9), $args);
+    } else {
+      throw new BadMethodCallException("no such method '$method'");
     }
   }
 
-  /**
-   * creates a link to a CSS Asset
-   *
-   * @param $main_file - the relative path without extension, relative to the stylesheet directory
-   * @param $params - Additional Params
-   */
-  public static function linkCSS($main_file, Array $params = Array()) {
-    return self::linkAsset("CSS", $main_file, $params);
-  }
-
-  /**
-   * creates a link to a Javascript Asset
-   *
-   * @param $main_file - the relative path without extension, relative to the javascript directory
-   * @param $params - Additional Params
-   */
-  public static function linkJS($main_file, Array $params = Array()) {
-    return self::linkAsset("JS", $main_file, $params);
-  }
-
-  /**
-   * creates a link to a Asset
-   *
-   * @param $type - the type of the asset ('CSS' or 'JS')
-   * @param $main_file - the relative path without extension, relative to the directory where the assets of the given type are in
-   * @param $params - Additional Params
-   */
-  protected static function linkAsset($type, $main_file, Array $params = Array()) {
-    $main_file = explode("/", $main_file);
-    $file = array_shift($main_file);
-    $params = array_merge($main_file, $params);
-    return self::link($type, $file, $params);
-  }
 
   /**
    * redirects to the given $controller and $action with the given $params
@@ -184,12 +92,8 @@ class Router extends VoidBase {
    * @param Array $params
    * @return string
    */
-  public static function redirect($controller = null, $action = null, Array $params = Array()) {
-    header("Location: " . self::link($controller, $action, $params));
+  public static function redirect($link_function, $params = null) {
+    header("Location: " . call_user_func_array(Array(__CLASS__, 'link'), func_get_args()));
     exit;
-  }
-
-  public static function getIndexFile() {
-    return self::$config->index_file;
   }
 }
