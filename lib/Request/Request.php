@@ -48,11 +48,11 @@ class Request extends VoidBase {
    * Parses the requested URL
    */
   public static function getArray() {
-    return array_values(array_diff(explode("/", trim(static::getRoutes()->parse(), "/")), Array('')));
+    return array_values(array_diff(explode("/", Router::request(self::getPathInfo())), Array('')));
   }
 
-  public static function getPathLink() {
-    return str_replace($_SERVER['SCRIPT_NAME'], "", $_SERVER['PHP_SELF']);
+  public static function getPathInfo() {
+    return "/" . trim(isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : "", "/");
   }
 
   /**
