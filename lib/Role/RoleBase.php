@@ -89,6 +89,17 @@ abstract class RoleBase {
   }
 
   /**
+   * easier access to allowedTo()
+   *
+   * @param the name of the thing the role is (not) allowed to do
+   * @return bool
+   * @see allowedTo
+   */
+  public function __get($right_name) {
+    return $this->allowedTo($right_name);
+  }
+
+  /**
    * returns the id of the role
    *
    * @static
