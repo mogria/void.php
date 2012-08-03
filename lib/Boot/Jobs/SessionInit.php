@@ -15,7 +15,7 @@ class SessionInit extends VoidBase implements Job {
     if(is_array($models)) {
       foreach($models as $model) {
         $model = "\\Void\\" . $model;
-        $model::auth_init();
+        $model::auth_init(false);
       }
     }
   }

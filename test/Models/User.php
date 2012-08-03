@@ -7,8 +7,10 @@ class User extends ModelAuthentification {
   public $text_password = null;
   static $before_save = Array('hash_password');
 
-  public static function auth_init() {
-    Session::user(new User(Array('name' => 'Anonymous')));
+  public static function auth_init($force) {
+    if($force || !(Session::user() instanceof User))  {
+      Session::user(new User(Array('name' => 'Anonymous')));
+    }
   }
 
   public function login() {
@@ -22,7 +24,7 @@ class User extends ModelAuthentification {
   }
 
   public function logout() {
-    self::auth_init();
+    self::auth_init(true);
   }
 
   public function get_role() {
