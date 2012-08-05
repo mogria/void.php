@@ -19,8 +19,11 @@
     </div>
 
     <div>
-      {=$f->label("category")}
-      {=$f->select("category", $categories, Array('%s', 'name'))}
+      {=$f->label("categories")}
+      {var_dump($post->categories)}
+      {foreach($categories as $category):}
+        <input type="checkbox" name="categories[]" value="{>$category->id}" {in_array($category, $post->categories) ? 'checked' : ''}/>{>$category->name}
+      {endforeach}
     </div>
 
     <div>
