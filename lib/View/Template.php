@@ -174,8 +174,8 @@ _VOID_TEMPLATE
    * @return string
    * @see Router 
    */
-  public function link($controller = null, $action = null, Array $params = Array()) {
-    return Router::link($controller, $action, $params);
+  public static function link($link_function, $params = null) {
+    return Router::link($link_function, $params);
   }
 
   /**
@@ -256,6 +256,9 @@ _VOID_TEMPLATE
       }
       // return the Tag Object
       return $tag;
+    // is it a link call?
+    } else if(substr($method, 0, 5) === "link_") {
+      return call_user_func_array(Array(__NAMESPACE__ . '\\Router', $method), $args);
     // is it a Helper-method
     } else if(method_exists($this->helper, $method)) {
       // call the methods of the Helper Class

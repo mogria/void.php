@@ -1,6 +1,8 @@
 <?php
 
 namespace Void;
+use \InvalidArgumentException;
+use \BadMethodCallException;
 
 /**
  * This class generates links and redirects
@@ -9,110 +11,99 @@ namespace Void;
  * @package void.php
  */
 class Router extends VoidBase {
-  /**
-   * returns a link to the given $controller and $action with the given $params
-   *
-   * @param mixed $controller
-   * @param string $action
-   * @param Array $params
-   * @return string
-   */
-  public static function link($controller = null, $action = null, Array $params = Array()) {
-    // if it's an array pull out the required values
     
-    // for notation like 'controller/action/param1'
-    if($action === null && $params === Array()
-      && (is_string($controller)
-        // if $controller is an array of size 1, use the first element as $controller
-        || (is_array($controller)
-          && count($controller) === 1
-          && $controller = array_shift($controller)))
-      // check for valid characters
-      && preg_match("/^[a-z0-9\\_\\/]*$/Di", $controller)
-      // there has to be a "/" inside the string
-      && strpos($controller, "/") !== false) {
-      // split it by "/" and create an array out of it
-      $controller = explode("/", $controller);
+  protected $path_link;
+
+  protected $routes = Array();
+  
+  protected static $instance;
+  
+  protected function __construct() {}
+  private function __clone() {}
+  
+  public function match($url, $target, $link_function = null) {
+    $link_function = is_string($link_function) ? self::generateLinkFunction($link_function) : self::generateLinkFunction($url);
+    if(isset($this->routes[$link_function])) {
+      throw new InvalidArgumentException("the link function '$link_function' already exists!");
     }
-      
-    if (is_array($controller)) {
-      $array = $controller;
-      // get the controller
-      $controller = isset($array['controller']) ? $array['controller'] : array_shift($array);
-      // remove it from the array
-      $array = array_diff_key($array, Array('controller' => null));
-      // grab the action
-      $action = isset($array['action']) ? $array['action'] : array_shift($array);
-      // and remove it
-      $array = array_diff_key($array, Array('action' => null));
+    $this->routes[$link_function] = new Route($url, $target);
+  }
+  
+  public static function generateLinkFunction($url) {
+    return trim(preg_replace('/_+/', '_', preg_replace('/[^a-zA-Z0-9]+/', '_', $url)), "_");
+  }
+  
+  public static function configure($closure) {
+    $route = new Router();
+    $closure($route);
+    self::$instance = $route;
+  }
+  
+  public static function getRoutes() {
+      return self::$instance->getRouteList();
+  }
+  
+  public function getRouteList() {
+    return $this->routes;
+  }
 
-      // get the params
-      $params = array_values(isset($array['params']) ? $array['params'] : $array);
+  public static function hasRoute($link_function) {
+    $routes = self::getRoutes();
+    return isset($routes[$link_function]);
+  }
 
-      if(count($params) == 1 && is_array($params[0])) {
-        $params = $params[0];
+  public static function getRoute($link_function) {
+    $routes = self::getRoutes();
+    if(!isset($routes[$link_function])) {
+      throw new InvalidArgumentException("tried to get inexistent route (via link_function '$link_function')");
+    }
+    return $routes[$link_function];
+  }
+
+  public static function request($path_info) {
+    $result = "";
+    $routes = self::getRoutes();
+    foreach($routes as $route) {
+      if(($back = $route->request($path_info)) !== false) {
+        $result = $back;
+        break;
       }
     }
-
-    // handle the things quite diffrent if $controller couldn't be a valid Class name
-    if(!preg_match("/^[a-z0-9\_]*$/Di", $controller)) {
-      return $controller;
-    }
-
-    // return link to root if no controller, action or any param is given
-    if($controller === null && $action === null && $params == null) {
-      return BASEURL;
-    } else if ($action === null &&  $params == null) { // if only controller is given
-      return BASEURL . urlencode(self::$config->index_file) . "/" . urlencode($controller);
+    return $result;
+  }
+  
+  public static function link($link_function, $params = null) {
+    // check if it is a garbage link or an absolute link
+    if($link_function === '' || $link_function === '#' || preg_match('/^[a-z\+\-]{2,}:\/\//', $link_function)) {
+      return $link_function;
     } else {
-      // get the default controller if needed
-      $controller = $controller == null ? Dispatcher::getDefaultController() : $controller;
-      // get the default action if needed
-      $action = $action == null ? Dispatcher::getDefaultMethod() : $action;
-      // append / in front of each element and implode all the elements together
-      $paramstr = implode("", array_map(function(&$value) {
-        return "/" . urlencode($value);
-      }, $params));
+      // no? let's create a link
 
-      // build and return the URL
-      return BASEURL . urlencode(self::$config->index_file) . "/" . urlencode($controller) . "/" . urlencode($action) . $paramstr;
+      // some params given?
+      if(count($args = func_get_args()) > 2) {
+        $params = $args;
+      } else if($params !== null && !is_array($params)) {
+        $params = array($params);
+      }
+      
+      // route available that handles $link_function ?
+      if(self::hasRoute($link_function)) {
+        // yup. let's call the link method of the route
+        $path = call_user_func_array(Array(self::getRoute($link_function), 'link'), $params);
+
+        // got the root path? return BASEURL
+        if($path === "/") {
+          return BASEURL;
+        } else {
+          // else prepend BASEURL
+          return BASEURL . self::getIndexFile() . $path;
+        }
+      } else {
+        throw new InvalidArgumentException("the link function '$link_function' doesn't exist!");
+      }
     }
   }
-
-  /**
-   * creates a link to a CSS Asset
-   *
-   * @param $main_file - the relative path without extension, relative to the stylesheet directory
-   * @param $params - Additional Params
-   */
-  public static function linkCSS($main_file, Array $params = Array()) {
-    return self::linkAsset("CSS", $main_file, $params);
-  }
-
-  /**
-   * creates a link to a Javascript Asset
-   *
-   * @param $main_file - the relative path without extension, relative to the javascript directory
-   * @param $params - Additional Params
-   */
-  public static function linkJS($main_file, Array $params = Array()) {
-    return self::linkAsset("JS", $main_file, $params);
-  }
-
-  /**
-   * creates a link to a Asset
-   *
-   * @param $type - the type of the asset ('CSS' or 'JS')
-   * @param $main_file - the relative path without extension, relative to the directory where the assets of the given type are in
-   * @param $params - Additional Params
-   */
-  protected static function linkAsset($type, $main_file, Array $params = Array()) {
-    $main_file = explode("/", $main_file);
-    $file = array_shift($main_file);
-    $params = array_merge($main_file, $params);
-    return self::link($type, $file, $params);
-  }
-
+  
   /**
    * redirects to the given $controller and $action with the given $params
    *
@@ -121,9 +112,19 @@ class Router extends VoidBase {
    * @param Array $params
    * @return string
    */
-  public static function redirect($controller = null, $action = null, Array $params = Array()) {
-    header("Location: " . self::link($controller, $action, $params));
+  public static function redirect($link_function, $params = null) {
+    header("Location: " . call_user_func_array(Array(__CLASS__, 'link'), func_get_args()));
     exit;
+  }
+
+  public static function __callStatic($method, $args) {
+    if(substr($method, 0, 5) === "link_") {
+      return self::link(substr($method, 5), $args);
+    } else if(substr($method, 0, 9) === "redirect_") {
+      return self::redirect(substr($method, 9), $args);
+    } else {
+      throw new BadMethodCallException("no such method '$method'");
+    }
   }
 
   public static function getIndexFile() {

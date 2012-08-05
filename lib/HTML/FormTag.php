@@ -36,7 +36,7 @@ class FormTag extends Tag {
   }
 
   public function setTarget($action) {
-    $this->action = Router::link($action);
+    $this->action = $action;
   }
 
   public function getTarget() {

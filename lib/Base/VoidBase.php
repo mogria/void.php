@@ -27,7 +27,7 @@ abstract class VoidBase {
    * @access public
    * @param Config $config - the new Config object
    */
-  public static function setConfig($config) {
+  public static function setConfig(Config $config) {
     static::$config = $config;
   }
 }
