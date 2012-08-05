@@ -40,11 +40,24 @@ class Router extends VoidBase {
   }
   
   public static function getRoutes() {
-      return self::$instance->getRoute();
+      return self::$instance->getRouteList();
   }
   
-  public function getRoute() {
+  public function getRouteList() {
     return $this->routes;
+  }
+
+  public static function hasRoute($link_function) {
+    $routes = self::getRoutes();
+    return isset($routes[$link_function]);
+  }
+
+  public static function getRoute($link_function) {
+    $routes = self::getRoutes();
+    if(!isset($routes[$link_function])) {
+      throw new InvalidArgumentException("tried to get inexistent route (via link_function '$link_function')");
+    }
+    return $routes[$link_function];
   }
 
   public static function request($path_info) {
@@ -60,30 +73,37 @@ class Router extends VoidBase {
   }
   
   public static function link($link_function, $params = null) {
-    if(count($args = func_get_args()) > 2) {
-      $params = $args;
-    } else if($params !== null && !is_array($params)) {
-      $params = array($params);
-    }
-    
-    if(isset($this->routes[$link_function])) {
-      return user_call_func_array(Array($this->routes[$link_function], 'link'), $params);
+    // check if it is a garbage link or an absolute link
+    if($link_function === '' || $link_function === '#' || preg_match('/^[a-z\+\-]{2,}:\/\//', $link_function)) {
+      return $link_function;
     } else {
-      throw new InvalidArgumentException("the link function '$link_function' doesn't exist!");
+      // no? let's create a link
+
+      // some params given?
+      if(count($args = func_get_args()) > 2) {
+        $params = $args;
+      } else if($params !== null && !is_array($params)) {
+        $params = array($params);
+      }
+      
+      // route available that handles $link_function ?
+      if(self::hasRoute($link_function)) {
+        // yup. let's call the link method of the route
+        $path = call_user_func_array(Array(self::getRoute($link_function), 'link'), $params);
+
+        // got the root path? return BASEURL
+        if($path === "/") {
+          return BASEURL;
+        } else {
+          // else prepend BASEURL
+          return BASEURL . self::getIndexFile() . $path;
+        }
+      } else {
+        throw new InvalidArgumentException("the link function '$link_function' doesn't exist!");
+      }
     }
   }
   
-  public static function __callStatic($method, $args) {
-    if(substr($method, 0, 5) === "link_") {
-      return self::link(substr($method, 5), $args);
-    } else if(substr($method, 0, 9) === "redirect_") {
-      return self::redirect(substr($method, 9), $args);
-    } else {
-      throw new BadMethodCallException("no such method '$method'");
-    }
-  }
-
-
   /**
    * redirects to the given $controller and $action with the given $params
    *
@@ -95,5 +115,19 @@ class Router extends VoidBase {
   public static function redirect($link_function, $params = null) {
     header("Location: " . call_user_func_array(Array(__CLASS__, 'link'), func_get_args()));
     exit;
+  }
+
+  public static function __callStatic($method, $args) {
+    if(substr($method, 0, 5) === "link_") {
+      return self::link(substr($method, 5), $args);
+    } else if(substr($method, 0, 9) === "redirect_") {
+      return self::redirect(substr($method, 9), $args);
+    } else {
+      throw new BadMethodCallException("no such method '$method'");
+    }
+  }
+
+  public static function getIndexFile() {
+    return self::$config->index_file;
   }
 }

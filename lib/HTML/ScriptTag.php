@@ -27,7 +27,7 @@ class ScriptTag extends Tag {
    * @param string $link - the link to a javascript file
    */
   public function setTarget($link) {
-    $this->src = (strpos($link, BASEURL) !== 0) && (strpos($link, FULLURL) !== 0) ? BASEURL . $link : $link;
+    $this->src = $link;
   }
 
   /**

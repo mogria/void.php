@@ -31,7 +31,7 @@ class ATag extends Tag {
    */
   public function setTarget($link) {
     // put the link into the href="" attribute
-    $this->href = Router::link($link);
+    $this->href = $link;
   }
 
   /**
