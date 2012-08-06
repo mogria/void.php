@@ -19,6 +19,15 @@ abstract class ControllerBase extends VirtualAttribute {
   protected $view_vars;
 
   /**
+   * Stores the subject which needs to be authenticated to access certain action
+   * (may be an user object)
+   * 
+   * @var Authenticate
+   * @access protected
+   */
+  protected $authenticate_subject;
+
+  /**
    * helps to determine wheter the user should have access to a certain action.
    * to make use of this function you need to set the $__authenticate_subject property 
    * to an instance of Authentification
@@ -39,9 +48,9 @@ abstract class ControllerBase extends VirtualAttribute {
     $ok = true;
     // check if the $__authenticate_subject variable is
     // set to an instance of Authenticate
-    if(isset($this->__authenticate_subject) && $this->__authenticate_subject instanceof Authenticate) {
+    if(isset($this->authenticate_subject) && $this->authenticate_subject instanceof Authenticate) {
       // grab the role
-      $role = $this->__authenticate_subject->get_role();
+      $role = $this->authenticate_subject->get_role();
 
       // array of rights the user should have
       $rights = array();
