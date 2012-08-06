@@ -8,9 +8,7 @@
   * better integration with models
 * Autoloader
   * you always have to delete the cache to add a new class to the autoloader
-
 * testing
   * proper boot the application in the testing mode (will prevent problems when classes with the same name are in the test/ directory and somewhere else)
+* is a default_controller needed, because of the new routing system? change it into an 404 Controller?
 
-* Authentication
-  * class Model Authentification is useless (ActiveRecord already has an reload method)

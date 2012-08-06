@@ -23,10 +23,6 @@ class User extends ModelAuthentification {
     return $password_correct;
   }
 
-  public function logout() {
-    self::auth_init(true);
-  }
-
   public function get_role() {
     return Session::user()->id === null
       ? new UnknownRole()

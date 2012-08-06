@@ -28,7 +28,7 @@ class LinkTag extends Tag {
    * @param string $link
    */
   public function setTarget($link) {
-    $this->href =  (strpos($link, BASEURL) !== 0) ? BASEURL . $link : $link;
+    $this->href = $link;
   }
 
   /**

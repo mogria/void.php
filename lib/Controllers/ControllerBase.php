@@ -19,6 +19,67 @@ abstract class ControllerBase extends VirtualAttribute {
   protected $view_vars;
 
   /**
+   * helps to determine wheter the user should have access to a certain action.
+   * to make use of this function you need to set the $__authenticate_subject property 
+   * to an instance of Authentification
+   *
+   * if this condition is met this function will look for the static variable
+   * $authenticate. this must be an array containing all the rights (as string) the
+   * user should have to access ANY of the actions inside of the controller
+   *
+   * after that this function will look for a static variable named
+   * authenticate_<current_action>. This must be an array containing all the rights
+   * (as string) the user should have to access this specific action
+   * (in this case <current_action>).
+   *
+   * @param $action - name of action which should be executed
+   * @return bool - wheter the current user is allowed to access the specifed action
+   */
+  public function authenticate($action) {
+    $ok = true;
+    // check if the $__authenticate_subject variable is
+    // set to an instance of Authenticate
+    if(isset($this->__authenticate_subject) && $this->__authenticate_subject instanceof Authenticate) {
+      // grab the role
+      $role = $this->__authenticate_subject->get_role();
+
+      // array of rights the user should have
+      $rights = array();
+
+      // add the rights of the static $authenticate property
+      if(isset(static::$authenticate)) {
+        $rights = static::$authenticate;
+      }
+      // add the rights of the static $authenticate_<current_action> property
+      $varname = "authenticate_$action";
+      $rights = array_merge($rights, isset(static::${$varname}) ? static::${$varname} : array());
+
+      // check if the user has all the specified rights
+      foreach($rights as $right) {
+        if(!$role->allowedTo($right)) {
+          $ok = false;
+          break;
+        }
+      }
+    }
+    return $ok;
+  }
+
+  /**
+   * gets executed if the user tries to execute an action which
+   * requires more permissions than he currently has.
+   * creates a message flash with the message "insufficent permission rights"
+   * and redirects to start page.
+   *
+   * if you don't like this behavior simply overwrite this method in one of your Controller or even in the ApplicationController.
+   *
+   */
+  public function insufficent_permissions() {
+    Flash::error("insufficent permission rights");
+    Router::redirect(null);
+  }
+
+  /**
    * Creates the view and calls a method from the controller
    * @param Dispatcher $dispatcher
    * @return string the rendered output of the view
@@ -33,7 +94,13 @@ abstract class ControllerBase extends VirtualAttribute {
       ($pos = strrpos(get_called_class(), "\\")) === false ? 0 : $pos + 1,
       -strlen(Dispatcher::getControllerExtension()));
 
+    // give the controller the ability to initialize his view variables etc.
     $this->initialize();
+
+    //
+    if($this->authenticate($actionname)) {
+      $this->insufficent_permissions();
+    }
 
     // call the action
     call_user_func_array(Array($this, Dispatcher::getMethodPrefix() . $actionname), $dispatcher->getParams());
