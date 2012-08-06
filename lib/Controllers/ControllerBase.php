@@ -85,7 +85,7 @@ abstract class ControllerBase extends VirtualAttribute {
    */
   public function insufficent_permissions() {
     Flash::error("insufficent permission rights");
-    Router::redirect(null);
+    Router::redirect('root');
   }
 
   /**

@@ -13,12 +13,10 @@ class ATag extends Tag {
    * @access public
    * @param string $content   - null or the text in the <a>-Tag
    * @param string $target    - an link, or an array which gets passed
-   *                            to Router::link() (a link within this application)
    * @param Array $attributes - additional attributes to set (href will be overwritten)
    */
   public function __construct($content = null, $target = '#', Array $attributes = Array()) {
     parent::__construct("a", $content, $attributes);
-    // if we get an array in the $target param, pass it to the Router::link() method and generate a link within this application
     // put the link into the href="" attribute
     $this->setTarget($target);
   }
