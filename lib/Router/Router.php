@@ -80,10 +80,12 @@ class Router extends VoidBase {
       // no? let's create a link
 
       // some params given?
-      if(count($args = func_get_args()) > 2) {
+      if(($count = count($args = func_get_args())) > 2) {
         $params = $args;
-      } else if($params !== null && !is_array($params)) {
+      } else if($count === 2 && !is_array($params)) {
         $params = array($params);
+      } else if($count === 1) {
+        $params = array();
       }
       
       // route available that handles $link_function ?
