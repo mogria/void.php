@@ -34,13 +34,12 @@ class Router extends VoidBase {
   }
   
   public static function configure($closure) {
-    $route = new Router();
+    self::$instance = $route = new Router();
     $closure($route);
-    self::$instance = $route;
   }
   
   public static function getRoutes() {
-      return self::$instance->getRouteList();
+    return self::$instance->getRouteList();
   }
   
   public function getRouteList() {
