@@ -25,7 +25,7 @@ abstract class ControllerBase extends VirtualAttribute {
    * @var Authenticate
    * @access protected
    */
-  protected $authenticate_subject;
+  protected $authenticate_subject = null;
 
   /**
    * helps to determine wheter the user should have access to a certain action.
@@ -106,8 +106,8 @@ abstract class ControllerBase extends VirtualAttribute {
     // give the controller the ability to initialize his view variables etc.
     $this->initialize();
 
-    //
-    if($this->authenticate($actionname)) {
+    // if authentification fails call insufficient_permissions trigger
+    if(!$this->authenticate($actionname)) {
       $this->insufficent_permissions();
     }
 
