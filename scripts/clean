@@ -8,16 +8,26 @@
  *
  */
 
-function pattern_match($str, $patterns) {
-  if($patterns == null) return true;
-  $patterns = implode("|", array_map(function($v) {
-    return preg_quote($v, '/');
-  }, $patterns));
-  return preg_match("/(" . $patterns . ")/i", $str);
+namespace Void;
+use \RecursiveIteratorIterator;
+use \RecursiveDirectoryIterator;
+
+
+require_once dirname(__FILE__) . '/../config/scripts.php';
+Script::init();
+
+if(!defined('_CLEAN_SCRIPT')) {
+  define('_CLEAN_SCRIPT', 1);
+
+  function pattern_match($str, $patterns) {
+    if($patterns == null) return true;
+    $patterns = implode("|", array_map(function($v) {
+      return preg_quote($v, '/');
+    }, $patterns));
+    return preg_match("/(" . $patterns . ")/i", $str);
+  }
 }
 
-define('DS', DIRECTORY_SEPARATOR);
-define('ROOT', realpath(dirname(__FILE__) . DS . "..") . DS);
 $file_list = Array(
   'Controllers/',
   'Views/',

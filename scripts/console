@@ -3,18 +3,14 @@
 
 namespace Void;
 
-define('REL', realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . ".."));
-chdir(REL);
+require_once dirname(__FILE__) . '/../config/scripts.php';
+Script::init();
 
-require_once 'config/consts.php';
-require_once 'autoload.php';
-$overwrite_environment = TEST;
-require 'config/environments.php';
-
-Booter::boot();
-
-function prompt() {
-  echo "void.php $ ";
+if(!defined('_CONSOLE_SCRIPT')) {
+  define('_CONSOLE_SCRIPT', 1);
+  function prompt() {
+    echo "void.php $ ";
+  }
 }
 
 
