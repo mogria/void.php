@@ -10,7 +10,9 @@
 
 function pattern_match($str, $patterns) {
   if($patterns == null) return true;
-  $patterns = implode("|", array_map('preg_quote', $patterns));
+  $patterns = implode("|", array_map(function($v) {
+    return preg_quote($v, '/');
+  }, $patterns));
   return preg_match("/(" . $patterns . ")/i", $str);
 }
 
