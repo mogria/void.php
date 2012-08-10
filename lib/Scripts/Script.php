@@ -55,8 +55,7 @@ class Script extends VoidBase {
       define('VOIDPHP_SCRIPT', 1);
     }
     $fullname = "scripts/$scriptname";
-    if(in_array(self::$scripts, $fullname)) {
-      $argc = count($argv);
+    if(in_array($fullname, self::$scripts)) {
       include $fullname;
       $args = array_slice(func_get_args(), 1);
       if(count($args) === 1 && is_array($args[0])) {

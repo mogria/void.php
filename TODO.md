@@ -2,7 +2,6 @@
 
 * Generators
   * Parse arguments with getopt (e.g. -f for overwriting)
-  * add a possibility for a script to call an other script
 * Forms
   * allow more tags
   * better integration with models

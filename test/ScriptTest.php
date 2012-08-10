@@ -22,9 +22,6 @@ class ScriptTest extends \PHPUnit_Framework_TestCase {
     }
     pclose($handle);
     
-    echo "OUTPUT: ";
-    var_dump($output);
-
     
     $this->assertEquals(Array(
       'f' => false,

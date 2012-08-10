@@ -8,13 +8,9 @@
  *
  */
 
-namespace Void;
-use \RecursiveIteratorIterator;
-use \RecursiveDirectoryIterator;
-
 
 require_once dirname(__FILE__) . '/../config/scripts.php';
-Script::init();
+\Void\Script::init();
 
 if(!defined('_CLEAN_SCRIPT')) {
   define('_CLEAN_SCRIPT', 1);
@@ -26,68 +22,75 @@ if(!defined('_CLEAN_SCRIPT')) {
     }, $patterns));
     return preg_match("/(" . $patterns . ")/i", $str);
   }
-}
 
-$file_list = Array(
-  'Controllers/',
-  'Views/',
-  'Helpers/',
-  'Models/',
-  'stylesheets/',
-  'javascripts/'
-);
+  function clean_main($patterns) {
+    $file_list = Array(
+      'Controllers/',
+      'Views/',
+      'Helpers/',
+      'Models/',
+      'stylesheets/',
+      'javascripts/'
+    );
 
-$all = false;
+    $all = false;
 
-$patterns = array_slice($argv, 1);
+    if(!is_array($patterns)) {
+      $patterns = func_get_args();
+    }
 
-foreach($file_list as $file) {
-  $file = ROOT . $file;
-  $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($file));
-  foreach($files as $del_file) {
-    if(pattern_match($del_file, $patterns)) {
-      if(is_file($del_file)) {
-        $yes = $all;
-        if(!$all) {
-          echo "delete file $del_file ? (y|n|a|q) ";
-          $handle = fopen("php://stdin", "r");
-          $out = fgets($handle, 80);
-          fclose($handle);
-          switch($out) {
-            case "a\n":
-              $yes = $all = true;
-              break;
-            case "y\n":
-              $yes = true;
-              break;
-            case "q\n":
-              exit;
-            default:
-              break;
+
+    foreach($file_list as $file) {
+      $file = ROOT . $file;
+      $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($file));
+      foreach($files as $del_file) {
+        if(pattern_match($del_file, $patterns)) {
+          if(is_file($del_file)) {
+            $yes = $all;
+            if(!$all) {
+              echo "delete file $del_file ? (y|n|a|q) ";
+              $handle = fopen("php://stdin", "r");
+              $out = fgets($handle, 80);
+              fclose($handle);
+              switch($out) {
+                case "a\n":
+                  $yes = $all = true;
+                  break;
+                case "y\n":
+                  $yes = true;
+                  break;
+                case "n\n":
+                  \Void\Script::call('clean', 'Pages');
+                  break;
+                case "q\n":
+                  exit;
+                default:
+                  break;
+              }
+              if($yes) {
+                echo "rm    '$del_file'\n";
+                unlink($del_file);
+              }
+            }
+          } else if(is_dir($del_file)) {
+            try {
+              @rmdir($del_file);
+              echo "rmdir '$del_file'\n";
+            } catch(\Exception $ex) {}
           }
-          if($yes) {
-            echo "rm    '$del_file'\n";
-            unlink($del_file);
-          }
-        }
-      } else if(is_dir($del_file)) {
-        if(@rmdir($del_file)) {
-          echo "rmdir '$del_file'\n";
         }
       }
     }
-  }
-}
-$files = Array();
-$files['Controllers'] = null;
-$files['Views'] = null;
-$files['Helpers'] = null;
-$files['Models'] = null;
-$files['stylesheets'] = null;
-$files['javascripts'] = null;
-$files["stylesheets/application.css"]   = "";
-$files["javascripts/application.js"]    = "";
-$files["Helpers/ApplicationHelper.php"] = <<<APPLICATION_HELPER
+    $files = Array();
+    $files['Controllers'] = null;
+    $files['Views'] = null;
+    $files['Helpers'] = null;
+    $files['Models'] = null;
+    $files['stylesheets'] = null;
+    $files['javascripts'] = null;
+    $files["stylesheets/application.css"]   = "";
+    $files["javascripts/application.js"]    = "";
+    $files["Helpers/ApplicationHelper.php"] = <<<APPLICATION_HELPER
 <?php
 
 namespace Void;
@@ -113,7 +116,7 @@ class ApplicationHelper extends HelperBase {
 }
 APPLICATION_HELPER;
 
-$files["Controllers/ApplicationController.php"] = <<<APPLICATION_CONTROLLER
+    $files["Controllers/ApplicationController.php"] = <<<APPLICATION_CONTROLLER
 <?php
 
 namespace Void;
@@ -152,8 +155,8 @@ abstract class ApplicationController extends ControllerBase {
 }
 APPLICATION_CONTROLLER;
 
-$files["Views/layout"] = null;
-$files["Views/layout/application.tpl"] = <<<APPLICATION_TPL
+    $files["Views/layout"] = null;
+    $files["Views/layout/application.tpl"] = <<<APPLICATION_TPL
 <!doctype html>
 <html>
   <head>
@@ -175,15 +178,24 @@ $files["Views/layout/application.tpl"] = <<<APPLICATION_TPL
 </html>
 APPLICATION_TPL;
 
-// create all the files $files
-foreach($files as $path => $content) {
-  if($content === null)  {
-    @mkdir($path);
-    echo "create dir  '$path'\n";
-  } else {
-    if(!is_file($path)) {
-      echo "create file '$path'\n";
-      file_put_contents(ROOT . $path, $content);
+    // create all the files $files
+    foreach($files as $path => $content) {
+      if($content === null)  {
+        try {
+          @mkdir($path);
+        } catch(\Exception $ex) { }
+        echo "create dir  '$path'\n";
+      } else {
+        if(!is_file($path)) {
+          echo "create file '$path'\n";
+          file_put_contents(ROOT . $path, $content);
+        }
+      }
     }
   }
+}
+
+if(!defined('VOIDPHP_SCRIPT')) {
+  echo "asdasd";
+  clean_main(array_slice($argv, 1));
 }
