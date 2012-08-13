@@ -8,26 +8,30 @@ Script::init();
 
 if(!defined('_CONSOLE_SCRIPT')) {
   define('_CONSOLE_SCRIPT', 1);
+
   function prompt() {
     echo "void.php $ ";
   }
-}
 
 
-prompt();
-$input = fopen("php://stdin", "r");
-while($str = fgets($input)) {
-  try {
-    $back = eval("namespace " . __NAMESPACE__ . "; return $str;");
-    if(trim($str, "\n \r;") !== "") {
-      echo "\n";
+  function console_main() {
+    prompt();
+    $input = fopen("php://stdin", "r");
+    while($str = fgets($input)) {
+      try {
+        $back = eval("namespace " . __NAMESPACE__ . "; return $str;");
+        if(trim($str, "\n \r;") !== "") {
+          echo "\n";
+        }
+        echo " => ";
+        var_dump($back);
+      } catch (\Exception $ex) {
+        echo get_class($ex) . (($code = $ex->getCode()) !== 0 ? "($code" : "") . ": " . $ex->getMessage() . "\n";
+      }
+      prompt();
     }
-    echo " => ";
-    var_dump($back);
-  } catch (\Exception $ex) {
-    echo get_class($ex) . (($code = $ex->getCode()) !== 0 ? "($code" : "") . ": " . $ex->getMessage() . "\n";
+    fclose($input);
   }
-  prompt();
-}
-fclose($input);
 
+  console_main();
+}

@@ -35,6 +35,7 @@ if(!defined('_GENERATE_SCRIPT')) {
     $generators_str .= "\t" . array_shift($shortcuts) . " (" .  implode(", ", $shortcuts) . ")\n";
   }
 
+
   define('GENERATOR_HELP', <<<HELP
 {$argv[0]} generator_name name [params ...]
 
@@ -277,22 +278,27 @@ TEST;
 METHOD;
     }
   }
-}
 
-
-
-try {
-  if(count($argv) > 2) {
-    if(array_key_exists($argv[1], $generators)) {
-      $generatorname = "Void\\" . $generators[$argv[1]];
-      $generator = new $generatorname($argv[2], @array_slice($argv, 3));
+  function generate_main($generatorname, $name, $params) {
+    global $generators, $generator_classes;
+    if(array_key_exists($generatorname, $generators)) {
+      $generatorname = "Void\\" . $generators[$generatorname];
+      $generator = new $generatorname($name, $params);
       $generator->generate();
     } else {
       throw new InvalidArgumentException("no such generator '{$argv[1]}'");
     }
-  } else {
-    echo GENERATOR_HELP;
   }
-} catch(\Exception $ex) {
-  echo "Error: {$ex->getMessage()}\n";
+}
+
+if(!defined('VOIDPHP_SCRIPT')) {
+  try {
+    if(count($argv) > 2) {
+      generate_main($argv[1], $argv[2], @array_slice($argv, 3));
+    } else {
+      echo GENERATOR_HELP;
+    }
+  } catch (\Exception $ex) {
+    echo "Error: {$ex->getMessage()}\n";
+  }
 }

@@ -196,6 +196,5 @@ APPLICATION_TPL;
 }
 
 if(!defined('VOIDPHP_SCRIPT')) {
-  echo "asdasd";
   clean_main(array_slice($argv, 1));
 }
