@@ -60,7 +60,6 @@ if(!defined('_CLEAN_SCRIPT')) {
                   $yes = true;
                   break;
                 case "n\n":
-                  \Void\Script::call('clean', 'Pages');
                   break;
                 case "q\n":
                   exit;
