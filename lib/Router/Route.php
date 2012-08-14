@@ -11,7 +11,8 @@ class Route {
   protected $pattern;
   protected $link_url;
   
-  const DYNAMIC_URL_PART_REGEX = "\\:([a-zA-Z_][a-zA-Z0-9_]*)";
+  const DYNAMIC_URL_PART_REGEX = "\\:(?:\\[([^\\]]+)\\]|)(\\{[\\,0-9]+\\}|\\+|\\*|\\?|)([a-zA-Z_][a-zA-Z0-9_]*)";
+
 
   public function __construct($url, $target) {
     $this->url = $url;
@@ -39,15 +40,23 @@ class Route {
   protected function compile() {
     $this->names = Array();
     $names = &$this->names;
-    $this->pattern = "/^" . preg_replace_callback("/\\" . self::DYNAMIC_URL_PART_REGEX . "/", function($match) use (&$names) {
-      $names[] = ":" . $match[1];
-      return "([^" . preg_quote("/", "/") . "]+)";
-    }, preg_quote($this->url, "/")) . "$/D";
-    $this->link_url = preg_replace_callback("/" . self::DYNAMIC_URL_PART_REGEX . "/", function($match) {
+    $regexs = Array();
+    $this->link_url = preg_replace_callback("/" . self::DYNAMIC_URL_PART_REGEX . "/", function($match) use (&$names, &$regexs) {
       static $i = 0;
       $i++;
-      return "?$i?";
+      print_r($match);
+      $names[] = ":" . $match[3];
+      ($match[1] == null || $match[1] === "0") && $match[1] = "^/";
+      ($match[2] == null || $match[2] === "0") && $match[2] = "+";
+      $regexs[$i] = "([" . str_replace(array("/", "]"), array("\\/", "\\]"), $match[1]) ."]" . $match[2] . ")";
+      return "\\?$i\\?"; //@todo: this may cause problems
     }, $this->url);
+
+    $this->pattern = "/^" . preg_quote($this->link_url, '/') . "$/D";
+    foreach($regexs as $key => $regex) {
+      $this->pattern = str_replace("\\\\\\?$key\\\\\\?", $regex, $this->pattern);
+    }
+    echo $this->pattern . "\n";
   }
 
   public function request($path_info) {
@@ -62,7 +71,7 @@ class Route {
       $args = func_get_args();
       foreach($args as $key => $arg) {
         $key++;
-        $link = str_replace("?$key?", $arg, $link);
+        $link = str_replace("\\?$key\\?", $arg, $link);
       }
     } else {
       throw new BadMethodCallException("Invalid number of arguments when linking to '{$this->url}'");
