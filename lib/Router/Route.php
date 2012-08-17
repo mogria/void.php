@@ -10,8 +10,9 @@ class Route {
   protected $names;
   protected $pattern;
   protected $link_url;
+  protected $delimiters;
   
-  const DYNAMIC_URL_PART_REGEX = "\\:(?:\\[([^\\]]+)\\]|)(\\{[\\,0-9]+\\}|\\+|\\*|\\?|)([a-zA-Z_][a-zA-Z0-9_]*)";
+  const DYNAMIC_URL_PART_REGEX = "\\:(?:\\[([^\\]]+)\\]|)(\\{[\\,0-9]+\\}|\\+|\\*|\\?|)([^a-zA-Z_]|)([a-zA-Z_][a-zA-Z0-9_]*)";
 
 
   public function __construct($url, $target) {
@@ -38,31 +39,58 @@ class Route {
   }
 
   protected function compile() {
-    $this->names = Array();
+    $this->names = $this->delimiters = $regexs = Array();
     $names = &$this->names;
-    $regexs = Array();
-    $this->link_url = preg_replace_callback("/" . self::DYNAMIC_URL_PART_REGEX . "/", function($match) use (&$names, &$regexs) {
-      static $i = 0;
-      $i++;
-      print_r($match);
-      $names[] = ":" . $match[3];
-      ($match[1] == null || $match[1] === "0") && $match[1] = "^/";
-      ($match[2] == null || $match[2] === "0") && $match[2] = "+";
-      $regexs[$i] = "([" . str_replace(array("/", "]"), array("\\/", "\\]"), $match[1]) ."]" . $match[2] . ")";
-      return "\\?$i\\?"; //@todo: this may cause problems
-    }, $this->url);
+    $delims = &$this->delimiters;
+    $this->link_url = preg_replace_callback("/" . self::DYNAMIC_URL_PART_REGEX . "/",
+      function($match) use (&$names, &$regexs, &$delims) {
+        static $i = 0;
+        $i++;
+        // save the names (needed for a replace later when request() is called)
+        $names[] = ":" . $match[4];
+
+        // define default values for regex componentes
+        $delim = ($match[3] == null || $match[3] === "0") ? "/" : $match[3];
+        ($match[1] == null || $match[1] === "0") && $match[1] = "^" . $delim;
+        ($match[2] == null || $match[2] === "0") && $match[2] = "{1}";
+
+        // save the delimiter if multiple blocks are requested
+        if($match[2] != "{1}" && $match[2] != "?" && $match[2] != "{0,1}" && $match[2] != "{,1}" && $match[2] != "{0}") {
+          $delims[] = $delim;
+        } else {
+          $delims[] = null;
+        }
+        // compose regex
+        $regexs[$i] = "((?:[" . str_replace(array("/", "]"), array("\\/", "\\]"), $match[1])
+          . "]+" . preg_quote($delim, "/") . "?)" . $match[2] . ")";
+
+        // return a string with the index of the match in the middle
+        // we don't return the generated regex yet because of problems
+        // with preg_quote
+        return "\\?$i\\?"; //@todo: this may cause problems, maybe select a better string?
+      }, $this->url);
 
     $this->pattern = "/^" . preg_quote($this->link_url, '/') . "$/D";
     foreach($regexs as $key => $regex) {
       $this->pattern = str_replace("\\\\\\?$key\\\\\\?", $regex, $this->pattern);
     }
-    echo $this->pattern . "\n";
   }
 
   public function request($path_info) {
     $matches = Array();
+    // see if the url requested matches the generated pattern
     $back = (bool) preg_match($this->pattern, $path_info, $matches);
-    return $back ? str_replace($this->names, array_slice($matches, 1), $this->target) : false;
+    if($back) {
+      // if yes replace the specified delimiters by /
+      foreach($this->delimiters as $key => $delim) {
+        if($delim !== null) {
+          $matches[$key + 1] = str_replace($delim, "/", $matches[$key + 1]);
+        }
+      }
+      // replace the placeholders in this->target with the stuff in the url requested
+      $back = str_replace($this->names, array_slice($matches, 1), $this->target);
+    }
+    return $back;
   }
   
   public function link() {
