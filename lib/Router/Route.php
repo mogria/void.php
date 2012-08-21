@@ -12,7 +12,7 @@ class Route {
   protected $link_url;
   protected $delimiters;
   
-  const DYNAMIC_URL_PART_REGEX = "\\:(?:\\[([^\\]]+)\\]|)(\\{[\\,0-9]+\\}|\\+|\\*|\\?|)([^a-zA-Z_]|)([a-zA-Z_][a-zA-Z0-9_]*)";
+  const DYNAMIC_URL_PART_REGEX = "\\:(?:\\[([^\\]]+)\\]|)(\\{[\\,0-9]+\\}|\\+|\\*|\\?|)([^a-zA-Z_]?)([a-zA-Z_][a-zA-Z0-9_]*)";
 
 
   public function __construct($url, $target) {
@@ -84,7 +84,7 @@ class Route {
       // if yes replace the specified delimiters by /
       foreach($this->delimiters as $key => $delim) {
         if($delim !== null) {
-          $matches[$key + 1] = str_replace($delim, "/", $matches[$key + 1]);
+          $matches[$key + 1] = trim(str_replace($delim, '/', $matches[$key + 1]), '/');
         }
       }
       // replace the placeholders in this->target with the stuff in the url requested
@@ -98,8 +98,13 @@ class Route {
     if(func_num_args() == count($this->names))  {
       $args = func_get_args();
       foreach($args as $key => $arg) {
+        $delim = $this->delimiters[$key];
         $key++;
-        $link = str_replace("\\?$key\\?", $arg, $link);
+        if($delim === null) {
+          $link = str_replace("\\?$key\\?", $arg, $link);
+        } else {
+          $link = str_replace("\\?$key\\?", implode($delim, $arg), $link);
+        }
       }
     } else {
       throw new BadMethodCallException("Invalid number of arguments when linking to '{$this->url}'");
