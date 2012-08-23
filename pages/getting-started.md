@@ -52,6 +52,7 @@ The `--recursive` parameter is needed, because void.php uses git submodules (git
      |- Models/
      |- images/
      |- javascripts/
+     |- roles/
      |- stylesheets/
      |  |- blueprint/
      |  |- layout/
@@ -68,17 +69,25 @@ The `--recursive` parameter is needed, because void.php uses git submodules (git
 
 ### config/
 
-All the configuration files are stored in here. But don't worry, you only have to set up the datebase Connection.
+All the configuration files are stored in here. You don't have to configure a lot of stuff, you basicly only have to set up the datebase Connection.
 
 
 ### config/consts.php
 
 Some constants needed in the Framework are defined here. Better not mess with this file if you don't exactly know what you're doing.
 
+#### constants
+
+constant  sample content                 description
+DS        '/' or '\'                     shortcut for DIRECTORY_SEPERATOR
+BASEURL   '/subdir/', '/'                absolute url to the void.php installation (without domain-name)
+FULLURL   'http://example.com/subdir/'   absolute url to the void.php installation (inclusive domain-name and protocol)
+ROOT      '/var/www/subdir'              path (on the filesystem) to your void.php installation
+
+
 ### config/default_configuration.php
 
-Some values which need to be initialized are defined in here. You can overwrite them in the `environments.php` file. So, don't mess with this file.
-
+Some configuration values which need to be initialized are defined in here. You can overwrite them in the `environments.php` file. So, don't mess with this file.
 
 ### config/environments.php
 
@@ -98,7 +107,7 @@ Here you can do your configuration. First of all you can define in which environ
 
 In this file there are also 4 sections in where you can do some configuration. One for each environment, and the first section is for all environments.
 
-#### How the configuration works
+#### How the configuration system works
 
 The configurations are made as followings and can be done for every class which extends the `VoidBase`-class.
 
@@ -127,7 +136,8 @@ This is a short example for a controller:
 
     namespace Void;
 
-    class ExampleController extends ControllerBase {
+    // the classname has to end with "Controller", and every Controller should inherit the ApplicationController
+    class ExampleController extends ApplicationController {
 
       // this method is nessesary in every controller
       // accessible via /index.php/example
@@ -146,7 +156,7 @@ This is a short example for a controller:
 
 ### Views/
 
-In here there is a subfolder for every controller which contains a .tpl file for (almost) all methods.
+In here there is a subfolder for every controller which contains a .tpl file for (almost) all every inside of the controler.
 
 #### The curly braces
 
@@ -181,21 +191,6 @@ But what if you want to create a Hyperlink inside a template or you want to incl
     {>:test()}
 
 
-##### Create a link
-
-To create a link you can use the `aTag` method as follows:
-
-    {=:aTag("Label", Array('controller', 'action', 'params' =>
-        Array('param1')), Array('target', '_blank')}
-
-
-(**Note**: This should all be on the same line)<br />
-this will return you something like this:
-    
-    <a href="/app/index.php/controller/action/param1" target="_blank">Label</a>
-
-
-
 ### Views/layout
 
 In this folder, there are template files which are used for the layout of the page. The file `application.tpl` should contain your basic HTML structure and a placeholder like this
@@ -208,9 +203,9 @@ All other template files in this folder have no special effect. But you can use 
 
     {=:render(Array('layout', 'filename'), Array('variablename' => 'value'))}
 
-### Models/ (create it if it doesn't exist!)
+### Models/
 
-Basicly the whole Model part of the framework is based on [PHP-ActiveRecord](http://phpactiverecord.org). The reference on the Website is pretty good, so I think i don't have to write  much more. But let's begin:
+Basicly the whole Model part of the framework is based on [PHP-ActiveRecord](http://phpactiverecord.org). If you're curious: you can find all the PHP-ActiveRecord stuff in `lib/Model`. The reference on the Website is pretty good, so I think i don't have to write  much more. But let's begin:
 
 For every table in the database you should create a Class in the `Models/` directory. Your table has to be in plural, and the model has to be in singular. For Example
 
@@ -256,8 +251,8 @@ Lets create a sample Model in `Models/Post.php`
       id            int(11)       PRI   NULL      auto_increment
       title         varchar(255)  NO    NULL  
       body          text          NO    NULL  
-      created       datetime      NO    NULL  
-      updated       datetime      YES   NULL  
+      created_at    datetime      NO    NULL  
+      updated_at    datetime      YES   NULL  
       user_id       int(11)       YES   NULL
 
     */
@@ -282,20 +277,14 @@ Lets create a sample Model in `Models/Post.php`
       );
       // more validations etc.
       
-      // this automaticly updates the 'created' & the 'updated' attributes
-      static $before_save = Array('fill_in_created', 'fill_in_updated');
-      static $before_update = Array('fill_in_updated');
+      // this automaticly calls the parse_post() method everytime you add 
+      // a new post or a post gets updated
+      static $before_save = Array('parse_post');
+      static $before_update = Array('parse_post');
 
-      public function fill_in_created() {
-        $this->created = $this->get_current_time();
-      }
-
-      public function fill_in_updated() {
-        $this->updated = $this->get_current_time();
-      }
-
-      public function get_current_time() {
-        return date('d-m-YH:i:s');
+      public function parse_post() {
+        // replace newline with <br />
+        $this->post = nl2br($this->post);
       }
     }
 
