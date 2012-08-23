@@ -5,39 +5,86 @@ use \BadMethodCallException;
 
 class Route {
 
+  /* simplyfied pattern which the request needs to match */
   protected $url;
+
+  /* target controller/action/params */
   protected $target;
+
+  /* name of the variables in $url */
   protected $names;
+
+  /* auto generated regex pattern (out of url) to match requests */
   protected $pattern;
+
+  /* url with simple placeholders, easy to create links out of it */
   protected $link_url;
+
   protected $delimiters;
   
+  /* regex to match variables insude of $url */
   const DYNAMIC_URL_PART_REGEX = "\\:(?:\\[([^\\]]+)\\]|)(\\{[\\,0-9]+\\}|\\+|\\*|\\?|)([^a-zA-Z_]?)([a-zA-Z_][a-zA-Z0-9_]*)";
 
 
+  /**
+   * Constructor
+   *
+   * @param string $url
+   * @param mixed $target
+   */
   public function __construct($url, $target) {
     $this->url = $url;
-    $this->target = is_array($target) ? implode("/", $target) : $target;
+    $this->target = (is_array($target) ? implode("/", $target) : $target);
 
+    // create a regex pattern out of url
     $this->compile();
   }
   
+  /**
+   * Getter for $url
+   *
+   * @return string
+   */
   public function getUrl() {
     return $this->url;
   }
 
+  /**
+   * Getter for $target
+   *
+   * @return string
+   */
   public function getTarget() {
     return $this->target;
   }
 
+  /**
+   * Getter for names
+   *
+   * @return array
+   */
   public function getNames() {
     return $this->names;
   }
 
+  /**
+   * Getter for pattern
+   *
+   * @return string
+   */
   public function getPattern() {
     return $this->pattern;
   }
 
+  /**
+   * translate the given $url in the Constructor to an regex pattern.
+   * all the variable names get extracted. And replaced by a auto-generated
+   * regular expression
+   *
+   * this also generates $link_url with its placeholders in it
+   *
+   * @return void
+   */
   protected function compile() {
     $this->names = $this->delimiters = $regexs = Array();
     $names = &$this->names;
@@ -76,6 +123,13 @@ class Route {
     }
   }
 
+  /**
+   * parses the request and checks if it matches $this->pattern. if not false is returned.
+   * If the pattern matches a string in the format /controller/action/param1/param2
+   * is returned to identify the controller/action which should be called.
+   *
+   * @return mixed
+   */
   public function request($path_info) {
     $matches = Array();
     // see if the url requested matches the generated pattern
@@ -93,16 +147,33 @@ class Route {
     return $back;
   }
   
+  /**
+   * called when the link function is called for a route.
+   * This method takes the stuff in $this->link_url and replaces the placeholders
+   * with the given parameters. throws an exception if an wrong number of arguments is
+   * given
+   *
+   * @return string
+   */
   public function link() {
     $link = $this->link_url;
+
+    // correct number of arguments given?
     if(func_num_args() == count($this->names))  {
+
+      // iterate through the given arguments
       $args = func_get_args();
       foreach($args as $key => $arg) {
+        // as soon as an variable has an delimiters it takes multiple vales
+        // so an array needs to be passed
         $delim = $this->delimiters[$key];
         $key++;
+
+        // replace the placeholder with the given argument
         if($delim === null) {
           $link = str_replace("\\?$key\\?", $arg, $link);
         } else {
+          !is_array($arg) && $arg = array($arg);
           $link = str_replace("\\?$key\\?", implode($delim, $arg), $link);
         }
       }
