@@ -21,6 +21,10 @@ class Route {
   protected $link_url;
 
   protected $delimiters;
+
+  protected $optional = 0;
+
+  protected $max_args = 0;
   
   /* regex to match variables insude of $url */
   const DYNAMIC_URL_PART_REGEX = "\\:(?:\\[([^\\]]+)\\]|)(\\{[\\,0-9]+\\}|\\+|\\*|\\?|)([^a-zA-Z_]?)([a-zA-Z_][a-zA-Z0-9_]*)";
@@ -86,6 +90,8 @@ class Route {
    * @return void
    */
   protected function compile() {
+    $thos->optional = 0;
+    $thos->max_args = 0;
     $this->names = $this->delimiters = $regexs = Array();
     $names = &$this->names;
     $delims = &$this->delimiters;
@@ -107,6 +113,17 @@ class Route {
         } else {
           $delims[] = null;
         }
+
+        // count number of arguments at max can be given to link() later
+        $this->max_args++;
+
+        // count optioal parameters
+        if(preg_match('/(\?|\*|\{(?:0|,).*\})/', $match[2])) {
+          $this->optional++;
+        } else {
+          $this->optional = 0;
+        }
+
         // compose regex
         $regexs[$i] = "((?:[" . str_replace(array("/", "]"), array("\\/", "\\]"), $match[1])
           . "]+" . preg_quote($delim, "/") . "?)" . $match[2] . ")";
@@ -158,8 +175,9 @@ class Route {
   public function link() {
     $link = $this->link_url;
 
+    $num_args = func_num_args();
     // correct number of arguments given?
-    if(func_num_args() == count($this->names))  {
+    if($num_args <= $this->max_args && $num_args >= $this->max_args - $this->optional)  {
 
       // iterate through the given arguments
       $args = func_get_args();
