@@ -44,7 +44,7 @@ class Request extends VoidBase {
     if($urlparams === null) {
       $this->urlparams = self::getArray();
     } else {
-      is_array($urlparams) && $urlparams = implode("/", $urlparams;
+      is_array($urlparams) && $urlparams = implode("/", $urlparams);
       $this->urlparams = self::requestStringToArray($urlparams);
     }
   }
@@ -64,7 +64,7 @@ class Request extends VoidBase {
     return "/" . trim(isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : "", "/");
   }
 
-  public static function compareTo($str) {
+  public function compareTo($str) {
     return implode("/", $this->urlparams) === trim($str, "/");
   }
 
