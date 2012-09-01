@@ -85,7 +85,7 @@ abstract class ControllerBase extends VirtualAttribute {
    */
   public function insufficent_permissions() {
     Flash::error("insufficent permission rights");
-    Router::redirect('root');
+    return 'root';
   }
 
   /**
@@ -93,7 +93,7 @@ abstract class ControllerBase extends VirtualAttribute {
    * @param Dispatcher $dispatcher
    * @return string the rendered output of the view
    */
-  public function executeAction(Dispatcher $dispatcher) {
+  public function executeAction(Dispatcher $dispatcher, &$redirect) {
     // use the property '$view_vars' to save all the variables for the view
     $this->setReference($this->view_vars);
     // get the name of the action called
@@ -108,32 +108,35 @@ abstract class ControllerBase extends VirtualAttribute {
 
     // if authentification fails call insufficient_permissions trigger
     if(!$this->authenticate($actionname)) {
-      $this->insufficent_permissions();
+      $redirect = $this->insufficent_permissions();
+      return null;
     }
 
     // call the action
-    call_user_func_array(Array($this, Dispatcher::getMethodPrefix() . $actionname), $dispatcher->getParams());
+    $back = call_user_func_array(Array($this, Dispatcher::getMethodPrefix() . $actionname), $dispatcher->getParams());
+    if($back === null) {
+      // create the template for the base layout
+      $layout = new Template(Array('layout', 'application'));
+      // also use '$view_vars' to store all the variables
+      $layout->setReference($this->getReference());
 
-    // create the template for the base layout
-    $layout = new Template(Array('layout', 'application'));
-    // also use '$view_vars' to store all the variables
-    $layout->setReference($this->getReference());
+      // create the template for this controller
+      $this->view = $layout->_content = new Template(Array(
+        $controllername,
+        $actionname
+      ));
+      // also use '$view_vars' to store all the variables
+      $this->view->setReference($this->getReference());
 
-    // create the template for this controller
-    $this->view = $layout->_content = new Template(Array(
-      $controllername,
-      $actionname
-    ));
-    // also use '$view_vars' to store all the variables
-    $this->view->setReference($this->getReference());
+      // give access to the current controllername, the actionname and the given params
+      $this->_action = $actionname;
+      $this->_controller = $controllername;
+      $this->_params = $dispatcher->getParams();
 
-    // give access to the current controllername, the actionname and the given params
-    $this->_action = $actionname;
-    $this->_controller = $controllername;
-    $this->_params = $dispatcher->getParams();
-
-    // render the layout
-  	return $layout->render();
+      // render the layout
+      return $layout->render();
+    }
+    return null;
   }
 
   abstract function action_index();

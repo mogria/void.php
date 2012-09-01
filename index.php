@@ -21,17 +21,32 @@ require_once 'config/routes.php';
 // Startup
 Booter::boot();
 
-// Read the request
-$request = new Request();
+$redirect_loop_limit = 10;
+$redirect_loop_count = 0;
 
-// instanciate the Dispatcher
-$dispatcher = new Dispatcher($request);
+do {
+  $redirect = null;
 
-// Get an instance of the Controller
-$controller = $dispatcher->getController();
+  // Read the request
+  $request = new Request($redirect);
 
-// Execute the action according to the request
-echo $controller->executeAction($dispatcher);
+  // instanciate the Dispatcher
+  $dispatcher = new Dispatcher($request);
+
+  // Get an instance of the Controller
+  $controller = $dispatcher->getController();
+
+  // Execute the action according to the request
+  $content = $controller->executeAction($dispatcher, $redirect);
+
+  // increase redirect_loop_count to check wheter we are in a redirect loop
+  $redirect_loop_count = $request->compareTo($redirect) ? $redirect_loop_count + 1 : 0;
+
+// repeat these steps if the action wants to redirect to an other controller
+} while($content === null && $redirect !== null && $redirect_loop_count < $redirect_loop_limit);
+
+// print the content
+echo $content;
 
 // Clean up
 Booter::shutdown();

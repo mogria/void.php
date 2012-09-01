@@ -3,14 +3,9 @@
 
 namespace Void;
 
-define('REL', realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . ".."));
-chdir(REL);
+require_once dirname(__FILE__) . '/../config/scripts.php';
+Script::init();
 
-require_once 'config/consts.php';
-require_once 'autoload.php';
-require_once 'config/environments.php';
-
-Booter::boot();
 
 // all the diffrent generators & the shortcuts
 $generators = Array(
@@ -27,129 +22,136 @@ $generators = Array(
 
 // get all the diffrent classes
 $generator_classes = array_unique($generators);
-$generators_str = "";
 
-foreach( $generator_classes as $class) {
-  // get all the shortcuts 
-  $shortcuts = array_keys(array_intersect($generators, array($class)));
-  $generators_str .= "\t" . array_shift($shortcuts) . " (" .  implode(", ", $shortcuts) . ")\n";
-}
 
-define('HELP', <<<HELP
+if(!defined('_GENERATE_SCRIPT')) {
+  define('_GENERATE_SCRIPT', 1);
+
+  $generators_str = "";
+
+  foreach($generator_classes as $class) {
+    // get all the shortcuts 
+    $shortcuts = array_keys(array_intersect($generators, array($class)));
+    $generators_str .= "\t" . array_shift($shortcuts) . " (" .  implode(", ", $shortcuts) . ")\n";
+  }
+
+
+  define('GENERATOR_HELP', <<<HELP
 {$argv[0]} generator_name name [params ...]
 
 generators: 
 $generators_str
 
 HELP
-);
+  );
 
-function ascii_table(Array $table) {
-  $lengths = Array();
-  $line = "+";
-  $result = "";
-  foreach($table as $row) {
-    foreach($row as $column_key => $column) {
-      !isset($lengths[$column_key]) && $lengths[$column_key] = 0;
-      if(($len = strlen($column)) > $lengths[$column_key]) {
-        $lengths[$column_key] = $len;
+
+  function ascii_table(Array $table) {
+    $lengths = Array();
+    $line = "+";
+    $result = "";
+    foreach($table as $row) {
+      foreach($row as $column_key => $column) {
+        !isset($lengths[$column_key]) && $lengths[$column_key] = 0;
+        if(($len = strlen($column)) > $lengths[$column_key]) {
+          $lengths[$column_key] = $len;
+        }
       }
     }
-  }
 
-  foreach($lengths as $length) {
-    $line .= str_repeat("-", $length + 2) . "+";
-  }
-  
-  $line = "\n" . $line . "\n";
-
-  $result .= $line;
-  foreach($table as $row) {
-    $result .= "| ";
-    foreach($row as $column_key => $column) {
-      $result .= str_pad($column, $lengths[$column_key]) . " | ";
+    foreach($lengths as $length) {
+      $line .= str_repeat("-", $length + 2) . "+";
     }
+    
+    $line = "\n" . $line . "\n";
+
     $result .= $line;
-  }
-  return $result;
-}
-
-function php_array($array, $multiline = true) {
-  $multiline !== true && $multiline > 0 && $multiline--;
-  $keys = array_keys(array_values($array));
-  $elements = Array();
-  foreach($array as $key => $element) {
-    $out = $multiline ? "  " : "";
-    current($keys) != $key && $out .= "'" . $key . "' => ";
-    if(is_array($element)) {
-      $out .= str_replace("\n", "\n  ", php_array($element, $multiline));
-    } else if (is_string($element)) {
-      $out .= "'" . addslashes($element) . "'";
-    } else {
-      $out .= $element;
+    foreach($table as $row) {
+      $result .= "| ";
+      foreach($row as $column_key => $column) {
+        $result .= str_pad($column, $lengths[$column_key]) . " | ";
+      }
+      $result .= $line;
     }
-    $elements[] = $out;
-    next($keys);
-  }
-  $space = $multiline ? "\n" : " ";
-  $break = $multiline ? "\n" : "";
-  return "Array(" . $break . implode("," . $space,  $elements) . $break . ")";
-}
-
-abstract class Generator {
-  protected $files = Array();
-  protected $flags = Array('force' => false);
-
-  public function isFlag($key) {
-    return array_key_exists($key, $this->flags);
+    return $result;
   }
 
-  public function setFlag($key, $value) {
-    if(!$this->isFlag($key)) {
-      throw new InvalidArgumentException("No such flag '$key'");
-    }
-    $this->flags[$key] = $value;
-  }
-
-  public function getFlag($key) {
-    if(!$this->isFlag($key)) {
-      throw new InvalidArgumentException("No such flag '$key'");
-    }
-    return $this->flags[$key];
-  }
-
-  public function generate() {
-    foreach($this->files as $file => $content) {
-      if($content === true) {
-        if(!is_dir(ROOT . $file)) {
-          echo "creating dir '$file'\n";
-          mkdir(ROOT . $file);
-        }
+  function php_array($array, $multiline = true) {
+    $multiline !== true && $multiline > 0 && $multiline--;
+    $keys = array_keys(array_values($array));
+    $elements = Array();
+    foreach($array as $key => $element) {
+      $out = $multiline ? "  " : "";
+      current($keys) != $key && $out .= "'" . $key . "' => ";
+      if(is_array($element)) {
+        $out .= str_replace("\n", "\n  ", php_array($element, $multiline));
+      } else if (is_string($element)) {
+        $out .= "'" . addslashes($element) . "'";
       } else {
-        if(is_file(ROOT . $file) && !$this->getFlag('force')) {
-          throw new \BadMethodCallException("file '$file' already exists (use -f to force overwrite)");
+        $out .= $element;
+      }
+      $elements[] = $out;
+      next($keys);
+    }
+    $space = $multiline ? "\n" : " ";
+    $break = $multiline ? "\n" : "";
+    return "Array(" . $break . implode("," . $space,  $elements) . $break . ")";
+  }
+
+  abstract class Generator {
+    protected $files = Array();
+    protected $flags = Array('force' => false);
+
+    public function isFlag($key) {
+      return array_key_exists($key, $this->flags);
+    }
+
+    public function setFlag($key, $value) {
+      if(!$this->isFlag($key)) {
+        throw new InvalidArgumentException("No such flag '$key'");
+      }
+      $this->flags[$key] = $value;
+    }
+
+    public function getFlag($key) {
+      if(!$this->isFlag($key)) {
+        throw new InvalidArgumentException("No such flag '$key'");
+      }
+      return $this->flags[$key];
+    }
+
+    public function generate() {
+      foreach($this->files as $file => $content) {
+        if($content === true) {
+          if(!is_dir(ROOT . $file)) {
+            echo "creating dir '$file'\n";
+            mkdir(ROOT . $file);
+          }
+        } else {
+          if(is_file(ROOT . $file) && !$this->getFlag('force')) {
+            throw new \BadMethodCallException("file '$file' already exists (use -f to force overwrite)");
+          }
+          echo "creating '$file'\n";
+          file_put_contents(ROOT . $file, $content);
         }
-        echo "creating '$file'\n";
-        file_put_contents(ROOT . $file, $content);
       }
     }
   }
-}
 
-class ControllerGenerator extends Generator {
- public function __construct($name, $methods) {
-   $camelized = s($name)->camelize();
-   $uncamelized = s($name)->uncamelize();
-   $methods = array_merge(array('index'), $methods);
-   $methods_string = "";
-   foreach($methods as $method) {
-     $methods_string .= <<<METHOD
+  class ControllerGenerator extends Generator {
+   public function __construct($name, $methods) {
+     $camelized = s($name)->camelize();
+     $uncamelized = s($name)->uncamelize();
+     $methods = array_merge(array('index'), $methods);
+     $methods_string = "";
+     foreach($methods as $method) {
+       $methods_string .= <<<METHOD
 
   public function action_{$method}() {
   }
 METHOD;
-   }
-   $this->files["Controllers/{$camelized}Controller.php"] = <<<CONTROLLER
+     }
+     $this->files["Controllers/{$camelized}Controller.php"] = <<<CONTROLLER
 <?php
 
 namespace Void;
@@ -160,7 +162,7 @@ $methods_string
 }
 
 CONTROLLER;
-    $this->files["Helpers/{$camelized}Helper.php"] = <<<HELPER
+      $this->files["Helpers/{$camelized}Helper.php"] = <<<HELPER
 <?php
 
 namespace Void;
@@ -169,45 +171,45 @@ class {$name}Helper extends ApplicationHelper {
 }
 HELPER;
 
-    $this->files["Views/$uncamelized"] = true;
-    foreach($methods as $method) {
-      $this->files["Views/$uncamelized/$method.tpl"] = "";
+      $this->files["Views/$uncamelized"] = true;
+      foreach($methods as $method) {
+        $this->files["Views/$uncamelized/$method.tpl"] = "";
+      }
     }
   }
-}
 
-class ModelGenerator extends Generator {
-  public function __construct($name, $params) {
-    $name = s($name)->camelize();
+  class ModelGenerator extends Generator {
+    public function __construct($name, $params) {
+      $name = s($name)->camelize();
 
-    $table_overview = "";
-    $validates_presence_of = Array();
-    $validates_length_of = Array();
-    try {
-      $table = Array();
-      $table[] = Array('Name', 'Type', 'Length', 'NULL', 'default', 'Primary Key',  'auto increment');
-      $model_creation = "class $name extends \\ActiveRecord\\Model{ };";
-      eval($model_creation);
-      $columns = $name::table()->columns;
-      foreach($columns as $column) {
-        $table[] = Array($column->name, $column->raw_type, $column->length, $column->nullable ? "yes" : "no", $column->default, $column->pk, $column->auto_increment);
-        if(!$column->nullable && !$column->auto_increment) {
-          $validates_presence_of[] = Array($column->name);
+      $table_overview = "";
+      $validates_presence_of = Array();
+      $validates_length_of = Array();
+      try {
+        $table = Array();
+        $table[] = Array('Name', 'Type', 'Length', 'NULL', 'default', 'Primary Key',  'auto increment');
+        $model_creation = "class $name extends \\ActiveRecord\\Model{ };";
+        eval($model_creation);
+        $columns = $name::table()->columns;
+        foreach($columns as $column) {
+          $table[] = Array($column->name, $column->raw_type, $column->length, $column->nullable ? "yes" : "no", $column->default, $column->pk, $column->auto_increment);
+          if(!$column->nullable && !$column->auto_increment) {
+            $validates_presence_of[] = Array($column->name);
+          }
+          if($column->length && !$column->auto_increment) {
+            $validates_length_of[] = Array($column->name, 'maximum' => $column->length);
+          }
         }
-        if($column->length && !$column->auto_increment) {
-          $validates_length_of[] = Array($column->name, 'maximum' => $column->length);
-        }
-      }
 
-      $table_overview = ascii_table($table);
-      $table_overview = "/*\n$table_overview\n*/";
-    } catch(\Exception $ex) { }
+        $table_overview = ascii_table($table);
+        $table_overview = "/*\n$table_overview\n*/";
+      } catch(\Exception $ex) { }
 
-    $validates_presence_of = str_replace("\n", "\n  ", php_array($validates_presence_of, 2));
-    $validates_length_of = str_replace("\n", "\n  ", php_array($validates_length_of, 2));
+      $validates_presence_of = str_replace("\n", "\n  ", php_array($validates_presence_of, 2));
+      $validates_length_of = str_replace("\n", "\n  ", php_array($validates_length_of, 2));
 
-    $this->files["Models"] = true;
-    $this->files["Models/$name.php"] = <<<MODEL
+      $this->files["Models"] = true;
+      $this->files["Models/$name.php"] = <<<MODEL
 <?php
 
 $table_overview
@@ -220,31 +222,31 @@ class {$name} extends \\ActiveRecord\\Model {
 }
 
 MODEL;
+    }
   }
-}
 
-class TestGenerator extends Generator {
-  public function __construct($name, $params) {
-    $name = s($name)->camelize();
-    $uncamelized_name = s($name)->uncamelize();
+  class TestGenerator extends Generator {
+    public function __construct($name, $params) {
+      $name = s($name)->camelize();
+      $uncamelized_name = s($name)->uncamelize();
 
-    $properties = "";
-    $setup = "";
-    $methods = "";
+      $properties = "";
+      $setup = "";
+      $methods = "";
 
-    if(class_exists("Void\\" . $name)) {
-      $properties = "protected $" . $uncamelized_name . ";";
-      $setup = "\$this->" . $uncamelized_name . " = new $name();";
-      $reflection = new \ReflectionClass("Void\\" . $name);
-      foreach($reflection->getMethods() as $method) {
-        if($method->class == "Void\\$name") {
-          $methods .= "\n\n" . $this->generateMethod($method->name);
+      if(class_exists("Void\\" . $name)) {
+        $properties = "protected $" . $uncamelized_name . ";";
+        $setup = "\$this->" . $uncamelized_name . " = new $name();";
+        $reflection = new \ReflectionClass("Void\\" . $name);
+        foreach($reflection->getMethods() as $method) {
+          if($method->class == "Void\\$name") {
+            $methods .= "\n\n" . $this->generateMethod($method->name);
+          }
         }
       }
-    }
 
-    $this->files["test"] = true;
-    $this->files["test/{$name}Test.php"] = <<<TEST
+      $this->files["test"] = true;
+      $this->files["test/{$name}Test.php"] = <<<TEST
 <?php
 
 namespace Void;
@@ -268,27 +270,35 @@ class {$name}Test extends \PHPUnit_Framework_TestCase {
 TEST;
   }
 
-  public function generateMethod($name) {
-    $name = s($name)->camelize();
-    return <<<METHOD
+    public function generateMethod($name) {
+      $name = s($name)->camelize();
+      return <<<METHOD
   public function test$name() {
   }
 METHOD;
+    }
   }
-}
 
-try {
-  if(count($argv) > 2) {
-    if(array_key_exists($argv[1], $generators)) {
-      $generatorname = "Void\\" . $generators[$argv[1]];
-      $generator = new $generatorname($argv[2], @array_slice($argv, 3));
+  function generate_main($generatorname, $name, $params) {
+    global $generators, $generator_classes;
+    if(array_key_exists($generatorname, $generators)) {
+      $generatorname = "Void\\" . $generators[$generatorname];
+      $generator = new $generatorname($name, $params);
       $generator->generate();
     } else {
       throw new InvalidArgumentException("no such generator '{$argv[1]}'");
     }
-  } else {
-    echo HELP;
   }
-} catch(\Exception $ex) {
-  echo "Error: {$ex->getMessage()}\n";
+}
+
+if(!defined('VOIDPHP_SCRIPT')) {
+  try {
+    if(count($argv) > 2) {
+      generate_main($argv[1], $argv[2], @array_slice($argv, 3));
+    } else {
+      echo GENERATOR_HELP;
+    }
+  } catch (\Exception $ex) {
+    echo "Error: {$ex->getMessage()}\n";
+  }
 }

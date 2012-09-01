@@ -10,5 +10,4 @@ class PagesController extends ApplicationController {
   
   public function action_about() {
   }
-
 }

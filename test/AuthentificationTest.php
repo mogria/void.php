@@ -31,7 +31,7 @@ class AuthentificationTest extends \PHPUnit_Framework_TestCase {
     } else {
       $this->user = User::find(self::$user_id);
     }
-    User::auth_init();
+    User::auth_init(true);
   }
 
   public function testAuthInit() {

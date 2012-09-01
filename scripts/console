@@ -3,35 +3,35 @@
 
 namespace Void;
 
-define('REL', realpath(dirname(__FILE__) . DIRECTORY_SEPARATOR . ".."));
-chdir(REL);
+require_once dirname(__FILE__) . '/../config/scripts.php';
+Script::init();
 
-require_once 'config/consts.php';
-require_once 'autoload.php';
-$overwrite_environment = TEST;
-require 'config/environments.php';
+if(!defined('_CONSOLE_SCRIPT')) {
+  define('_CONSOLE_SCRIPT', 1);
 
-Booter::boot();
-
-function prompt() {
-  echo "void.php $ ";
-}
-
-
-prompt();
-$input = fopen("php://stdin", "r");
-while($str = fgets($input)) {
-  try {
-    $back = eval("namespace " . __NAMESPACE__ . "; return $str;");
-    if(trim($str, "\n \r;") !== "") {
-      echo "\n";
-    }
-    echo " => ";
-    var_dump($back);
-  } catch (\Exception $ex) {
-    echo get_class($ex) . (($code = $ex->getCode()) !== 0 ? "($code" : "") . ": " . $ex->getMessage() . "\n";
+  function prompt() {
+    echo "void.php $ ";
   }
-  prompt();
-}
-fclose($input);
 
+
+  function console_main() {
+    prompt();
+    $input = fopen("php://stdin", "r");
+    while($str = fgets($input)) {
+      try {
+        $back = eval("namespace " . __NAMESPACE__ . "; return $str;");
+        if(trim($str, "\n \r;") !== "") {
+          echo "\n";
+        }
+        echo " => ";
+        var_dump($back);
+      } catch (\Exception $ex) {
+        echo get_class($ex) . (($code = $ex->getCode()) !== 0 ? "($code" : "") . ": " . $ex->getMessage() . "\n";
+      }
+      prompt();
+    }
+    fclose($input);
+  }
+
+  console_main();
+}
