@@ -90,13 +90,15 @@ class Route {
    * @return void
    */
   protected function compile() {
-    $thos->optional = 0;
-    $thos->max_args = 0;
+    $this->optional = 0;
+    $this->max_args = 0;
     $this->names = $this->delimiters = $regexs = Array();
     $names = &$this->names;
     $delims = &$this->delimiters;
+    $optional = &$this->optional;
+    $max_args = &$this->max_args;
     $this->link_url = preg_replace_callback("/" . self::DYNAMIC_URL_PART_REGEX . "/",
-      function($match) use (&$names, &$regexs, &$delims) {
+      function($match) use (&$names, &$regexs, &$delims, &$optional, &$max_args) {
         static $i = 0;
         $i++;
         // save the names (needed for a replace later when request() is called)
@@ -115,13 +117,13 @@ class Route {
         }
 
         // count number of arguments at max can be given to link() later
-        $this->max_args++;
+        $max_args++;
 
         // count optioal parameters
         if(preg_match('/(\?|\*|\{(?:0|,).*\})/', $match[2])) {
-          $this->optional++;
+          $optional++;
         } else {
-          $this->optional = 0;
+          $optional = 0;
         }
 
         // compose regex
