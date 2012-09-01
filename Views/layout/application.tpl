@@ -18,10 +18,10 @@
       </header>
       <nav class="push-1 span-22">
         <ul class="navimenu">
-          <li>{=:aTag("Home", null)}</li>
-          <li>{=:aTag("About", "pages/about")}</li>
-          <li>{=:aTag("Categories", "categories")}</li>
-          <li>{=:aTag("Tags", "tags")}</li>
+          <li>{=:aTag("Home", $this->link_root())}</li>
+          <li>{=:aTag("About", $this->link_about())}</li>
+          <li>{=:aTag("Categories", $this->link_controller("categories"))}</li>
+          <li>{=:aTag("Tags", $this->link_controller("tags"))}</li>
         </ul>
         
         <ul class="usermenu right">
