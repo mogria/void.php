@@ -40,19 +40,32 @@ class Request extends VoidBase {
   /**
    * Constructor
    */
-  public function __construct() {
-    $this->urlparams = self::getArray();
+  public function __construct($urlparams = null) {
+    if($urlparams === null) {
+      $this->urlparams = self::getArray();
+    } else {
+      is_array($urlparams) && $urlparams = implode("/", $urlparams;
+      $this->urlparams = self::requestStringToArray($urlparams);
+    }
   }
 
   /**
    * Parses the requested URL
    */
   public static function getArray() {
-    return array_values(array_diff(explode("/", Router::request(self::getPathInfo())), Array('')));
+    return self::requestStringToArray(Router::request(self::getPathInfo()));
+  }
+
+  public static function requestStringToArray($str) {
+    return array_values(array_diff(explode("/", $str), Array('')));
   }
 
   public static function getPathInfo() {
     return "/" . trim(isset($_SERVER['PATH_INFO']) ? $_SERVER['PATH_INFO'] : "", "/");
+  }
+
+  public static function compareTo($str) {
+    return implode("/", $this->urlparams) === trim($str, "/");
   }
 
   /**
