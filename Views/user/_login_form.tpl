@@ -1,5 +1,5 @@
 {=:render('layout/_errors', Array('object' => $user))}
-{=:form('post', Router::link('user', 'login'), function($f) use ($user){}
+{=:form('post', $this->link_login(), function($f) use ($user){}
   {$f->setModel($user)}
   <fieldset>
     <legend>Login</legend>

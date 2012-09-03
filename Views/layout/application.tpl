@@ -26,10 +26,10 @@
         
         <ul class="usermenu right">
         {if(Session::user()->role->login):}
-          <li>{=:aTag("Profile", "user/show")}</li>
-          <li>{=:aTag("Logout", "user/logout")}</li>
+          <li>{=:aTag("Profile", $this->link_user())}</li>
+          <li>{=:aTag("Logout", $this->link_logout())}</li>
         {else:}
-          <li>{=:aTag("Login", "user/login")}</li>
+          <li>{=:aTag("Login", $this->link_login())}</li>
         {endif}
         </ul>
       </nav>
@@ -40,8 +40,8 @@
       <aside class="push-2 span-6 last">
         <h3>Actions</h3>
         <ul>
-          <li>{=:aTag('create a post', Array('posts', 'new'))}</li>
-          <li>{=:aTag('create a category', Array('categories', 'new'))}</li>
+          <li>{=:aTag('create a post', $this->link_new_post())}</li>
+          <li>{=:aTag('create a category', $this->link_new_category())}</li>
         </ul>
       </aside>
       <footer class="clear">

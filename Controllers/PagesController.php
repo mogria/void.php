@@ -5,7 +5,7 @@ namespace Void;
 class PagesController extends ApplicationController {
 
   public function action_index() {
-    Router::redirect('pages/about');
+    Router::redirect_about();
   }
   
   public function action_about() {

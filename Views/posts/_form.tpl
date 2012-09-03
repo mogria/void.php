@@ -22,7 +22,7 @@
       {=$f->label("categories")}
       {var_dump($post->categories)}
       {foreach($categories as $category):}
-        <input type="checkbox" name="categories[]" value="{>$category->id}" {in_array($category, $post->categories) ? 'checked' : ''}/>{>$category->name}
+        <input type="checkbox" name="categories[]" value="{>$category->id}" {in_array($category, is_array($post->categories) ? $post->categories : array()) ? 'checked' : ''}/>{>$category->name}
       {endforeach}
     </div>
 

@@ -12,7 +12,7 @@ class CategoriesController extends ApplicationController {
   public function action_new() {
     $this->category = new Category($_POST);
     if(isset($_POST['form_sent']) && $this->category->save()) {
-      Router::redirect('categories', 'show', Array($this->category->id));
+      Router::redirect_category($this->category->id);
     }
   }
 
@@ -32,7 +32,7 @@ class CategoriesController extends ApplicationController {
         throw new Exception();
       }
     } catch(Exception $ex) {
-      Router::redirect('categories', 'show', Array($id));
+      Router::redirect_category($id);
     }
   }
 
@@ -40,9 +40,9 @@ class CategoriesController extends ApplicationController {
     try {
       Category::find($id)->delete();
       Flash::success('The category was successfully deleted');
-      Router::redirect('categories');
+      Router::redirect_categories();
     } catch(Exception $ex) {
-      Router::redirect('posts', 'show', Array($id));
+      Router::redirect_categories();
     }
   }
 }

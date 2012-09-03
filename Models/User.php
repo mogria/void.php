@@ -86,7 +86,7 @@ class User extends ModelAuthentification {
   }
 
   public function logout() {
-    self::auth_init();
+    self::auth_init(true);
   }
 
   public function get_role() {

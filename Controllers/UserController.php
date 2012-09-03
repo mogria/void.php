@@ -15,7 +15,7 @@ class UserController extends ApplicationController {
         $user->last_login = new \DateTime();
         $user->save();
         Flash::success('Successfully logged in');
-        Router::redirect(null);
+        Router::redirect_root();
       } else {
         $this->user = new User(Array('name' => $_POST['name']));
         Flash::error('Username and/or Password wrong');
@@ -26,7 +26,7 @@ class UserController extends ApplicationController {
   public function action_logout() {
     Session::user()->logout();
     Flash::success('Successfully logged out');
-    Router::redirect(null);
+    Router::redirect_root();
   }
 
   public function action_show($id = null) {
@@ -36,7 +36,7 @@ class UserController extends ApplicationController {
       : User::find_by_id($id);
     if($this->user === null ) {
       Flash::error('This user doesn\'t exist');
-      Router::redirect(null);
+      Router::redirect_root();
     }
   }
 

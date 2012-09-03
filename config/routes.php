@@ -143,8 +143,33 @@ namespace Void;
 
 Router::configure(function($route) {
   $route->match('/', '/posts', 'root');
-  $route->match('/about', '/pages/about');
-  $route->match('/:controller', '/:controller');
-  $route->match('/:controller/:action', '/:controller/:action');
-  $route->match('/:controller/:action/:params', '/:controller/:action/:params');
+  $route->match('/about', '/pages/about', 'about');
+
+  //user
+  $route->match('/login', '/user/login', 'login');
+  $route->match('/logout', '/user/logout', 'logout');
+  $route->match('/register', '/user/new', 'register');
+  $route->match('/user/:?id', '/user/show/:id', 'user');
+
+  // post
+  $route->match('/new', '/posts/new', 'new_post');
+  $route->match('/posts', '/posts', 'posts');
+  $route->match('/post/delete/:id', '/posts/delete/:id', 'post_delete');
+  $route->match('/post/edit/:id', '/posts/edit/:id', 'post_edit');
+  $route->match('/post/:id', '/posts/show/:id', 'post');
+
+  // category
+  $route->match('/category/new', '/categories/new', 'new_category');
+  $route->match('/categories', '/categories', 'categories');
+  $route->match('/category/delete/:id', '/categories/delete/:id', 'category_delete');
+  $route->match('/category/edit/:id', '/categories/edit/:id', 'category_edit');
+  $route->match('/category/:id', '/categories/show/:id', 'category');
+
+  // tags
+  $route->match('/tags', '/tags', 'tags');
+  $route->match('/tag/:name', '/tags/show/:name', 'tag');
+
+  $route->match('/:controller', '/:controller', 'controller');
+  $route->match('/:controller/:action', '/:controller/:action', 'action');
+  $route->match('/:controller/:action/:*params', '/:controller/:action/:params', 'params');
 });

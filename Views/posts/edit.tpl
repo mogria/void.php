@@ -1,1 +1,1 @@
-{=:render('posts/_form', Array('post' => $post, 'action' => Array('posts', 'edit', $post->id), 'categories' => $categories))}
+{=:render('posts/_form', Array('post' => $post, 'action' => $this->link_post_edit($post->id), 'categories' => $categories))}
