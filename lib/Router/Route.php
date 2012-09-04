@@ -183,10 +183,13 @@ class Route {
 
       // iterate through the given arguments
       $args = func_get_args();
+
+      // add some empty entries in where for the not given optional arguments
+      $this->optional > 0 && $args = array_values(array_merge($args, array_fill(0, $this->optional, null)));
       foreach($args as $key => $arg) {
         // as soon as an variable has an delimiters it takes multiple vales
         // so an array needs to be passed
-        $delim = $this->delimiters[$key];
+        $delim = isset($this->delimiters[$key]) ? $this->delimiters[$key] : null;
         $key++;
 
         // replace the placeholder with the given argument
