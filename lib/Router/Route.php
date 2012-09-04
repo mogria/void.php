@@ -189,7 +189,7 @@ class Route {
       foreach($args as $key => $arg) {
         // as soon as an variable has an delimiters it takes multiple vales
         // so an array needs to be passed
-        $delim = $this->delimiters[$key];
+        $delim = isset($this->delimiters[$key]) ? $this->delimiters[$key] : null;
         $key++;
 
         // replace the placeholder with the given argument
