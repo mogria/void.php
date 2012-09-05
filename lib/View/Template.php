@@ -71,8 +71,9 @@ class Template extends VirtualAttribute {
    * @return string
    */
   public function parse($string) {
+    // match every { } pair and replace it with the correct php code
     return preg_replace_callback(
-      "/\\{(\\[|>|=|)\s*(:|)([^\\}]*?({(?:.*|(?3))}|)[^\\{]*)\\}($)?/m",
+      "/\\{(\\[|>|=|)\s*([^\\}]*?({(?:.*|(?3))}|)[^\\{]*)\\}($)?/m",
       function($match) {
         $before = '<' . '?php ';
         $after = ' ?' . '>';
@@ -95,14 +96,16 @@ class Template extends VirtualAttribute {
             break;
         }
 
-        if($match[2] === ':') {
-          $before .= '$this->';
-        }
+        // replace : with $this-> (but not in static calls)
+        $match[2] = preg_replace("/(?:[^\:]|^)\:([a-z_][a-z0-9_]*\\()/i",
+          "\$this->\\1",
+          $match[2]);
         
-        if(isset($match[4])) {
+        if(isset($match[3])) {
           $after .= "\n";
         }
-        return $before . $match[3] . $after;
+
+        return $before . $match[2] . $after;
       }, $string);
   }
 
