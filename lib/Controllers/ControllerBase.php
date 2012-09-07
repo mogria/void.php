@@ -133,6 +133,7 @@ abstract class ControllerBase extends VirtualAttribute {
       $this->_controller = $controllername;
       $this->_params = $dispatcher->getParams();
 
+
       // render the layout
       return $layout->render();
     }

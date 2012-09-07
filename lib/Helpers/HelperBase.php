@@ -1,6 +1,7 @@
 <?php
 
 namespace Void;
+use \BadMethodCallException;
 
 /**
  * All the Helper classes extend this class
@@ -9,19 +10,17 @@ namespace Void;
 class HelperBase extends VirtualAttribute {
 
   /**
-   * @var Template
+   * @var ViewRenderer
    * @access protected
    */
-  protected $template;
+  protected $view_renderer = null;
   
   /**
-   * Constructor
-   *
    * @param Template $template
+   * Constructor
    */
   public function __construct(Template $template) {
-    $this->template = $template;
-    $this->setReference($this->template->getReference());
+    $this->setReference($template->getReference());
   }
 
   /**
@@ -32,7 +31,21 @@ class HelperBase extends VirtualAttribute {
    * @return mixed
    */
   public function __call($method, $args) {
-    return $this->template->__call($method, $args);
+    if($this->view_renderer != null) {
+      return $this->view_renderer->__call($method, $args);
+    } else {
+      throw new BadMethodCallException('no template renderer set to forward function calls');
+    }
+  }
+
+  /**
+   * sets the view renderer.
+   * All the function calls get forwarded to this objects
+   *
+   * @param ViewRenderer $view_renderer
+   */
+  public function setViewRenderer(ViewRenderer $view_renderer) {
+    $this->view_renderer = $view_renderer;
   }
 
   /**
@@ -81,4 +94,61 @@ class HelperBase extends VirtualAttribute {
     }
     return implode("\n", $tags);
   }
+
+  /**
+   * create a form
+   * 
+   * @param mixed $model      the method of the form or ActiveRecord\Model
+   * @param mixed $action     an action of a controller to send this form to
+   * @param array $attributes additional attributes for the form (or the
+   *                          callback if you don't have some)
+   * @param mixed $callback   a callback function (first parameter is the form)
+   * @access public
+   * @return string  - the finished form as HTML
+   */
+  public function form($model, $action, $attributes = Array(), $callback = null) {
+    // use POST as defailt method
+    $method = "post";
+    // use "get" if given instead of an model
+    strtolower($method) === "get" && $method == "get";
+
+    if($callback === null) {
+      $callback = $attributes;
+      $attributes = Array();
+      // throw an exception if $callback isn't callable?
+    }
+
+    // create tje form tag
+    $form = new HTML\FormTag($method, $action, $attributes);
+
+    // give the model to the form if there is one
+    if($model instanceof \ActiveRecord\Model) {
+      $form->setModel($model);
+    }
+    
+    // grab the output of the callback function and set it as content of the form
+    ob_start();
+    $callback($form);
+    $contents = ob_get_contents();
+    ob_end_clean();
+    $form->setContent($contents);
+
+    // return the finish html of the form
+    return $form->output();
+  }
+
+  
+  /**
+   * Link to a certain Controller
+   *
+   * @param type $controller
+   * @param type $action
+   * @param array $params
+   * @return string
+   * @see Router 
+   */
+  public static function link($link_function, $params = null) {
+    return Router::link($link_function, $params);
+  }
+
 }

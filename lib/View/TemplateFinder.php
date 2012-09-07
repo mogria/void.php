@@ -9,11 +9,15 @@ namespace Void;
  */
 class TemplateFinder extends VoidBase {
 
+  static protected $template_renderers = Array();
+
   protected $controller;
 
   protected $action;
 
   protected $file;
+
+  protected $extension;
 
   public function getAction() {
     return $this->action;
@@ -32,6 +36,15 @@ class TemplateFinder extends VoidBase {
     $this->controller = "layout";
     $this->action = "application";
     $filespec !== null && $this->setFilespec($filespec);
+
+    if(self::$template_renderers == null) {
+      $renderers = Array('VoidViewRenderer', 'PHPViewRenderer');
+      foreach($renderers as $renderer) {
+        $renderer = __NAMESPACE__ . "\\" . $renderer;
+        $renderer = new $renderer();
+        self::$template_renderers[$renderer->getExtension()] = $renderer;
+      }
+    }
   }
 
   /**
@@ -103,13 +116,36 @@ class TemplateFinder extends VoidBase {
     // build the path
     $file = ROOT . self::$config->dir . DS . s($this->controller)->uncamelize() . DS . $this->action;
 
-    // append the extension if not given
-    !preg_match("/\\." . preg_quote(self::$config->ext) . "$/", $file)
-      && $file .= "." . self::$config->ext;
+    $extensions = array_keys(self::$template_renderers);
 
+    // do we have any template renderers?
+    if(count($extensions) == 0) {
+      throw new BadMethodCallException("no template renderers specified");
+    }
+
+    // per default use first extension in list
+    $this->extension = $extensions[0];
+    
+    if(is_file($file) && ($pos = strrpos($this->action, ".") !== false)) {
+      $extension = substr($this->action, $pos + 1);
+      if(in_array($extensions, $extension)) {
+        $this->extension = $extension;
+      }
+    } else {
+      $found = false;
+      foreach($extensions as $extension) {
+        $cur_file = $file . "." . $extension;
+        if(is_file($cur_file)) {
+          $this->extension = $extension;
+          $file = $cur_file;
+          $found = true;
+          break;
+        }
+      }
+    }
 
     // replace the slashes with the directory seperator of the current operating system.
-    return str_replace(Array("///", "//", "/"), DS, $file);
+    return $this->file = str_replace(Array("///", "//", "/"), DS, $file);
   }
 
   /**
@@ -118,5 +154,15 @@ class TemplateFinder extends VoidBase {
    */
   public function getPath() {
     return $this->file;
+  }
+
+  /**
+   * returns the view renderer for the file found
+   * @return ViewRenderer
+   */
+  public function getRenderer() {
+    $renderer = clone self::$template_renderers[$this->extension];
+    $renderer->setFile($this->file);
+    return $renderer;
   }
 }
