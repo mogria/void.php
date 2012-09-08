@@ -63,7 +63,12 @@ class VoidViewRenderer extends PHPViewRenderer {
         $match[2] = preg_replace("/(?:[^\:]|^)\:([a-z_][a-z0-9_]*\\()/i",
           "\$this->\\1",
           $match[2]);
-        
+
+        // replace strings like h"random strings" with a call to $this->h()
+        $match[2] = preg_replace("/h((\"|')(?:\\2|.*?[^\\\\](?:\\\\\\\\)*\\2))/",
+          "\$this->h(\\1)",
+          $match[2]);
+
         if(isset($match[3])) {
           $after .= "\n";
         }
