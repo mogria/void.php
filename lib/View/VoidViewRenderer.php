@@ -42,8 +42,8 @@ class VoidViewRenderer extends PHPViewRenderer {
         $after = ' ?' . '>';
         switch($match[1]) {
           case '>':
-            $before .= "echo htmlspecialchars(";
-            $after = ", ENT_QUOTES, 'UTF-8')" . $after;
+            $before .= "echo \$this->h(";
+            $after = ")" . $after;
             break;
           case '=':
             $before .= "echo ";

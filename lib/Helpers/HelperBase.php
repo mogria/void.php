@@ -141,14 +141,22 @@ class HelperBase extends VirtualAttribute {
   /**
    * Link to a certain Controller
    *
-   * @param type $controller
-   * @param type $action
-   * @param array $params
+   * @param string $link_function (defined as 3rd parameter in config/routes.php)
+   * @param Array $params params to link function
    * @return string
    * @see Router 
    */
-  public static function link($link_function, $params = null) {
+  public function link($link_function, $params = null) {
     return Router::link($link_function, $params);
   }
-
+  
+  /**
+   * properly escape a string for outputting it savely in a HTML document
+   *
+   * @param string $str
+   * @return string
+   */
+  public function h($str) {
+    return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
+  }
 }
