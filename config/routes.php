@@ -152,7 +152,12 @@ Router::configure(function($route) {
   $route->match('/:[0-9\.]+:numbers', '/pages/math/:/:numbers', 'div');
 
   // we dont want /pages/ in the url
-  $route->match('/:page', '/pages/:page');
+  $route->match('/about', '/pages/about', 'about');
+  $route->match('/get_involved', '/pages/get_involved');
+  $route->match('/help', '/pages/help');
+  $route->match('/test_forms', '/pages/test_forms');
+  $route->match('/params', '/pages/params');
+  $route->match('/math', '/pages/math');
 
   // fallback route
   $route->match('/:+parts', '/:parts');
