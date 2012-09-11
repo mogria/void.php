@@ -33,7 +33,7 @@ class Dispatcher extends VoidBase {
   public function getController() {
     // does the controller exist? if not use the default one
     !class_exists($classname = $this->getControllerName()) &&
-      $classname = $this->getDefaultControllerName();
+      $classname = $this->getHttpControllerName();
     // create and instance of the controller and return it.
     return new $classname();
   }
@@ -79,7 +79,7 @@ class Dispatcher extends VoidBase {
     return self::buildControllerName(
       $this->request->controller != null
          ? $this->request->controller 
-         : self::getDefaultController());
+         : self::getHttpController());
   }
 
   /**
@@ -113,8 +113,8 @@ class Dispatcher extends VoidBase {
    * @static
    * @return string
    */
-  public static function getDefaultController() {
-    return self::$config->default_controller;
+  public static function getHttpController() {
+    return self::$config->http_controller;
   }
 
 
@@ -125,8 +125,8 @@ class Dispatcher extends VoidBase {
    * @static
    * @return string
    */
-  public static function getDefaultControllerName() {
-    return self::buildControllerName(self::getDefaultController());
+  public static function getHttpControllerName() {
+    return self::buildControllerName(self::getHttpController());
   }
 
   /**
