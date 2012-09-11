@@ -77,14 +77,13 @@ abstract class ControllerBase extends VirtualAttribute {
   /**
    * gets executed if the user tries to execute an action which
    * requires more permissions than he currently has.
-   * creates a message flash with the message "insufficent permission rights"
-   * and redirects to start page.
+   * simply redirects the user to the HttpController's 403 action (in the same request)
    *
-   * if you don't like this behavior simply overwrite this method in one of your Controller or even in the ApplicationController.
+   * if you don't like this behavior simply overwrite this method
+   * in one of your Controller or even in the ApplicationController.
    *
    */
   public function insufficent_permissions() {
-    Flash::error("insufficent permission rights");
     return 'http/403';
   }
 
