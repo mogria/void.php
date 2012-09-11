@@ -11,5 +11,6 @@
   * proper boot the application in the testing mode (will prevent problems when classes with the same name are in the test/ directory and somewhere else)
 * controllers
   * add possibility to stop render the template
+  * feature: have multiple layouts
 * assets
   * check if the asset system needs changes (because of the new routing system)
