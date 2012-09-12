@@ -20,12 +20,10 @@ class ParsedHtml implements Format {
 
   /**
    * the variables which are available in the template file
-   * @var string
+   * @var &Array
    */
   protected $variables;
 
-
-  // @TODO: add getters & setters for $variables, $template_file & $layout_file
 
   /**
    * Constructor
@@ -42,9 +40,57 @@ class ParsedHtml implements Format {
   }
 
   /**
+   * getter for $template_file property
+   * @return mixed
+   */
+  public function getTemplateFile() {
+    return $this->template_file;
+  }
+
+  /**
+   * setter for $template_file property
+   * @param mixed $template_file
+   */
+  public function setTemplateFile($new_template_file) {
+    $this->template_file = $new_template_file;
+  }
+
+  /**
+   * getter for $layout_file property
+   * @return mixed
+   */
+  public function getLayoutFile() {
+    return $this->layout_file;
+  }
+
+  /**
+   * setter for $layout_file property
+   * @param mixed $layout_file
+   */
+  public function setLayoutFile($new_layout_file) {
+    $this->layout_file = $new_layout_file;
+  }
+
+  /**
+   * getter for $variables property
+   * @return &Array
+   */
+  public function getVariables() {
+    return $this->variables;
+  }
+
+  /**
+   * setter for $variables property
+   * @param &Array $variables
+   */
+  public function setVariables($new_variables) {
+    $this->variables = $new_variables;
+  }
+
+  /**
    * returns the mime-type of an HTML document
    *
-   * @return string
+   * @return strin
    */
   public function getMimeType() {
     return 'text/html';
@@ -58,7 +104,6 @@ class ParsedHtml implements Format {
   public function getFileExtenison() {
     return 'html';
   }
-
 
   /**
    * renders the templates and returns the result
