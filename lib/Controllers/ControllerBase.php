@@ -111,30 +111,15 @@ abstract class ControllerBase extends VirtualAttribute {
       return null;
     }
 
+    $response = new Response();
+
     // call the action
     $back = call_user_func_array(Array($this, Dispatcher::getMethodPrefix() . $actionname), $dispatcher->getParams());
     if($back === null) {
-      // create the template for the base layout
-      $layout = new Template(Array('layout', 'application'));
-      // also use '$view_vars' to store all the variables
-      $layout->setReference($this->getReference());
-
-      // create the template for this controller
-      $this->view = $layout->_content = new Template(Array(
-        $controllername,
-        $actionname
-      ));
-      // also use '$view_vars' to store all the variables
-      $this->view->setReference($this->getReference());
-
-      // give access to the current controllername, the actionname and the given params
-      $this->_action = $actionname;
-      $this->_controller = $controllername;
-      $this->_params = $dispatcher->getParams();
-
+      $response->setFormat(new Response\Format\ParsedHtml($this->getReference(), "$controllername/$actionname", 'layout/application'));
 
       // render the layout
-      return $layout->render();
+      return $response->send();
     } else {
       $redirect = $back;
     }
