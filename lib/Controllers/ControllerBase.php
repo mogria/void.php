@@ -19,6 +19,13 @@ abstract class ControllerBase extends VirtualAttribute {
   protected $view_vars;
 
   /**
+   * format of the response
+   *
+   * @var Response\Format
+   */
+  protected $__format;
+
+  /**
    * Stores the subject which needs to be authenticated to access certain action
    * (may be an user object)
    * 
@@ -113,10 +120,17 @@ abstract class ControllerBase extends VirtualAttribute {
 
     $response = new Response();
 
+    // set default format (ParsedHTML via Templates)
+    $this->format(new Response\Format\ParsedHtml(
+      $this->getReference(),
+      "$controllername/$actionname",
+      'layout/application')
+    );
+
     // call the action
     $back = call_user_func_array(Array($this, Dispatcher::getMethodPrefix() . $actionname), $dispatcher->getParams());
     if($back === null) {
-      $response->setFormat(new Response\Format\ParsedHtml($this->getReference(), "$controllername/$actionname", 'layout/application'));
+      $response->setFormat($this->format());
 
       // render the layout
       return $response->send();
@@ -124,6 +138,20 @@ abstract class ControllerBase extends VirtualAttribute {
       $redirect = $back;
     }
     return null;
+  }
+
+  /**
+   * getter & setter for property $__format
+   *
+   * @param $new_format - the value you want to set $__format to
+   * @return Response\Format - actual value of the $__format property
+   */
+  public function format($new_format = null) {
+    // only set new value if a value is given
+    if($new_format !== null && $new_format instanceof Response\Format)  {
+      $this->__format = $new_format;
+    }
+    return $this->__format;
   }
 
   abstract function action_index();
