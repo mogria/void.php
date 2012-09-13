@@ -27,7 +27,7 @@ class Route {
   protected $max_args = 0;
   
   /* regex to match variables insude of $url */
-  const DYNAMIC_URL_PART_REGEX = "\\:(?:\\[([^\\]]+)\\]|)(\\{[\\,0-9]+\\}|\\+|\\*|\\?|)([^a-zA-Z_]?)([a-zA-Z_][a-zA-Z0-9_]*)";
+  const DYNAMIC_URL_PART_REGEX = "([\\W_])?\\:(?:\\[([^\\]]+)\\]|)(\\{[\\,0-9]+\\}|\\+|\\*|\\?|)([^a-zA-Z_]?)([a-zA-Z_][a-zA-Z0-9_]*)";
 
 
   /**
@@ -102,15 +102,15 @@ class Route {
         static $i = 0;
         $i++;
         // save the names (needed for a replace later when request() is called)
-        $names[] = ":" . $match[4];
+        $names[] = ":" . $match[5];
 
         // define default values for regex componentes
-        $delim = ($match[3] == null || $match[3] === "0") ? "/" : $match[3];
-        ($match[1] == null || $match[1] === "0") && $match[1] = "^" . $delim;
-        ($match[2] == null || $match[2] === "0") && $match[2] = "{1}";
+        $delim = ($match[4] == null || $match[4] === "0") ? "/" : $match[3];
+        ($match[2] == null || $match[2] === "0") && $match[2] = "^" . $delim;
+        ($match[3] == null || $match[3] === "0") && $match[3] = "{1}";
 
         // save the delimiter if multiple blocks are requested
-        if($match[2] != "{1}" && $match[2] != "?" && $match[2] != "{0,1}" && $match[2] != "{,1}" && $match[2] != "{0}") {
+        if($match[3] != "{1}" && $match[3] != "?" && $match[3] != "{0,1}" && $match[3] != "{,1}" && $match[3] != "{0}") {
           $delims[] = $delim;
         } else {
           $delims[] = null;
@@ -120,15 +120,16 @@ class Route {
         $max_args++;
 
         // count optioal parameters
-        if(preg_match('/(\?|\*|\{(?:0|,).*\})/', $match[2])) {
+        if($is_optional = preg_match('/(\?|\*|\{(?:0|,).*\})/', $match[3])) {
           $optional++;
         } else {
           $optional = 0;
         }
 
         // compose regex
-        $regexs[$i] = "((?:[" . str_replace(array("/", "]"), array("\\/", "\\]"), $match[1])
-          . "]+" . preg_quote($delim, "/") . "?)" . $match[2] . ")";
+        $regexs[$i] = ($is_optional ? preg_quote($match[1], "/") . "?" : "")
+          . "((?:[" . str_replace(array("/", "]"), array("\\/", "\\]"), $match[2])
+          . "]+" . preg_quote($delim, "/") . "?)" . $match[3] . ")";
 
         // return a string with the index of the match in the middle
         // we don't return the generated regex yet because of problems

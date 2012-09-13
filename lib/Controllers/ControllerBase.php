@@ -19,6 +19,13 @@ abstract class ControllerBase extends VirtualAttribute {
   protected $view_vars;
 
   /**
+   * format of the response
+   *
+   * @var Response\Format
+   */
+  protected $__format;
+
+  /**
    * Stores the subject which needs to be authenticated to access certain action
    * (may be an user object)
    * 
@@ -77,15 +84,14 @@ abstract class ControllerBase extends VirtualAttribute {
   /**
    * gets executed if the user tries to execute an action which
    * requires more permissions than he currently has.
-   * creates a message flash with the message "insufficent permission rights"
-   * and redirects to start page.
+   * simply redirects the user to the HttpController's 403 action (in the same request)
    *
-   * if you don't like this behavior simply overwrite this method in one of your Controller or even in the ApplicationController.
+   * if you don't like this behavior simply overwrite this method
+   * in one of your Controller or even in the ApplicationController.
    *
    */
   public function insufficent_permissions() {
-    Flash::error("insufficent permission rights");
-    return 'root';
+    return 'http/403';
   }
 
   /**
@@ -112,31 +118,40 @@ abstract class ControllerBase extends VirtualAttribute {
       return null;
     }
 
+    $response = new Response();
+
+    // set default format (ParsedHTML via Templates)
+    $this->format(new Response\Format\ParsedHtml(
+      $this->getReference(),
+      "$controllername/$actionname",
+      'layout/application')
+    );
+
     // call the action
     $back = call_user_func_array(Array($this, Dispatcher::getMethodPrefix() . $actionname), $dispatcher->getParams());
     if($back === null) {
-      // create the template for the base layout
-      $layout = new Template(Array('layout', 'application'));
-      // also use '$view_vars' to store all the variables
-      $layout->setReference($this->getReference());
-
-      // create the template for this controller
-      $this->view = $layout->_content = new Template(Array(
-        $controllername,
-        $actionname
-      ));
-      // also use '$view_vars' to store all the variables
-      $this->view->setReference($this->getReference());
-
-      // give access to the current controllername, the actionname and the given params
-      $this->_action = $actionname;
-      $this->_controller = $controllername;
-      $this->_params = $dispatcher->getParams();
+      $response->setFormat($this->format());
 
       // render the layout
-      return $layout->render();
+      return $response->send();
+    } else {
+      $redirect = $back;
     }
     return null;
+  }
+
+  /**
+   * getter & setter for property $__format
+   *
+   * @param $new_format - the value you want to set $__format to
+   * @return Response\Format - actual value of the $__format property
+   */
+  public function format($new_format = null) {
+    // only set new value if a value is given
+    if($new_format !== null && $new_format instanceof Response\Format)  {
+      $this->__format = $new_format;
+    }
+    return $this->__format;
   }
 
   abstract function action_index();

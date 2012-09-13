@@ -24,9 +24,8 @@ Booter::boot();
 $redirect_loop_limit = 10;
 $redirect_loop_count = 0;
 
+$redirect = null;
 do {
-  $redirect = null;
-
   // Read the request
   $request = new Request($redirect);
 
@@ -37,6 +36,7 @@ do {
   $controller = $dispatcher->getController();
 
   // Execute the action according to the request
+  $redirect = null;
   $content = $controller->executeAction($dispatcher, $redirect);
 
   // increase redirect_loop_count to check wheter we are in a redirect loop

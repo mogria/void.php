@@ -30,7 +30,7 @@ if(!function_exists('\Void\getConfig')) {
       // the settings for all environments
       $cfg->config(function($cfg) {
         // the default Controller (if none is given)
-        $cfg->dispatcher_default_controller = "Posts";
+        $cfg->dispatcher_http_controller = "Http";
         $cfg->sessioninit_models = Array('User');
       }, 'all');
 
