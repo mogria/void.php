@@ -158,6 +158,7 @@ Router::configure(function($route) {
   $route->match('/test_forms', '/pages/test_forms');
   $route->match('/params', '/pages/params');
   $route->match('/math', '/pages/math');
+  $route->match('/text', '/pages/text');
 
   // fallback route
   $route->match('/:+parts', '/:parts');

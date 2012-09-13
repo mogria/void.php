@@ -43,4 +43,16 @@ class PagesController extends ApplicationController {
       }
     }
   }
+
+  public function action_text() {
+    $text = <<<OUTPUT
++-------------------------------------------+
+|                                           | 
+| This should be displayed as a text file.  |
+|             Hopefully it is.              |
+|                                           |
++-------------------------------------------+
+OUTPUT;
+    $this->format(new Response\Format\Text($text));
+  }
 }
