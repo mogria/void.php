@@ -9,7 +9,5 @@
   * you always have to delete the cache to add a new class to the autoloader
 * testing
   * proper boot the application in the testing mode (will prevent problems when classes with the same name are in the test/ directory and somewhere else)
-* controllers
-  * add possibility to stop render the template
 * assets
   * check if the asset system needs changes (because of the new routing system)
