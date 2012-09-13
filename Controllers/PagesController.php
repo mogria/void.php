@@ -55,4 +55,17 @@ class PagesController extends ApplicationController {
 OUTPUT;
     $this->format(new Response\Format\Text($text));
   }
+
+  public function action_json() {
+    $json_data = Array(
+      'name' => 'Trollinger',
+      'role' => 'Regular User',
+      'email' => 'trolls@example.org',
+      'posts' => Array(
+        Array('title' => 'second post', 'content' => 'some other content'),
+        Array('title' => 'first post', 'content' => 'sample content')
+      )
+    );
+    $this->format(new Response\Format\Json($json_data));
+  }
 }

@@ -159,6 +159,7 @@ Router::configure(function($route) {
   $route->match('/params', '/pages/params');
   $route->match('/math', '/pages/math');
   $route->match('/text', '/pages/text');
+  $route->match('/json', '/pages/json');
 
   // fallback route
   $route->match('/:+parts', '/:parts');
