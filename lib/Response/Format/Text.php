@@ -44,7 +44,7 @@ class Text implements Format {
    * in case of a text file: do nothing with the content :-)
    */
   public function format() {
-    return $response->getContent();
+    return $this->content;
   }
 
   /**
