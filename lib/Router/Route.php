@@ -27,7 +27,7 @@ class Route {
   protected $max_args = 0;
   
   /* regex to match variables insude of $url */
-  const DYNAMIC_URL_PART_REGEX = "([\\W_])?\\:(?:\\[([^\\]]+)\\]|)(\\{[\\,0-9]+\\}|\\+|\\*|\\?|)([^a-zA-Z_]?)([a-zA-Z_][a-zA-Z0-9_]*)";
+  const DYNAMIC_URL_PART_REGEX = "([\\W_]?)\\:(?:\\[([^\\]]+)\\]|)(\\{[\\,0-9]+\\}|\\+|\\*|\\?|)([^a-zA-Z_]?)([a-zA-Z_][a-zA-Z0-9_]*)";
 
 
   /**
@@ -97,8 +97,11 @@ class Route {
     $delims = &$this->delimiters;
     $optional = &$this->optional;
     $max_args = &$this->max_args;
+
+    $optional_chars_before = Array();
+
     $this->link_url = preg_replace_callback("/" . self::DYNAMIC_URL_PART_REGEX . "/",
-      function($match) use (&$names, &$regexs, &$delims, &$optional, &$max_args) {
+      function($match) use (&$names, &$regexs, &$delims, &$optional, &$max_args, &$optional_chars_before) {
         static $i = 0;
         $i++;
         // save the names (needed for a replace later when request() is called)
@@ -121,6 +124,7 @@ class Route {
 
         // count optioal parameters
         if($is_optional = preg_match('/(\?|\*|\{(?:0|,).*\})/', $match[3])) {
+          $optional_chars_before[$i] = $match[1];
           $optional++;
         } else {
           $optional = 0;
@@ -134,13 +138,29 @@ class Route {
         // return a string with the index of the match in the middle
         // we don't return the generated regex yet because of problems
         // with preg_quote
-        return "\\?$i\\?"; //@todo: this may cause problems, maybe select a better string?
+        $back = (!$is_optional ? $match[1] : "");
+        $back .= "\\?$i\\?"; //@todo: this may cause problems, maybe select a better string?
+        return $back;
       }, $this->url);
 
     $this->pattern = "/^" . preg_quote($this->link_url, '/') . "$/D";
+
     foreach($regexs as $key => $regex) {
-      $this->pattern = str_replace("\\\\\\?$key\\\\\\?", $regex, $this->pattern);
+      $prefix = "";
+      // add a prefix if optional char is before placeholder
+      if(isset($optional_chars_before[$key])) {
+        $prefix = preg_quote($optional_chars_before[$key], "/");
+        $prefix = $prefix . "?";
+      }
+
+      // replace placeholder with partial regex
+      $this->pattern = str_replace("\\\\\\?$key\\\\\\?", $prefix . $regex, $this->pattern);
     }
+
+    foreach($optional_chars_before as $key => $char) {
+      $this->link_url = str_replace("\\?$key\\?", "$char\\?$key\\?", $this->link_url);
+    }
+    
   }
 
   /**
@@ -204,6 +224,7 @@ class Route {
     } else {
       throw new BadMethodCallException("Invalid number of arguments when linking to '{$this->url}'");
     }
+
     return $link;
   }
 
