@@ -90,7 +90,7 @@ class HelperBase extends VirtualAttribute {
     $asset = new $asset_class($main_file);
     foreach($asset->getFileList() as $file) {
       $methodname = strtolower($tagname) . "Tag";
-      $tags[] = $this->$methodname(BASEURL . $asset->getDirectory() . DS . $file, $attributes)->output();
+      $tags[] = $this->$methodname(BASEURL . str_replace(DS, "/", $asset->getDirectory() . DS . $file), $attributes)->output();
     }
     return implode("\n", $tags);
   }
