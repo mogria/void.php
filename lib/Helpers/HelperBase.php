@@ -137,6 +137,27 @@ class HelperBase extends VirtualAttribute {
     return $form->output();
   }
 
+  /**
+   *
+   */
+  public function yield($variable) {
+    return "--" . YIELD_BOUNDARY . "(" . $variable . ")--";
+  }
+
+  /**
+   * set the content for a placeholder indicated by a yield-call
+   * @param string $variable  - name of the yield placeholder
+   * @param Closure $content  -  a closure which outputs the content for the placeholder
+   */
+  public function content_for($variable, $content) {
+    ob_start();
+    $content();
+    $contents = ob_get_contents();
+    ob_end_clean();
+    $varname = "__yield_$variable";
+    $this->$varname = $contents;
+  }
+
   
   /**
    * Link to a certain Controller

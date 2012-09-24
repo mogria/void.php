@@ -107,7 +107,11 @@ namespace Void; ?>{$this->executable_content}
 _VOID_TEMPLATE
     );
       $content = ob_get_contents();
+
       ob_end_clean();
+
+      $content = $this->replaceYieldedContent($content);
+
     } catch (Exception $ex) {
       $content = null;
       self::$config->onDevelopment() && $content = $this->showDebugInformation();
@@ -115,6 +119,19 @@ _VOID_TEMPLATE
     }
 
     return $content;
+  }
+
+  public function replaceYieldedContent($content) {
+    $boundary = preg_quote(YIELD_BOUNDARY, '/');
+    $obj = $this;
+    return preg_replace_callback("/\\-\\-$boundary\\((.+)\\)\\-\\-/", function($match) use ($obj) {
+      $back = "";
+      $varname = "__yield_{$match[1]}";
+      if(isset($obj->$varname)) {
+        $back = $obj->$varname;
+      }
+      return $back;
+    }, $content);
   }
 
   /**

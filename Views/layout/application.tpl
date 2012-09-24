@@ -21,8 +21,11 @@
           {[$_content}
         </section>
         <aside class="span-8 last">
-          <h1>by the way ...</h1>
-          <p class="box">Random text, Random text, Random text, Random text, Random text, Random text, Random text, Random text</p>
+          {:content_for('aside', function() { }
+            <h3>by the way ... </h3>
+            <p>random stuff ...</p>
+          { }) }
+          {=:yield('aside')}
         </aside>
         <hr />
         {=:render('layout/_footer')}
