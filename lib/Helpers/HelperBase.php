@@ -138,7 +138,11 @@ class HelperBase extends VirtualAttribute {
   }
 
   /**
+   * define a placeholder inside of the template
+   * which later gets replaced by the content specified using content_for
    *
+   * @param string $variable 
+   * @return string
    */
   public function yield($variable) {
     return "--" . YIELD_BOUNDARY . "(" . $variable . ")--";
@@ -146,6 +150,7 @@ class HelperBase extends VirtualAttribute {
 
   /**
    * set the content for a placeholder indicated by a yield-call
+   *
    * @param string $variable  - name of the yield placeholder
    * @param Closure $content  -  a closure which outputs the content for the placeholder
    */
@@ -157,7 +162,6 @@ class HelperBase extends VirtualAttribute {
     $varname = "__yield_$variable";
     $this->$varname = $contents;
   }
-
   
   /**
    * Link to a certain Controller
