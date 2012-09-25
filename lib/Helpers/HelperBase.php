@@ -90,7 +90,7 @@ class HelperBase extends VirtualAttribute {
     $asset = new $asset_class($main_file);
     foreach($asset->getFileList() as $file) {
       $methodname = strtolower($tagname) . "Tag";
-      $tags[] = $this->$methodname(BASEURL . $asset->getDirectory() . DS . $file, $attributes)->output();
+      $tags[] = $this->$methodname(BASEURL . str_replace(DS, "/", $asset->getDirectory() . DS . $file), $attributes)->output();
     }
     return implode("\n", $tags);
   }
@@ -137,6 +137,31 @@ class HelperBase extends VirtualAttribute {
     return $form->output();
   }
 
+  /**
+   * define a placeholder inside of the template
+   * which later gets replaced by the content specified using content_for
+   *
+   * @param string $variable 
+   * @return string
+   */
+  public function yield($variable) {
+    return "--" . YIELD_BOUNDARY . "(" . $variable . ")--";
+  }
+
+  /**
+   * set the content for a placeholder indicated by a yield-call
+   *
+   * @param string $variable  - name of the yield placeholder
+   * @param Closure $content  -  a closure which outputs the content for the placeholder
+   */
+  public function content_for($variable, $content) {
+    ob_start();
+    $content();
+    $contents = ob_get_contents();
+    ob_end_clean();
+    $varname = "__yield_$variable";
+    $this->$varname = $contents;
+  }
   
   /**
    * Link to a certain Controller

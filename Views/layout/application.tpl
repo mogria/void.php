@@ -47,5 +47,5 @@
       <footer class="clear">
         &copy; Copyright {>:copyright_year()} by Mogria | powered by <a href="http://github.com/mogria/void.php" target="_blank">void.php</a>
       </footer>
-  </body>
+</body>
 </html>

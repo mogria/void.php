@@ -11,3 +11,8 @@
   * proper boot the application in the testing mode (will prevent problems when classes with the same name are in the test/ directory and somewhere else)
 * assets
   * check if the asset system needs changes (because of the new routing system)
+  * probebly needs updateing due new Responde object
+  * updating because of redirect loop in index.php?
+  * remove feature?
+* template
+  * has_content() as helper method, rails like? probably not possible easily

@@ -48,13 +48,16 @@ class Template extends VirtualAttribute {
    */
   public function setFile($file) {
     $this->template_finder->setFilespec($file);
+    $this->template_renderer = $this->template_finder->getRenderer();
+  }
+
+  public function createHelper() {
     $helpername = ucfirst($this->template_finder->getController()) . self::$config->helper_postfix;
     if(!class_exists(__NAMESPACE__ . "\\" . $helpername, true)) {
       $helpername = "ApplicationHelper";
     }
     $helpername = __NAMESPACE__ . "\\" . $helpername;
     $this->helper = new $helpername($this);
-    $this->template_renderer = $this->template_finder->getRenderer();
   }
 
   /**
@@ -67,6 +70,7 @@ class Template extends VirtualAttribute {
   }
 
   public function render() {
+    $this->createHelper();
     $this->template_renderer->setVariables($this->getReference());
     $this->helper->setViewRenderer($this->template_renderer);
     if($this->template_renderer instanceof HelpableRenderer) {

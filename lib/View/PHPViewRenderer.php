@@ -67,13 +67,31 @@ class PHPViewRenderer extends VirtualAttribute implements HelpableRenderer {
     $this->setReference($variables);
   }
 
+  /**
+   * gets called when the render function is called as Helper method
+   * renders a subtemplate
+   * @params Array $args  - arguments which will be given to the constructor of Template
+   * @return string - rendered content or null if invalid call
+   */
   public function handleRenderCallAsHelperMethod($args) {
     $num_args = count($args);
     if($num_args > 0 && $num_args <= 2) {
+      // create template instance
       $filespec = $args[0];
       $initializers = $num_args > 1 ? $args[1] : array();
       $template = new Template($filespec, $initializers);
-      return  $template->render();
+
+      // render template
+      $rendered_content = $template->render();
+
+      // use the content of the yield variables from the child templates
+      foreach($template->toArray() as $key => $value) {
+        if(substr($key, 0, 8) === "__yield_") {
+          $this[$key] = $template[$key];
+        }
+      }
+
+      return $rendered_content;
     }
     return null;
   }
@@ -107,7 +125,11 @@ namespace Void; ?>{$this->executable_content}
 _VOID_TEMPLATE
     );
       $content = ob_get_contents();
+
       ob_end_clean();
+
+      $content = $this->replaceYieldedContent($content);
+
     } catch (Exception $ex) {
       $content = null;
       self::$config->onDevelopment() && $content = $this->showDebugInformation();
@@ -115,6 +137,19 @@ _VOID_TEMPLATE
     }
 
     return $content;
+  }
+
+  public function replaceYieldedContent($content) {
+    $boundary = preg_quote(YIELD_BOUNDARY, '/');
+    $obj = $this;
+    return preg_replace_callback("/\\-\\-$boundary\\((.+)\\)\\-\\-/", function($match) use ($obj) {
+      $back = "";
+      $varname = "__yield_{$match[1]}";
+      if(isset($obj->$varname)) {
+        $back = $obj->$varname;
+      }
+      return $back;
+    }, $content);
   }
 
   /**

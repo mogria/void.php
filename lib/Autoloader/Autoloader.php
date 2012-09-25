@@ -148,7 +148,7 @@ class Autoloader {
   private static function inExcludedDir($file) {
     $inside = false;
     $file = str_replace("/", DS, $file);
-    $excluded = Array("lib/Model", "test", "stylesheets", "javascripts", "images", ".git");
+    $excluded = Array("lib/Model", "test", "Views", "stylesheets", "javascripts", "config", "images", ".git");
     // iterate through each excluded directory
     foreach($excluded as $dir) {
       // replace all normal slashes in the path with the

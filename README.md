@@ -18,6 +18,8 @@ But some commands to install it:
 
 It should now be accessible via `http://localhost/void.php/`
 
+__Note__: the `--recursive` flag is required to also fetch the git submodules in this repository. If you forgot to add this flag you can fetch the submodules using `git submodule update --init`
+
 # Contributing
 If you've found any bugs or have suggestions, let me know! You can also fork this project on [GitHub](https://github.com/mogria/void.php) and create a pull request.
 

@@ -16,6 +16,9 @@ define('DS', DIRECTORY_SEPARATOR);
 // the path in the file system to the framework
 define('ROOT', realpath('.') . DS);
 
+// yield boundary
+define('YIELD_BOUNDARY', md5(microtime() . mt_rand()));  
+
 
 // the environments
 define('PRODUCTION', 'production');
