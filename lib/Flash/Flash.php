@@ -100,7 +100,9 @@ class Flash extends VoidBase {
   public static function show($callback, $clear = true) {
     self::createSession();
     foreach($_SESSION[self::SESSION_VARIABLE] as $flash_message) {
-      $callback($flash_message);
+      if($flash_message instanceof FlashMessage) {
+        $callback($flash_message);
+      }
     }
     $clear && self::clear();
   }

@@ -38,11 +38,12 @@ class VoidViewRenderer extends PHPViewRenderer {
     return preg_replace_callback(
       "/\\{(\\[|>|=|)\s*([^\\}]*?({(?:.*|(?3))}|)[^\\{]*)\\}($)?/m",
       function($match) {
+        $this_string = "\$GLOBALS['__voidphp_template_renderer']";
         $before = '<' . '?php ';
         $after = ' ?' . '>';
         switch($match[1]) {
           case '>':
-            $before .= "echo \$this->h(";
+            $before .= "echo {$this_string}->h(";
             $after = ")" . $after;
             break;
           case '=':
@@ -60,13 +61,13 @@ class VoidViewRenderer extends PHPViewRenderer {
         }
 
         // replace : with $this-> (but not in static calls)
-        $match[2] = preg_replace("/(?:[^\:]|^)\:([a-z_][a-z0-9_]*\\()/i",
-          "\$this->\\1",
+        $match[2] = preg_replace("/([^\:]|^)\:([a-z_][a-z0-9_]*\\()/i",
+          "\\1{$this_string}->\\2",
           $match[2]);
 
         // replace strings like h"random strings" with a call to $this->h()
         $match[2] = preg_replace("/h((\"|')(?:\\2|.*?[^\\\\](?:\\\\\\\\)*\\2))/",
-          "\$this->h(\\1)",
+          "{$this_string}->h(\\1)",
           $match[2]);
 
         if(isset($match[3])) {

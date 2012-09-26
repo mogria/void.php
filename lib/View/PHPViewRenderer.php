@@ -2,6 +2,7 @@
 
 namespace Void;
 use \BadMethodCallException;
+use Exception;
 
 class PHPViewRenderer extends VirtualAttribute implements HelpableRenderer {
 
@@ -118,12 +119,20 @@ class PHPViewRenderer extends VirtualAttribute implements HelpableRenderer {
       $this->executable_content = file_get_contents($this->getFile());
     }
     extract($this->toArray());
+
+    // to make helper methods also available in closures in templates
+    $GLOBALS['__voidphp_template_renderer'] = $this;
     try {
       ob_start();
       $back = eval(<<<_VOID_TEMPLATE
 namespace Void; ?>{$this->executable_content}
 _VOID_TEMPLATE
-    );
+      );
+
+      if($back === false) {
+        throw new Exception("syntax or parse error inside of eval()");
+      }
+
       $content = ob_get_contents();
 
       ob_end_clean();
@@ -132,10 +141,8 @@ _VOID_TEMPLATE
 
     } catch (Exception $ex) {
       $content = null;
-      self::$config->onDevelopment() && $content = $this->showDebugInformation();
-      echo $ex;
+      self::$config->onDevelopment() && $content = $this->getDebugInformation();
     }
-
     return $content;
   }
 
@@ -175,6 +182,7 @@ _VOID_TEMPLATE
     $content .= htmlspecialchars(implode("\n", $file), ENT_QUOTES, 'UTF-8');
     // close pre tag & output the rest
     $content .= "</pre>" . ob_get_contents();
+    return $content;
   }
  
 
