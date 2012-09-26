@@ -126,9 +126,9 @@ class TemplateFinder extends VoidBase {
     // per default use first extension in list
     $this->extension = $extensions[0];
     
-    if(is_file($file) && ($pos = strrpos($this->action, ".") !== false)) {
+    if(is_file($file) && ($pos = strrpos($this->action, ".")) !== false) {
       $extension = substr($this->action, $pos + 1);
-      if(in_array($extensions, $extension)) {
+      if(in_array($extension, $extensions)) {
         $this->extension = $extension;
       }
     } else {
