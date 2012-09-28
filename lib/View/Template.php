@@ -30,7 +30,7 @@ class Template extends VirtualAttribute {
 
   /**
    * Constructor
-   * @param string $file
+   * @param string $flle
    * @param Array $initializers
    */
   public function __construct($file, Array $initializers = Array()) {
@@ -49,10 +49,11 @@ class Template extends VirtualAttribute {
   public function setFile($file) {
     $this->template_finder->setFilespec($file);
     $this->template_renderer = $this->template_finder->getRenderer();
+    $this->createHelper();
   }
 
   public function createHelper() {
-    $helpername = ucfirst($this->template_finder->getController()) . self::$config->helper_postfix;
+    $helpername = s($this->template_finder->getController())->camelize() . self::$config->helper_postfix;
     if(!class_exists(__NAMESPACE__ . "\\" . $helpername, true)) {
       $helpername = "ApplicationHelper";
     }
@@ -70,7 +71,6 @@ class Template extends VirtualAttribute {
   }
 
   public function render() {
-    $this->createHelper();
     $this->template_renderer->setVariables($this->getReference());
     $this->helper->setViewRenderer($this->template_renderer);
     if($this->template_renderer instanceof HelpableRenderer) {

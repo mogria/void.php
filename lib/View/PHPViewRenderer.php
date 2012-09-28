@@ -121,7 +121,9 @@ class PHPViewRenderer extends VirtualAttribute implements HelpableRenderer {
     extract($this->toArray());
 
     // to make helper methods also available in closures in templates
-    $GLOBALS['__voidphp_template_renderer'] = $this;
+    
+    $__copy_this = isset($GLOBALS['__voidphp_template_renderer']) ? $GLOBALS['__voidphp_template_renderer'] : null;
+    $GLOBALS['__voidphp_template_renderer'] = $this; 
     try {
       ob_start();
       $back = eval(<<<_VOID_TEMPLATE
@@ -141,8 +143,9 @@ _VOID_TEMPLATE
 
     } catch (Exception $ex) {
       $content = null;
-      self::$config->onDevelopment() && $content = $this->getDebugInformation();
+      self::$config->onDevelopment() && $content = $this->getDebugInformation($ex);
     }
+    $GLOBALS['__voidphp_template_renderer'] = $__copy_this ;
     return $content;
   }
 
@@ -161,9 +164,9 @@ _VOID_TEMPLATE
 
   /**
    * print out the rendered .tpl file for debuging
-   *
+   * @param Exception $ex
    */
-  public function getDebugInformation() {
+  public function getDebugInformation(Exception $ex) {
     // replace all line breaks with unix line breaks
     $file = str_replace(Array("\r\n", "\r"), "\n", $this->executable_content);
     $file = explode("\n", $file);
@@ -175,8 +178,10 @@ _VOID_TEMPLATE
       return str_pad($linenr, strlen((string)$lines), " ", STR_PAD_LEFT) . " | " . $current_line;
     }, $file);
     // open <pre> tag and add some space
-    $content  = "<pre>" . str_repeat(" ", strlen((string)$lines) + 3);
+    $content  = "<pre style=\"font-stype: monotype; text-align: left; background-color: white; color: black;\">";
+    $content .= str_repeat(" ", strlen((string)$lines) + 3);
     // output the file name (in bold)
+    $content .= $this->h((string)$ex);
     $content .= "<b>" . $this->getFile() . "</b> <i>(parsed)</i>\n";
     // output the file & the line numbers
     $content .= htmlspecialchars(implode("\n", $file), ENT_QUOTES, 'UTF-8');
@@ -234,5 +239,4 @@ _VOID_TEMPLATE
       throw new BadMethodCallException("There is no template or helper method '$method'");
     }
   }
-
 }
