@@ -90,7 +90,7 @@ class User extends ModelAuthentification {
   }
 
   public function get_role() {
-    if(Session::user_exists()) {
+    if(Session::user_exists() && $this->id) {
       if($this->admin) {
         return new AdminRole();
       }
