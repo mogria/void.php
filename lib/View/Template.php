@@ -70,6 +70,11 @@ class Template extends VirtualAttribute {
     return $this->template_finder->getPath();
   }
 
+  /**
+   * calls the proper template renderer and renders the template_render
+   *
+   * @return string
+   */
   public function render() {
     $this->template_renderer->setVariables($this->getReference());
     $this->helper->setViewRenderer($this->template_renderer);
