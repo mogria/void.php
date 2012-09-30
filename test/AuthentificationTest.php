@@ -6,18 +6,18 @@ require_once 'config/consts.php';
 require_once 'autoload.php';
 require_once 'test/roles/UnknownRole.php';
 require_once 'test/roles/RegistredRole.php';
-require_once 'test/Models/User.php';
-
 
 class AuthentificationTest extends \PHPUnit_Framework_TestCase {
   
   
   protected $user;
   protected static $user_id = null;
+
   public function setUp() {
     // load the config (for the Hash class)
     $overwrite_environment = TEST;
     require 'config/environments.php';
+    require_once 'test/Models/User.php';
     Booter::boot(true);
 
     $_SESSION = Array();
