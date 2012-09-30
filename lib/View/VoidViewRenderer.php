@@ -30,6 +30,9 @@ class VoidViewRenderer extends PHPViewRenderer {
    * if you use {= } the text will be echo'ed out.
    * if you use {> } the text will be echo'ed out safely.
    * if you use {[ } an other template object is rendered in place
+   * if you use : somethere between { } it will be replaced with 
+   * the template render object. using this you can call helper methods
+   *
    * @param string $string
    * @return string
    */
