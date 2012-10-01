@@ -24,9 +24,9 @@ class User extends ModelAuthentification {
   }
 
   public function get_role() {
-    return Session::user()->id === null
-      ? new UnknownRole()
-      : RoleManager::get($this->read_attribute('role'));
+    return Session::user()->id
+      ? RoleManager::get($this->read_attribute('role'))
+      : new UnknownRole();
   }
 
   public function hash_password() {

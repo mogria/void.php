@@ -8,8 +8,8 @@ require_once 'autoload.php';
 require_once __DIR__  . DS . 'roles/UnknownRole.php';
 require_once __DIR__  . DS . 'roles/RegistredRole.php';
 require_once __DIR__  . DS . 'roles/AdminRole.php';
-require_once __DIR__  . DS . 'roles/ReservedIdRole.php';
-require_once __DIR__  . DS . 'roles/InvalidIdFormatRole.php';
+require_once __DIR__  . DS . 'invalid_roles/ReservedIdRole.php';
+require_once __DIR__  . DS . 'invalid_roles/InvalidIdFormatRole.php';
 
 class RoleManagerTest extends \PHPUnit_Framework_TestCase {
 
