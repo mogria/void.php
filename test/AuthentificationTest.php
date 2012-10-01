@@ -2,8 +2,8 @@
 
 namespace Void;
 
-require_once 'config/consts.php';
-require_once 'autoload.php';
+require __DIR__ . DIRECTORY_SEPARATOR . 'test_bootstrap.php';
+
 require_once 'test/roles/UnknownRole.php';
 require_once 'test/roles/RegistredRole.php';
 
@@ -14,12 +14,6 @@ class AuthentificationTest extends \PHPUnit_Framework_TestCase {
   protected static $user_id = null;
 
   public function setUp() {
-    // load the config (for the Hash class)
-    $overwrite_environment = TEST;
-    require 'config/environments.php';
-    require_once 'test/Models/User.php';
-    Booter::boot(true);
-
     $_SESSION = Array();
     if(self::$user_id === null) {
       $this->user = User::create(Array('name' => 'testuser', 'text_password' => 'secretpasswd15', 'role' => 15));

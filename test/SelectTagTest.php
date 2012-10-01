@@ -2,13 +2,8 @@
 
 namespace Void;
 
-$overwrite_environment = TEST;
-require_once 'config/consts.php';
-require_once 'autoload.php';
-require 'config/environments.php';
+require __DIR__ . DIRECTORY_SEPARATOR . 'test_bootstrap.php';
 require_once 'test/Models/User.php';
-
-Booter::boot(true);
 
 class SelectTagTest extends \PHPUnit_Framework_TestCase {
    

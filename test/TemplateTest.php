@@ -2,11 +2,7 @@
 
 namespace Void;
 
-require_once 'lib/Exceptions/VoidException.php';
-require_once 'lib/Exceptions/InexistentFileException.php';
-require_once 'lib/View/VirtualAttribute.php';
-require_once 'lib/View/Template.php';
-require_once 'lib/View/TemplateFinder.php';
+require __DIR__ . DIRECTORY_SEPARATOR . 'test_bootstrap.php';
 
 class TemplateTest extends \PHPUnit_Framework_TestCase {
   protected $template;

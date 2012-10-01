@@ -2,9 +2,7 @@
 
 namespace Void;
 
-require_once 'config/consts.php';
-require_once 'autoload.php';
-require_once 'test/config/routes.php';
+require __DIR__ . DIRECTORY_SEPARATOR . 'test_bootstrap.php';
 
 class RouteTest extends \PHPUnit_Framework_TestCase {
   

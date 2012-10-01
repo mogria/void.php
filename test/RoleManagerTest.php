@@ -2,8 +2,7 @@
 
 namespace Void;
 
-require_once 'config/consts.php';
-require_once 'autoload.php';
+require __DIR__ . DIRECTORY_SEPARATOR . 'test_bootstrap.php';
 
 require_once __DIR__  . DS . 'roles/UnknownRole.php';
 require_once __DIR__  . DS . 'roles/RegistredRole.php';
