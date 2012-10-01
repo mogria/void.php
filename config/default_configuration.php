@@ -20,11 +20,12 @@ function loadDefaultConfig($cfg) {
     // the default action if none is given
     $cfg->dispatcher_default_method = "index";
 
-    /** Router */
+    /** Routing */
+    $cfg->routeloader_file = 'config/routes.php';
     $cfg->router_index_file = "index.php";
 
     /** Booter */
-    $cfg->booter_classes = Array('ErrorToException', 'PHPErrorMessages', 'ModelConfig', 'UtilShortcuts', 'RoleLoader');
+    $cfg->booter_classes = Array('ErrorToException', 'PHPErrorMessages', 'ModelConfig', 'UtilShortcuts', 'RoleLoader', 'RouteLoader');
     $cfg->booter_classes_web   = Array('RequestFilter', 'SessionInit');
     $cfg->booter_classes_shell = Array();
 
@@ -64,6 +65,7 @@ function loadDefaultConfig($cfg) {
     $cfg->javascriptasset_dir = "test/javascripts";
     $cfg->templatefinder_dir = "test/Views";
     $cfg->roleloader_dir = "test/roles";
+    $cfg->routeloader_file = "test/config/routes.php";
 
     $cfg->phperrormessages_on = true;
     $cfg->phperrormessages_level = E_ALL | E_STRICT;

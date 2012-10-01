@@ -13,5 +13,5 @@ require_once 'config/routes.php';
 
 // boot in a test environment (this environment has a diffrent database connection)
 $overwrite_environment = TEST;
-require 'config/environments.php';
+require_once 'config/environments.php';
 Booter::boot(true);
