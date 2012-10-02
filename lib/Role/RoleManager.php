@@ -20,13 +20,18 @@ class RoleManager {
    *
    * @param $id
    */
-  protected static function validateId($id) {
+  protected static function validate($id, $role) {
     if(!is_int($id)) {
       throw new VoidException("Invalid role id format: has to be an integer");
     }
 
     if(isset(self::$roles[$id])) {
-      throw new VoidException("role id($id) is already in use");
+      $class = new \ReflectionClass($role);
+      $class2 = new \ReflectionClass(self::get($id));
+      
+      if($class->getName() !== $class2->getName()) {
+        throw new VoidException("role id($id) is already in use");
+      }
     }
 
   }
@@ -38,7 +43,7 @@ class RoleManager {
    * @param $role an instance of the new role class
    */
   public static function register($id, RoleBase $role) {
-    self::validateId($id);
+    self::validate($id, $role);
     self::$roles[$id] = $role;
   }
 
