@@ -2,12 +2,16 @@
 
 namespace Void;
 
-require __DIR__ . DIRECTORY_SEPARATOR . 'test_bootstrap.php';
 
 class TemplateTest extends \PHPUnit_Framework_TestCase {
   protected $template;
+
+  public static function setUpBeforeClass() {
+    require 'test/test_voidphp_boot.php';
+  }
+
   public function setUp() {
-    $this->template = new Template('test/Views/test.tpl', Array('included' => new Template('test/Views/included.tpl')));
+    $this->template = new Template('layout/test'/*, Array('included' => new Template('included')) */);
   }
 
   public function testParse() {

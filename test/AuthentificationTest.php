@@ -2,8 +2,7 @@
 
 namespace Void;
 
-require __DIR__ . DIRECTORY_SEPARATOR . 'test_bootstrap.php';
-
+require_once 'test/Models/User.php';
 require_once 'test/roles/UnknownRole.php';
 require_once 'test/roles/RegistredRole.php';
 
@@ -12,6 +11,10 @@ class AuthentificationTest extends \PHPUnit_Framework_TestCase {
   
   protected $user;
   protected static $user_id = null;
+
+  public static function setUpBeforeClass() {
+    require 'test/test_voidphp_boot.php';
+  }
 
   public function setUp() {
     $_SESSION = Array();
