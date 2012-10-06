@@ -16,6 +16,14 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Current Database: `voidphp_test`
+--
+
+CREATE DATABASE /*!32312 IF NOT EXISTS*/ `voidphp_test` /*!40100 DEFAULT CHARACTER SET utf8 */;
+
+USE `voidphp_test`;
+
+--
 -- Table structure for table `users`
 --
 
@@ -49,4 +57,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2012-10-06 16:17:28
+-- Dump completed on 2012-10-06 16:19:48
