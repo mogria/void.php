@@ -73,6 +73,19 @@ class TemplateFinder extends VoidBase {
     // does the file exist?
     if(!is_file($file)) {
       throw new InexistentFileException("Template File '$file' not found.");
+    } else {
+
+      $extensions = array_keys(self::$template_renderers);
+      if(($pos = strrpos($this->action, ".")) !== false) {
+        $extension = substr($this->action, $pos + 1);
+        if(in_array($extension, $extensions)) {
+          $this->extension = $extension;
+        } else {
+          $this->extension = $extensions[0];
+        }
+      } else {
+        $this->extension = $extensions[0];
+      }
     }
     $this->file = $file;
   }
@@ -84,10 +97,26 @@ class TemplateFinder extends VoidBase {
    * @param mixed $filespec
    */
   private function resolveFileSpec($filespec) {
-    if(is_string($filespec) && is_file($filespec)) {
-      return $filespec;
-    } else if(is_string($filespec) && is_file($filespec . "." . self::$config->ext)) {
-      return $filespec . "." . self::$config->ext;
+    $extensions = array_keys(self::$template_renderers);
+
+    if(is_string($filespec)) {
+      $checkfunc = function($filespec) use($extensions) {
+        $null_extensions = array_merge($extensions, array($extensions));
+        foreach($null_extensions as $extension) {
+          $tmpfilename = $filespec . ($extensions !== "" ? "." . $extension : "");
+          if(is_file($tmpfilename)) {
+            return $tmpfilename;
+          }
+        }
+        return null;
+      };
+      
+      $values = array($filespec, self::$config->dir . DS . $filespec);
+      foreach($values as $value) {
+        if(($ret = $checkfunc($value)) !== null) {
+          return $ret;
+        }
+      }
     }
     // filespec has to be an array || an string
     if(!is_array($filespec) && !is_string($filespec)) {
@@ -116,8 +145,6 @@ class TemplateFinder extends VoidBase {
     // build the path
     $file = ROOT . self::$config->dir . DS . s($this->controller)->uncamelize() . DS . $this->action;
 
-    $extensions = array_keys(self::$template_renderers);
-
     // do we have any template renderers?
     if(count($extensions) == 0) {
       throw new BadMethodCallException("no template renderers specified");
@@ -126,17 +153,11 @@ class TemplateFinder extends VoidBase {
     // per default use first extension in list
     $this->extension = $extensions[0];
     
-    if(is_file($file) && ($pos = strrpos($this->action, ".")) !== false) {
-      $extension = substr($this->action, $pos + 1);
-      if(in_array($extension, $extensions)) {
-        $this->extension = $extension;
-      }
-    } else {
+    if(!is_file($file)) {
       $found = false;
       foreach($extensions as $extension) {
         $cur_file = $file . "." . $extension;
         if(is_file($cur_file)) {
-          $this->extension = $extension;
           $file = $cur_file;
           $found = true;
           break;

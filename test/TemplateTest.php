@@ -11,7 +11,7 @@ class TemplateTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function setUp() {
-    $this->template = new Template('layout/test'/*, Array('included' => new Template('included')) */);
+    $this->template = new Template('test', Array('included' => new Template('included')));
   }
 
   public function testRender() {
