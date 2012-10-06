@@ -62,19 +62,7 @@ abstract class RoleBase {
    * simply overwrite this Method without calling parent::__construct()
    */
   public function __construct() {
-    static::register($this);
-  }
-
-  /**
-   * registers this class to the RoleManager (only one time)
-   * @param RoleBase $this - an instance of this object
-   */
-  protected static function register(RoleBase $role) {
-    static $registred = false;
-    if(!$registred) {
-      $registred = true;
-      RoleManager::register(static::$id, $role);
-    }
+    RoleManager::register(static::$id, $this);
   }
 
   /**

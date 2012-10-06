@@ -26,7 +26,7 @@ If you've found any bugs or have suggestions, let me know! You can also fork thi
 # Runnings the Tests
 All the tests and related files are in the `test/`-folder. To run the tests simply use
 
-    $ phpunit test/
+    $ make test
 
 [![endorse](http://api.coderwall.com/mogria/endorsecount.png)](http://coderwall.com/mogria)
 

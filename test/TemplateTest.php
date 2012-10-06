@@ -2,33 +2,16 @@
 
 namespace Void;
 
-require_once 'lib/Exceptions/VoidException.php';
-require_once 'lib/Exceptions/InexistentFileException.php';
-require_once 'lib/View/VirtualAttribute.php';
-require_once 'lib/View/Template.php';
-require_once 'lib/View/TemplateFinder.php';
 
 class TemplateTest extends \PHPUnit_Framework_TestCase {
   protected $template;
-  public function setUp() {
-    $this->template = new Template('test/Views/test.tpl', Array('included' => new Template('test/Views/included.tpl')));
+
+  public static function setUpBeforeClass() {
+    require 'test/test_voidphp_boot.php';
   }
 
-  public function testParse() {
-    $expected_output = <<<TEXT
-<h1>This is just a Test Template</h1>
-<?php for(\$x = 0; \$x < 2; \$x++): ?>
-
-<p>This is just some random Text to Test the Template Engine. <?php echo date('d.m.Y', 0) ?>
-</p>
-<?php endfor ?>
-
-<?php echo \$included->render() ?>
-
-<p>encoded: <?php echo htmlspecialchars("<>\"", ENT_QUOTES, 'UTF-8') ?>
-</p>
-TEXT;
-    $this->assertEquals($expected_output, $this->template->parse(file_get_contents($this->template->getFile())));
+  public function setUp() {
+    $this->template = new Template('test', Array('included' => new Template('included')));
   }
 
   public function testRender() {

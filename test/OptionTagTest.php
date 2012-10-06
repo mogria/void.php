@@ -2,8 +2,7 @@
 
 namespace Void;
 
-require_once 'config/consts.php';
-require_once 'autoload.php';
+require __DIR__ . DIRECTORY_SEPARATOR . 'test_bootstrap.php';
 
 class OptionTagTest extends \PHPUnit_Framework_TestCase {
   

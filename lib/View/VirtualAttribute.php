@@ -26,6 +26,10 @@ class VirtualAttribute extends VoidBase implements \ArrayAccess, \IteratorAggreg
     $this->setReference($reference);
   }
 
+  /**
+   * tell the class where all the variables should be stored
+   * @param &array $reference
+   */
   public function setReference(&$reference) {
     $this->__virtual_vars = &$reference;
   }
@@ -148,6 +152,7 @@ class VirtualAttribute extends VoidBase implements \ArrayAccess, \IteratorAggreg
   public function __get($key) {
     return $this->get($key);
   }
+
   public function __set($key, $value) {
     if($key === "_" && is_array($value)) {
       $this->setArray($value);

@@ -2,8 +2,7 @@
 
 namespace Void;
 
-require_once 'lib/View/VirtualAttribute.php';
-require_once 'lib/HTML/Tag.php';
+require __DIR__ . DIRECTORY_SEPARATOR . 'test_bootstrap.php';
 
 class TagTest extends \PHPUnit_Framework_TestCase {
   protected $tag;
