@@ -30,6 +30,7 @@
           <li>{=:aTag("Logout", $this->link_logout())}</li>
         {else:}
           <li>{=:aTag("Login", $this->link_login())}</li>
+          <li>{=:aTag("Register", $this->link_register())}</li>
         {endif}
         </ul>
       </nav>

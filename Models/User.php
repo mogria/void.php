@@ -36,9 +36,10 @@ namespace Void;
 
 class User extends ModelAuthentification {
   static $has_many = Array('posts');
+  static $attr_accessible = Array('name', 'email', 'text_password', 'text_password_confirm', 'status', 'description', 'fullname');
   static $validates_presence_of = Array(
     Array('name'),
-    Array('password'),
+    //Array('password'),
     Array('email'),
     Array('admin')
   );
@@ -54,6 +55,7 @@ class User extends ModelAuthentification {
   static $before_save = Array('hash_password');
 
   protected $text_password = null;
+  protected $text_password_confirm = null;
 
   public function set_text_password($new_text_password) {
     $this->text_password = $new_text_password;
@@ -62,7 +64,19 @@ class User extends ModelAuthentification {
     $this->flag_dirty("password");
   }
 
+  public function set_text_password_confirm($new_text_password_confirmation) {
+    $this->text_password_confirm = $new_text_password_confirmation;
+
+    // setting attribute dirty so the model gets saved when calling save();
+    $this->flag_dirty("password");
+  }
+
   public function get_text_password() {
+    return "";
+  }
+
+
+  public function get_text_password_confirm() {
     return "";
   }
 
@@ -104,6 +118,14 @@ class User extends ModelAuthentification {
     if(is_string($this->text_password)) {
       $this->password = Hash::create($this->text_password);
       $this->text_password = null;
+    }
+  }
+
+  public function validate() {
+    if($this->text_password_confirm !== null && $this->text_password !== null) {
+      if($this->text_password_confirm !== $this->text_password) {
+        $this->errors->add('text_password_confirm', 'password do not match');
+      }
     }
   }
 }

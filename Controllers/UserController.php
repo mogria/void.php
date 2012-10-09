@@ -41,6 +41,20 @@ class UserController extends ApplicationController {
   }
 
   public function action_new() {
+    if(Session::user()->get_role()->allowedTo("login")) {
+      Flash::error('You\'re logged in. You don\'t need to register again.');
+      Router::redirect_root();
+    }
+
+    $this->user = new User($_POST);
+
+    if(isset($_POST['form_sent'])) {
+      $this->user->admin = 0;
+      if($this->user->save()) {
+        Flash::success('Registration successful');
+        Router::redirect_login();
+      }
+    }
   }
   public function action_edit() {
   }
