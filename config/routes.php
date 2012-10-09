@@ -146,7 +146,7 @@ Router::configure(function($route) {
   $route->match('/about', '/pages/about', 'about');
 
   //user
-  $route->match('/login', '/user/login', 'login');
+  $route->match('/login/:?loginname', '/user/login/:loginname', 'login');
   $route->match('/logout', '/user/logout', 'logout');
   $route->match('/register', '/user/new', 'register');
   $route->match('/user/:?id', '/user/show/:id', 'user');

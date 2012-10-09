@@ -7,8 +7,8 @@ class UserController extends ApplicationController {
   public function action_index() {
   }
 
-  public function action_login() {
-    $this->user = new User(Array('name' => ''));
+  public function action_login($loginname = null) {
+    $this->user = new User(Array('name' => $loginname));
     if(isset($_POST['name'], $_POST['text_password'])) {
       $user = User::find_by_name($_POST['name']);
       if($user !== null && (($user->text_password = $_POST['text_password']) || 1) && $user->login()) {
@@ -52,7 +52,7 @@ class UserController extends ApplicationController {
       $this->user->admin = 0;
       if($this->user->save()) {
         Flash::success('Registration successful');
-        Router::redirect_login();
+        Router::redirect_login($this->user->name);
       }
     }
   }
