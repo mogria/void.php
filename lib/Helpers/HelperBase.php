@@ -184,4 +184,16 @@ class HelperBase extends VirtualAttribute {
   public function h($str) {
     return htmlspecialchars($str, ENT_QUOTES, 'UTF-8');
   }
+
+  /**
+   * properly output a term in singular or plural according to $num
+   *
+   * @param $num int amount
+   * @param string $singluar the term in the singular form (e.g. "person")
+   * @param string $plural the term in the plural form (e.g. "people")
+   * @return string 
+   */
+  public function plural($num, $singluar, $plural) {
+    return $num . " " . ($num == 1 ? $singluar : $plural);
+  }
 }
