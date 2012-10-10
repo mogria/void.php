@@ -3,9 +3,7 @@
 namespace Void;
 
 
-require_once 'config/consts.php';
-require_once 'autoload.php';
-require_once 'config/environments.php';
+require __DIR__ . DIRECTORY_SEPARATOR . 'test_bootstrap.php';
 
 class FlashTest extends \PHPUnit_Framework_TestCase {
   public function setUp() {

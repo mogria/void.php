@@ -12,7 +12,11 @@ class RoleLoader extends VoidBase implements Job {
     $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator(self::$config->dir));
     foreach($files as $file) {
       if($file->isFile() && substr($file->getFilename(), -strlen($extension)) === $extension) {
-        class_exists(substr($file->getFilename(), -3));
+        $classname = substr($file->getFilename(), 0, -4);
+        $classname = __NAMESPACE__ . "\\" . $classname;
+        if(class_exists($classname)) {
+          new $classname;
+        }
       }
     }
   }

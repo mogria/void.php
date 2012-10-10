@@ -68,84 +68,106 @@ class TemplateFinder extends VoidBase {
    * @return string
    */
   public function setFilespec($new_filespec) {
+
+    // filespec has to be an array || an string
+    if(!is_array($new_filespec) && !is_string($new_filespec)) {
+      throw new \InvalidArgumentException("Filespec has to be an array or an string");
+    }
+
+    // do we have any template renderers?
+    if(count(self::$template_renderers) == 0) {
+      throw new BadMethodCallException("no template renderers specified");
+    }
+
+    $new_filespec = $this->normalizeFileSpec($new_filespec);
     $file = $this->resolveFileSpec($new_filespec);
 
     // does the file exist?
-    if(!is_file($file)) {
-      throw new InexistentFileException("Template File '$file' not found.");
+    if($file === null || !is_file($file)) {
+      throw new InexistentFileException("Template File '" . implode("/", $new_filespec) . "' not found.");
     }
+
+    // set file property
     $this->file = $file;
   }
 
   /**
    * gets the controllername and the action name out of the mixed value $filespec and returns 
-   * a path to a file
+   * a path to a file or null if none has been found
    *
-   * @param mixed $filespec
+   * @param array $filespec
+   * @return path to template file or null if none found
    */
   private function resolveFileSpec($filespec) {
-    if(is_string($filespec) && is_file($filespec)) {
-      return $filespec;
-    } else if(is_string($filespec) && is_file($filespec . "." . self::$config->ext)) {
-      return $filespec . "." . self::$config->ext;
-    }
-    // filespec has to be an array || an string
-    if(!is_array($filespec) && !is_string($filespec)) {
-      throw new \InvalidArgumentException("Filespec has to be an array or an string");
+    // normalize filespec remove unnecessary slashes and convert to array
+    $extensions = array_keys(self::$template_renderers);
+
+    // see if file was specified using the ['controller' => 'value', 'action' => 'index'] scheme
+    if(count($filespec) == 2) {
+      $keys = array_keys($filespec);
+      $filespec = array_values($filespec);
+
+      // check if 'controller' & 'action' have the correct position
+      // in the array (because of array_values())
+      if($keys[0] === 'action' || $keys[1] === 'controller') {
+        $filespec = array($filespec[1], $filespec[0]);
+      }
+      $this->controller = $filespec[0] = (string)s($filespec[0])->uncamelize();
+      $this->action = $filespec[1];
     }
 
-    // make $filespec to an array if it is a string by exploding the slashes
+    // convert filespec to path relative to Views/ directory
+    $filespec = implode(DS, $filespec);
+
+    // all extensions including an empty one
+    $null_extensions = array_merge($extensions, array(''));
+
+    // function to check if an extension matches
+    $checkfunc = function($filespec, &$correct_extension) use($null_extensions) {
+      foreach($null_extensions as $extension) {
+        $tmpfilename = $filespec . ($extension !== "" ? "." . $extension : "");
+        if(is_file($tmpfilename)) {
+          $correct_extension = $extension;
+          return $tmpfilename;
+        }
+      }
+      return null;
+    };
+    
+    // check if any extension matches in an relative or an absolute path
+    $values = array($filespec, ROOT . self::$config->dir . DS . $filespec);
+    foreach($values as $value) {
+      if(($file = $checkfunc($value, $this->extension)) !== null) {
+        $this->extension === '' && $this->extension = $extensions[0];
+        return $file;
+      }
+    }
+
+    // nothing matched, template not found
+    return null;
+  }
+
+  /**
+   * converts the $filespec to an array removing
+   * empty values
+   *
+   * @param mixed $filespec
+   * @return Array
+   */
+  private function normalizeFileSpec($filespec) {
+    // convert $filespec to an array
     if(is_string($filespec)) {
+      $filespec = str_replace("\\", "/", $filespec);
       $filespec = explode("/", $filespec);
     }
 
-    // filter out the name of the controller
-    $this->controller = isset($filespec['controller'])
-                          ? $filespec['controller']
-                          : (($element = array_shift($filespec)) == null
-                            ? $this->controller
-                            : $element);
-
-    // filter out the name of the action
-    $this->action = isset($filespec['action'])
-                      ? $filespec['action']
-                      : (($element = array_shift($filespec)) == null
-                        ? $this->action
-                        : $element);
-
-    // build the path
-    $file = ROOT . self::$config->dir . DS . s($this->controller)->uncamelize() . DS . $this->action;
-
-    $extensions = array_keys(self::$template_renderers);
-
-    // do we have any template renderers?
-    if(count($extensions) == 0) {
-      throw new BadMethodCallException("no template renderers specified");
-    }
-
-    // per default use first extension in list
-    $this->extension = $extensions[0];
-    
-    if(is_file($file) && ($pos = strrpos($this->action, ".")) !== false) {
-      $extension = substr($this->action, $pos + 1);
-      if(in_array($extension, $extensions)) {
-        $this->extension = $extension;
-      }
-    } else {
-      $found = false;
-      foreach($extensions as $extension) {
-        $cur_file = $file . "." . $extension;
-        if(is_file($cur_file)) {
-          $this->extension = $extension;
-          $file = $cur_file;
-          $found = true;
-          break;
-        }
+    // remove empty values, preserving the keys
+    foreach($filespec as $key => $value) { 
+      if(empty($value)) {
+        unset($filespec[$key]);
       }
     }
-
-    // replace the slashes with the directory seperator of the current operating system.
-    return $this->file = str_replace(Array("///", "//", "/"), DS, $file);
+    return $filespec;
   }
 
   /**

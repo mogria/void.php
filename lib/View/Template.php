@@ -52,7 +52,11 @@ class Template extends VirtualAttribute {
     $this->createHelper();
   }
 
-  public function createHelper() {
+  /**
+   * creates and instance of an Helper for the current template file used
+   * and stores it in the attribute $this->helper
+   */
+  private function createHelper() {
     $helpername = s($this->template_finder->getController())->camelize() . self::$config->helper_postfix;
     if(!class_exists(__NAMESPACE__ . "\\" . $helpername, true)) {
       $helpername = "ApplicationHelper";
@@ -62,7 +66,7 @@ class Template extends VirtualAttribute {
   }
 
   /**
-   * returns the path to the used template file
+   * returns the path to the template file which should get rendered
    *
    * @return string
    */
@@ -70,6 +74,11 @@ class Template extends VirtualAttribute {
     return $this->template_finder->getPath();
   }
 
+  /**
+   * calls the proper template renderer and renders the template_render
+   *
+   * @return string
+   */
   public function render() {
     $this->template_renderer->setVariables($this->getReference());
     $this->helper->setViewRenderer($this->template_renderer);
@@ -77,5 +86,24 @@ class Template extends VirtualAttribute {
       $this->template_renderer->setHelper($this->helper);
     }
     return $this->template_renderer->render();
+  }
+
+  /**
+   * returns the TemplateRenderer used to process the template file
+   *
+   * @return
+   */
+  public function getTemplateRenderer() {
+    return $this->template_renderer;
+  }
+  
+  /**
+   * returns the helper which provides functions for templates which support them
+   * if no Helper is available this method may also return null
+   *
+   * @return 
+   */
+  public function getHelper() {
+    return $this->helper;
   }
 }
