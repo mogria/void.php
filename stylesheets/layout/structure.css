@@ -16,3 +16,13 @@ footer {
 ul.right > li{
   float: right;
 }
+
+.comment-sidebar {
+  float: left;
+  width: 100px;
+  margin-right: 20px;
+}
+
+.comment-content {
+  overflow: auto;
+}

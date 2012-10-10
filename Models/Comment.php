@@ -27,15 +27,22 @@
 namespace Void;
 
 class Comment extends \ActiveRecord\Model {
+  static $attr_accessible = Array('fullname', 'email', 'content');
   static $validates_presence_of = Array(
     Array('post_id')
   );
   static $validates_length_of = Array(
     Array('fullname', 'maximum' => 50),
     Array('email', 'maximum' => 60),
-    Array('post_id', 'maximum' => 11),
-    Array('created_at', 'maximum' => 19),
-    Array('updated_at', 'maximum' => 19),
-    Array('user_id', 'maximum' => 11)
   );
+
+  static $belongs_to = Array('post', 'user');
+
+  public function get_fullname() {
+    return $this->user_id ?  $this->user->get_fullname() : $this->read_attribute('fullname');
+  }
+
+  public function get_email() {
+    return $this->user_id ?  $this->user->email() : $this->read_attribute('email');
+  }
 }

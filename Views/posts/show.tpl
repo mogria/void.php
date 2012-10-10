@@ -5,3 +5,5 @@ No post found
 {=:render('posts/_post', Array('post' => $post))}
 {=:render('posts/_post_menu', Array('post' => $post))}
 {endif}
+
+{=:render('comment/_multiple_comments', Array('comments' => $post->comments))}

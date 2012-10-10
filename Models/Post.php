@@ -29,7 +29,8 @@ class Post extends \ActiveRecord\Model {
     Array('category_assigns'),
     Array('categories', 'through' => 'category_assigns'),
     Array('tag_assigns'),
-    Array('tags', 'through' => 'tag_assigns')
+    Array('tags', 'through' => 'tag_assigns'),
+    Array('comments')
   );
 
   static $belongs_to = Array('user');

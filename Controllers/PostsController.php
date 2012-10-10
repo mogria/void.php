@@ -48,5 +48,4 @@ class PostsController extends ApplicationController {
       Router::redirect_posts();
     }
   }
-
 }

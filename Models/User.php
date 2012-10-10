@@ -35,7 +35,7 @@
 namespace Void;
 
 class User extends ModelAuthentification {
-  static $has_many = Array('posts');
+  static $has_many = Array('posts', 'comments');
   static $attr_accessible = Array('name', 'email', 'text_password', 'text_password_confirm', 'status', 'description', 'fullname');
   static $validates_presence_of = Array(
     Array('name'),
