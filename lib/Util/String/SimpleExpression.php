@@ -4,17 +4,15 @@ namespace Void;
 
 class SimpleExpression {
 
+  const PLACEHOLDER_FINDER_REGEX = "\\:(?:\\[([^\\]]+)\\]|)(\\{[\\,0-9]+\\}|\\+|\\*|\\?|)([^a-zA-Z_]?)([a-zA-Z_][a-zA-Z0-9_]*)";
+
   protected $default_delimiter;
 
   protected $expression;
 
+  protected $placeholders;
+
   protected $replacement_template;
-
-  protected $place_holder_names;
-
-  const PLACEHOLDER_FINDER_REGEX = "([\\W_]?)\\:(?:\\[([^\\]]+)\\]|)(\\{[\\,0-9]+\\}|\\+|\\*|\\?|)([^a-zA-Z_]?)([a-zA-Z_][a-zA-Z0-9_]*)";
-
-  protected $delimiters;
 
   protected $num_optional_placeholders;
 
@@ -31,44 +29,78 @@ class SimpleExpression {
     // (re)intialize properties & variables
     $this->num_optional_placeholders = 0;
     $this->num_placeholders = 0;
-    $this->placeholder_names = Array();
-    $this->delimiters = Array();
-    $placeholder_expressions = Array();
+    $this->placeholders = Array();
 
     // make references to pass use() them in closures
-    $names = &$this->placeholder_names;
-    $delimiters = &$this->delimiters;
     $optional = &$this->num_optional_placeholders;
     $num_placeholders = &$this->num_placeholders;
     $default_delimiter = $this->default_delimiter;
+    $placeholders = &$this->placeholders;
 
-
-    $optional_chars_before_placeholder = Array();
+    $offset = 0;
+    $match_length = 0;
+    $subject = $this->expression;
 
     $this->replacement_template = preg_replace_callback("/" . self::PLACEHOLDER_FINDER_REGEX . "/",
-      function($match) use (&$names, &$placeholder_expressions, &$delimiters, $default_delimiter, &$num_placeholders, &$optional_chars_before_placeholder) {
+      function($match) use (&$placeholders, $default_delimiter, &$num_placeholders, &$optional, $subject, &$offset, &$match_length) {
         // count number of matches/placeholders
-        $num_placeholders++;
+        $offset = strpos($subject, $match[0], $offset);
 
         // rename/initialize variables for better readability
-        $char_before = $match[1];
-        $delimiter = empty($match[4]) ? $default_delimiter : $match[4] ;
-        $allowed_chars = empty($match[2]) ? "^" . $delimiter : $match[2];
-        $quantity = empty($match[3]) ? "{1}" : $match[3];
-        $placeholder_name = $match[5];
+        $delimiter = empty($match[3]) ? $default_delimiter : $match[3] ;
+        $allowed_chars = empty($match[1]) ? "^" . $delimiter : $match[1];
+        $quantity = empty($match[2]) ? "{1}" : $match[2];
+        $placeholder_name = $match[4];
 
-        // save the names (needed for a replace())
-        $names[] = ":" . $placeholder_name;
+        $placeholders[$num_placeholders] = $placeholder = new SimpleExpressionPlaceholder($num_placeholders, $offset - $match_length, $placeholder_name, $allowed_chars, $quantity, $delimiter);
+      
+        if($placeholder->isOptional()) {
+          $optional++;
+        }
+
+        $match_length += strlen($match[0]);
+
+        $num_placeholders++;
+        return "";
       }, $this->expression);
 
+    $this->pattern = "/^" . $this->replacement(array_map(function($placeholder) {
+      return $placeholder->getExpression();
+    }, $this->placeholders), function($part) {
+      return preg_quote($part, '/'); 
+    }) . "$/D";
   }
 
-  protected function compilePlaceholder() {
+  public function match($subject) {
+    $matches = Array();
+    preg_match($this->pattern, $subject, $matches);
+    return $matches;
   }
 
-  public function match() {
+  public function replace(Array $values) {
+    return $this->replacement($values);
   }
 
-  public function replace() {
+  private function replacement(Array $values, $callback = null) {
+    $concat = "";
+    $last_offset = strlen($this->replacement_template);
+    // we want the highest offset first so the offsets are correct
+    $placeholders = array_reverse($this->placeholders);
+    foreach($placeholders as $placeholder) {
+      $value = isset($values[$placeholder->getName()]) ? $values[$placeholder->getName()] :
+        (isset($values[$placeholder->getId()]) ? $values[$placeholder->getId()] : "");
+      $offset = $placeholder->getOffset();
+      $part = substr($this->replacement_template, $offset, $last_offset - $offset);
+
+      if(is_callable($callback)) {
+        $part = $callback($part);
+      }
+
+      $concat = $value . $part . $concat;
+
+      $last_offset = $offset;
+    }
+    $concat = substr($this->replacement_template, 0, $last_offset) . $concat;
+    return $concat;
   }
 }
