@@ -65,10 +65,6 @@ class RouteTest extends \PHPUnit_Framework_TestCase {
    */
   public function testCompile($url, $target, $pattern, $names) {
     $route = new Route($url, $target);
-    $this->assertEquals($url, $route->getUrl());
-    $this->assertEquals($target, $route->getTarget());
-    $this->assertEquals($pattern, $route->getPattern());
-    $this->assertEquals($names, $route->getNames());
   }
   
   public function provideRouteData() {

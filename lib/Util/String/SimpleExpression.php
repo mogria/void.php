@@ -25,6 +25,15 @@ class SimpleExpression {
     $this->compile();
   }
 
+  public function getPlaceholderCount() {
+    return $this->num_placeholders;
+  }
+
+
+  public function getOptionalPlaceholderCount() {
+    return $this->num_optional_placeholders;
+  }
+
   protected function compile() {
     // (re)intialize properties & variables
     $this->num_optional_placeholders = 0;
@@ -73,8 +82,27 @@ class SimpleExpression {
 
   public function match($subject) {
     $matches = Array();
-    preg_match($this->pattern, $subject, $matches);
-    return $matches;
+    $back = preg_match($this->pattern, $subject, $matches);
+    array_shift($matches);
+    $matches = array_values($matches);
+    return $back ? $matches : false;
+  }
+
+  public function replace_by_names($subject, $replace_template) {
+    $matches = $this->match($subject);
+    if($matches) {
+      $replace_from = Array();
+      $replace_to = Array();
+
+      foreach($this->placeholders as $placeholder) {
+        $replace_from[] = ":" . $placeholder->getName();
+        $replace_to[] = $matches[$placeholder->getId()];
+      }
+
+      return str_replace($replace_from, $replace_to, $replace_template);
+    } else {
+      return false;
+    }
   }
 
   public function replace(Array $values) {
@@ -82,25 +110,29 @@ class SimpleExpression {
   }
 
   private function replacement(Array $values, $callback = null) {
+    if(!is_callable($callback)) {
+      $callback = function($part) {
+        return $part;
+      };
+    }
     $concat = "";
     $last_offset = strlen($this->replacement_template);
     // we want the highest offset first so the offsets are correct
     $placeholders = array_reverse($this->placeholders);
+
     foreach($placeholders as $placeholder) {
       $value = isset($values[$placeholder->getName()]) ? $values[$placeholder->getName()] :
         (isset($values[$placeholder->getId()]) ? $values[$placeholder->getId()] : "");
       $offset = $placeholder->getOffset();
       $part = substr($this->replacement_template, $offset, $last_offset - $offset);
 
-      if(is_callable($callback)) {
-        $part = $callback($part);
-      }
+      $part = $callback($part);
 
       $concat = $value . $part . $concat;
 
       $last_offset = $offset;
     }
-    $concat = substr($this->replacement_template, 0, $last_offset) . $concat;
+    $concat = $callback(substr($this->replacement_template, 0, $last_offset)) . $concat;
     return $concat;
   }
 }
