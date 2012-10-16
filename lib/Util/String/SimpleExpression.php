@@ -127,6 +127,10 @@ class SimpleExpression {
       $part = substr($this->replacement_template, $offset, $last_offset - $offset);
 
       $part = $callback($part);
+      
+      if(is_array($value) && $placeholder->hasMultipleBlocks()) {
+        $value = implode($placeholder->getDelimiter(), $value);
+      }
 
       $concat = $value . $part . $concat;
 
