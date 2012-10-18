@@ -11,8 +11,8 @@ class RouteTest extends \PHPUnit_Framework_TestCase {
   protected $routes = Array(
     '/' => Array('/', '/pages/home', "/^\\/$/D", Array()),
     '/about' => Array('/about', '/pages/about', "/^\\/about$/D", Array()),
-    '/_:action' =>  Array('/_:action', '/admin/:action', "/^\\/_((?:[^\\/]+\\/?){1})$/D", Array(':action')),
-    '/add/:[0-9]++number' => Array('/add/:[0-9]++number', '/calculator/add/:number', "/^\\/add\\/((?:[0-9]+\\+?)+)$/D", Array(':number'))
+    '/_:action' =>  Array('/_:action', '/admin/:action', "/^\\/_(\\/?(?:[^\\/]+\\/?){1})$/D", Array(':action')),
+    '/add/:[0-9]++number' => Array('/add/:[0-9]++number', '/calculator/add/:number', "/^\\/add\\/(\\+?(?:[0-9]+\\+?)+)$/D", Array(':number'))
   );
   
   protected $results = Array(
@@ -39,7 +39,7 @@ class RouteTest extends \PHPUnit_Framework_TestCase {
       Array('/add/', false),
       Array('/add/+', false),
       Array('/add/1+', '/calculator/add/1'),
-      Array('/add/+1', false),
+      Array('/add/+1', '/calculator/add/1'),
       Array('/add/1+1/', false),
       Array('/add/1+1', '/calculator/add/1/1'))
   );
@@ -53,11 +53,29 @@ class RouteTest extends \PHPUnit_Framework_TestCase {
       Array(Array('test'), '/_test'),
       Array(Array('some_other_random_string'), '/_some_other_random_string')),
     '/add/:[0-9]++number' => Array(
-      Array(Array(Array('1','3', '5', '5')), '/add/1+3+5+5'),
-      Array(Array(Array('random_string')), '/add/'))
+      Array(Array(Array('1','3', '5', '5')), '/add/1+3+5+5'))
+      // Array(Array(Array('random_string')), '/add/')) @todo: the link function shouldn't simply return ''
+      // if no numeric value is given. it should throw an exception. This can not be tested using an data
+      // provider. so create a seperate test case.
   );
 
   public function setUp() {
+  }
+
+
+  /**
+   * @dataProvider providePatternData
+   */
+  public function testPatterns($route, $correct_pattern) {
+    $this->assertEquals($correct_pattern, $route->getPattern());
+  }
+
+  public function providePatternData() {
+    $data = Array();
+    foreach($this->routes as $route) {
+      $data[] = Array(new Route($route[0], $route[1]), $route[2]);
+    }
+    return $data;
   }
 
   /**
@@ -102,7 +120,6 @@ class RouteTest extends \PHPUnit_Framework_TestCase {
    * @dataProvider provideLinkData
    */
   public function testLink($route, $param, $result) {
-    //print_r(func_get_args());
     $this->assertEquals($result, call_user_func_array(Array($route, 'link'), $param));
   }
 }
