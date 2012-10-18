@@ -17,7 +17,11 @@ class Route {
   public function __construct($url, $target) {
     $this->target = (is_array($target) ? implode("/", $target) : $target);
   
-    $this->simple_expression = new SimpleExpression($url);
+    $this->simple_expression = new SimpleExpression($url, "/", true);
+  }
+
+  public function getPattern() {
+    return $this->simple_expression->getPattern();
   }
   
   /**
@@ -51,7 +55,7 @@ class Route {
       // add some empty entries in where for the not given optional arguments
       $optional > 0 && $args = array_values(array_merge($args, array_fill(0, $optional, null)));
 
-      $link = $this->simple_expression->replace($args);
+      $link = $this->simple_expression->replace($args, false);
     } else {
       throw new BadMethodCallException("Invalid number of arguments when linking to '{$this->url}'");
     }
