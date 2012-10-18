@@ -10,6 +10,8 @@ class SimpleExpression {
 
   protected $expression;
 
+  protected $pattern;
+
   protected $placeholders;
 
   protected $replacement_template;
@@ -18,9 +20,10 @@ class SimpleExpression {
 
   protected $num_placeholders;
 
-  public function __construct($expression, $default_delimiter = ";") {
+  public function __construct($expression, $default_delimiter = ";", $force_delim_replace = false) {
     $this->default_delimiter = $default_delimiter;
     $this->expression = $expression;
+    $this->force_delim_replace = $force_delim_replace;
 
     $this->compile();
   }
@@ -29,6 +32,13 @@ class SimpleExpression {
     return $this->num_placeholders;
   }
 
+  public function getPattern() {
+    return $this->pattern;
+  }
+
+  public function getExpression() {
+    return $this->expression;
+  }
 
   public function getOptionalPlaceholderCount() {
     return $this->num_optional_placeholders;
@@ -85,31 +95,42 @@ class SimpleExpression {
     $back = preg_match($this->pattern, $subject, $matches);
     array_shift($matches);
     $matches = array_values($matches);
+    if($back) {
+      foreach($this->placeholders as $placeholder) {
+        if($placeholder->hasMultipleBlocks()) {
+          $matches[$placeholder->getId()] = array_diff(explode($placeholder->getDelimiter(), $matches[$placeholder->getId()]), array(''));
+        }
+      }
+    }
     return $back ? $matches : false;
   }
 
   public function replace_by_names($subject, $replace_template) {
     $matches = $this->match($subject);
-    if($matches) {
-      $replace_from = Array();
-      $replace_to = Array();
+    $back = false;
+    if(is_array($matches)) {
+      if(count($matches) > 0) {
+        $replace_from = Array();
+        $replace_to = Array();
 
-      foreach($this->placeholders as $placeholder) {
-        $replace_from[] = ":" . $placeholder->getName();
-        $replace_to[] = $matches[$placeholder->getId()];
+        foreach($this->placeholders as $placeholder) {
+          $replace_from[] = ":" . $placeholder->getName();
+          $replace_to[] = $this->concatMultipleBlock($matches[$placeholder->getId()], $placeholder);
+        }
+
+        $back = str_replace($replace_from, $replace_to, $replace_template);
+      } else  {
+        $back = $replace_template;
       }
-
-      return str_replace($replace_from, $replace_to, $replace_template);
-    } else {
-      return false;
     }
+    return $back;
   }
 
-  public function replace(Array $values) {
-    return $this->replacement($values);
+  public function replace(Array $values, $force_delim_replace = null) {
+    return $this->replacement($values, null, $force_delim_replace);
   }
 
-  private function replacement(Array $values, $callback = null) {
+  private function replacement(Array $values, $callback = null, $force_delim_replace = null) {
     if(!is_callable($callback)) {
       $callback = function($part) {
         return $part;
@@ -125,18 +146,21 @@ class SimpleExpression {
         (isset($values[$placeholder->getId()]) ? $values[$placeholder->getId()] : "");
       $offset = $placeholder->getOffset();
       $part = substr($this->replacement_template, $offset, $last_offset - $offset);
-
       $part = $callback($part);
       
-      if(is_array($value) && $placeholder->hasMultipleBlocks()) {
-        $value = implode($placeholder->getDelimiter(), $value);
-      }
-
+      $value = $this->concatMultipleBlock($value, $placeholder, $force_delim_replace);
       $concat = $value . $part . $concat;
 
       $last_offset = $offset;
     }
     $concat = $callback(substr($this->replacement_template, 0, $last_offset)) . $concat;
     return $concat;
+  }
+
+  private function concatMultipleBlock($value, $placeholder, $force_delim_replace = null) {
+    if(is_array($value) && $placeholder->hasMultipleBlocks()) {
+      $value = implode(($force_delim_replace !== null ? $force_delim_replace : $this->force_delim_replace) ? $this->default_delimiter : $placeholder->getDelimiter(), $value);
+    }
+    return $value;
   }
 }
