@@ -22,10 +22,13 @@ Booter::boot();
 $redirect_loop_limit = 10;
 $redirect_loop_count = 0;
 
+$resolve_request = true;
+
 $redirect = null;
 do {
   // Read the request
-  $request = new Request($redirect);
+  $request = new Request($redirect, $resolve_request);
+  $resolve_request = false;
 
   // instanciate the Dispatcher
   $dispatcher = new Dispatcher($request);

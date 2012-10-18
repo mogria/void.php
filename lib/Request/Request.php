@@ -40,13 +40,13 @@ class Request extends VoidBase {
   /**
    * Constructor
    */
-  public function __construct($urlparams = null) {
+  public function __construct($urlparams = null, $resolve_request = true) {
     if($urlparams === null) {
       $urlparams = self::getPathInfo();
     }
 
     is_array($urlparams) && $urlparams = implode("/", $urlparams);
-    $this->urlparams = self::requestStringToArray(Router::request($urlparams));
+    $this->urlparams = self::requestStringToArray($resolve_request ? Router::request($urlparams) : $urlparams);
   }
 
   /**
