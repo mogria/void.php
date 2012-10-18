@@ -61,7 +61,7 @@ class SimpleExpressionPlaceholder {
     $this->char_range = $char_range;
     $this->numerically = $numerically;
     $this->multiple_blocks = $this->checkMultipleBlocks($numerically);
-    $this->delimiter = ($this->multiple_blocks) ? $delimiter : null;
+    $this->delimiter = $delimiter;
     $this->is_optional = preg_match('/(\?|\*|\{(?:0|,).*\})/', $numerically);
   }
 
@@ -78,7 +78,8 @@ class SimpleExpressionPlaceholder {
   }
 
   public function getExpression() {
-    return "((?:[" . str_replace(array(self::REGEX_DELIMITER, ']'), array("\\" . self::REGEX_DELIMITER, "\\]"), $this->char_range)
-      . "]+" . preg_quote($this->delimiter, self::REGEX_DELIMITER) . "?)" . $this->numerically . ")";
+    $quoted_delim = preg_quote($this->delimiter, self::REGEX_DELIMITER);
+    return "(" . $quoted_delim . "?(?:[" . str_replace(array(self::REGEX_DELIMITER, ']'), array("\\" . self::REGEX_DELIMITER, "\\]"), $this->char_range)
+      . "]+" . $quoted_delim  . "?)" . $this->numerically . ")";;
   }
 }
