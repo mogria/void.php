@@ -55,7 +55,7 @@ abstract class ControllerBase extends VirtualAttribute {
     $ok = true;
     // check if the $__authenticate_subject variable is
     // set to an instance of Authenticate
-    if(isset($this->authenticate_subject) && $this->authenticate_subject instanceof Authenticate) {
+    if(isset($this->authenticate_subject) && $this->authenticate_subject instanceof Authentification) {
       // grab the role
       $role = $this->authenticate_subject->get_role();
 

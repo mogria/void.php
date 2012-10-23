@@ -55,6 +55,15 @@ class Route {
       // add some empty entries in where for the not given optional arguments
       $optional > 0 && $args = array_values(array_merge($args, array_fill(0, $optional, null)));
 
+      foreach($args as $key => $arg) {
+        if(is_array($arg)) {
+          $args[$key] = array_map('urlencode', $arg);
+        } else {
+          $args[$key] = urlencode($arg);
+        }
+      }
+      $args = array_map('urlencode', $args);
+
       $link = $this->simple_expression->replace($args, false);
     } else {
       throw new BadMethodCallException("Invalid number of arguments when linking to '{$this->url}'");
