@@ -149,7 +149,7 @@ Router::configure(function($route) {
   $route->match('/login:?/loginname', '/user/login/:loginname', 'login');
   $route->match('/logout', '/user/logout', 'logout');
   $route->match('/register', '/user/new', 'register');
-  $route->match('/user/:?id', '/user/show/:id', 'user');
+  $route->match('/user:?/id', '/user/show/:id', 'user');
 
   // post
   $route->match('/new', '/posts/new', 'new_post');
