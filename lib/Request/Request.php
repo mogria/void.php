@@ -46,13 +46,13 @@ class Request extends VoidBase {
     }
 
     is_array($urlparams) && $urlparams = implode("/", $urlparams);
-    $this->urlparams = self::requestStringToArray($resolve_request ? Router::request($urlparams) : $urlparams);
+    $this->urlparams = self::requestStringToArray($resolve_request ? Router::request(urldecode($urlparams)) : $urlparams);
   }
 
   /**
    * Parses the requested URL
    */
-  public function toArray() {
+  function toArray() {
     return $this->urlparams;
   }
 
